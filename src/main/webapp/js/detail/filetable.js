@@ -142,7 +142,6 @@ var FileTable = (function (_self) {
             if($('#advanced-search-icon').hasClass('fa-minus-square')) {
                 $(".col-advsearch-input").show();
                 $('#file-list_filter input[type=search]').val('').prop('disabled','disabled');
-                //debugger;
             } else {
                 $(".col-advsearch-input").hide();
                 $('#file-list_filter input[type=search]').removeAttr('disabled');
@@ -393,8 +392,9 @@ var FileTable = (function (_self) {
         });
         $('#batchdl-popup').foundation();
         $("#download-selected-files").on('click', function () {
+            var os = $("#script-os :selected").val();
             var fileName = {os:"unix", ps:".sh", acc:$('#accession').text()};
-            if (navigator.appVersion.indexOf("Win")!=-1) {
+            if (os.indexOf("win")!=-1 || (os.indexOf("default")!=-1 && navigator.appVersion.indexOf("Win")!=-1)) {
                 fileName.os ="windows";
                 fileName.ps = ".bat";
             }
@@ -425,13 +425,13 @@ var FileTable = (function (_self) {
 
             });
             $("input.button").on('click', function () {
-                getSelectedFilesForm(key, dltype);
+                getSelectedFilesForm(key, dltype, fileName.os);
             });
 
         });
     }
 
-    function getSelectedFilesForm(key, type){
+    function getSelectedFilesForm(key, type, os){
         var selectedHtml = '<form method="POST" target="_blank" action="'
             + window.contextPath + "/files/"
             + $('#accession').text() +  type + '">';
@@ -443,6 +443,9 @@ var FileTable = (function (_self) {
         }
         if(type){
             selectedHtml += '<input type="hidden" name="type" value="'+type+'"/>' ;
+        }
+        if(os){
+            selectedHtml += '<input type="hidden" name="os" value="'+os+'"/>' ;
         }
         selectedHtml+='</form>';
         var submissionForm = $(selectedHtml);

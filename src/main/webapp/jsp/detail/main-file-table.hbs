@@ -8,8 +8,15 @@
             <div class="table-wrapper">
                 <table id="file-list" class="stripe compact hover" width="100%">
                 </table>
-                <div class="filetoolbar">
+                <div class="filetoolbar dlpopup_length">
                     <a class="section-button" id="download-selected-files">Download <span id="selected-file-count">0</span> selected files</a>
+                    <label>OS:
+                    <select id="script-os">
+                        <option value="default">Default</option>
+                        <option value="win">Windows</option>
+                        <option value="unix">Unix</option>
+                    </select>
+                    </label>
                     <div class="reveal large" id="batchdl-popup" data-reveal></div>
                 </div>
             </div>
@@ -18,7 +25,10 @@
 </script>
 
 <script id='batchdl-template' type='text/x-handlebars-template'>
-    <div class='reveal-modal' id='first-modal' data-reveal>
+    <div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
         <div class="row">
           <div class="columns">
             <h2>Download files</h2>

@@ -44,15 +44,12 @@ public class FileDownload {
 
     @RequestMapping(value = "/files/**", method = RequestMethod.POST)
     public void getFilesInZippedFormat(HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String browserDetails  =   request.getHeader("User-Agent");
-        String operatingSystem = Constants.OS.UNKNOWN;
         String dlType = request.getParameter("type");
+        String os = request.getParameter("os");
+        if(os==null || os.isEmpty())
+            os="unix";
         String fileExtension = "sh";
-        if(browserDetails!=null){
-            browserDetails=browserDetails.toLowerCase();
-            operatingSystem = getOperatingSystem(browserDetails);
-            fileExtension = getFileExtension(operatingSystem);
-        }
+        fileExtension = getFileExtension(os);
         List<String> fileNames = new ArrayList<>();
         Document luceneDoc = getFilePaths(request,response, fileNames);
         String relativeBaseDir = luceneDoc.get(Constants.Fields.RELATIVE_PATH);
@@ -63,9 +60,9 @@ public class FileDownload {
             zipDownloadService.sendZip(request, response, files);
         else if(dlType.equalsIgnoreCase("ftp") || dlType.equalsIgnoreCase("aspera")){
             response.setContentType("application/txt");
-            response.addHeader("Content-Disposition", "attachment; filename="+accession+"-" + operatingSystem+"-"+dlType+"."+fileExtension);
+            response.addHeader("Content-Disposition", "attachment; filename="+accession+"-" + os+"-"+dlType+"."+fileExtension);
             response.addHeader("Cache-Control", "no-cache");
-            response.getOutputStream().print(batchDownloadScriptBuilder.fillTemplate(dlType, fileNames, relativeBaseDir, operatingSystem));
+            response.getOutputStream().print(batchDownloadScriptBuilder.fillTemplate(dlType, fileNames, relativeBaseDir, os));
             response.getOutputStream().close();
         }
 
@@ -76,27 +73,6 @@ public class FileDownload {
         fileDownloadService.sendFile(request, response);
     }
 
-    private static String getOperatingSystem(String userAgent){
-
-        if (userAgent.toLowerCase().indexOf("windows") >= 0 )
-        {
-            return Constants.OS.WINDOWS;
-        } else if(userAgent.toLowerCase().indexOf("mac") >= 0)
-        {
-            return Constants.OS.MAC;
-        } else if(userAgent.toLowerCase().indexOf("x11") >= 0)
-        {
-            return Constants.OS.UNIX;
-        } else if(userAgent.toLowerCase().indexOf("android") >= 0)
-        {
-            return Constants.OS.ANDROID;
-        } else if(userAgent.toLowerCase().indexOf("iphone") >= 0)
-        {
-            return Constants.OS.IPHONE;
-        }else{
-            return Constants.OS.UNKNOWN;
-        }
-    }
 
     private  Document getFilePaths(HttpServletRequest request, HttpServletResponse response, List<String> fileNames) throws Exception {
         String[] args = request.getRequestURI().replaceAll(request.getContextPath()+"(/[a-zA-Z])?/files/"       ,"").split("/");
