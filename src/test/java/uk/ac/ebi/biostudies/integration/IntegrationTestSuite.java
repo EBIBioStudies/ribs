@@ -47,7 +47,9 @@ public class IntegrationTestSuite {
 
     @AfterClass
     public static void destroy(){
-        webDriver.close();
+        if (webDriver!=null) {
+            webDriver.quit();
+        }
     }
 
 }
