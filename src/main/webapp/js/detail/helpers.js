@@ -253,6 +253,7 @@ var Metadata = (function (_self) {
                 });
                 if (!author.affiliation && author.Affiliation) {
                     author.affiliation = author.Affiliation;
+                    delete author.Affiliation;
                 }
 
                 if (author.affiliation) {
