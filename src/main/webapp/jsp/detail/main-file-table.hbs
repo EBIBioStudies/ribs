@@ -10,18 +10,112 @@
                 </table>
                 <div class="filetoolbar dlpopup_length">
                     <a class="section-button" id="download-selected-files">Download <span id="selected-file-count">0</span> selected files</a>
-                    <label>OS:
-                    <select id="script-os">
-                        <option value="default">Default</option>
-                        <option value="win">Windows</option>
-                        <option value="unix">Unix</option>
-                    </select>
-                    </label>
+
                     <div class="reveal large" id="batchdl-popup" data-reveal></div>
                 </div>
             </div>
         </div>
     </section>
+</script>
+
+<script id='batchdl-accordion-template' type='text/x-handlebars-template'>
+    <div>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <div class="row">
+          <div class="columns" style="background-color: lightblue;">
+            <h2>Zip/Ftp/Aspera Download </h2>
+            <p>You can choose to download the selected files either as a zipper archive over HTTP or via our FTP/Aspera server . </p>
+          </div>
+        </div>
+        <ul class="accordion" data-accordion>
+            <li class="accordion-item is-active" data-accordion-item>
+                <!-- Accordion tab title -->
+
+                <a href="#" class="accordion-title" style="font-size:large;">Download as a Zip file</a>
+
+                <!-- Accordion tab content: it would start in the open state due to using the `is-active` state class. -->
+                <div class="accordion-content" data-tab-content>
+                  <p>Click the button below to download the selected files as a zipped archive. </p>
+                  <input id="zip-dl-button" class="button" type="button" value="Download"/>
+                </div>
+              </li>
+              <li class="accordion-item" data-accordion-item>
+                  <!-- Accordion tab title -->
+                  <a href="#" class="accordion-title" style="font-size:large;">Download Using FTP</a>
+                  <div class="accordion-content" data-tab-content>
+                    <div class="row">
+                        <div class="columns small-6 large-4">
+                            Instruction for:
+
+                            <select id="ftp-script-os-select" style="max-width:100px;" class="select">
+                                <option value="win">Windows</option>
+                                <option value="unix">Unix</option>
+                                <option value="mac">MAC</option>
+                            </select>
+                        </div>
+                        <div class="columns small-6 large-8 "/>
+                    </div>
+                    <div id="ftp-instruct">
+
+                    </div>
+                    <input id="ftp-dl-button" class="button" type="button" value="Download"/>
+                  </div>
+              </li>
+              <li class="accordion-item" data-accordion-item>
+                  <!-- Accordion tab title -->
+                  <a href="#" class="accordion-title" style="font-size:large;">Download Using Aspera</a>
+
+                  <div class="accordion-content" data-tab-content>
+                      <div class="row">
+                          <div class="columns small-6 large-4">
+                              Instruction for:
+                              <select id="aspera-script-os-select" style="max-width:100px;">
+                                  <option value="win">Windows</option>
+                                  <option value="unix">Unix</option>
+                                  <option value="mac">MAC</option>
+                              </select>
+                          </div>
+                          <div class="columns small-6 large-8 "/>
+                      </div>
+
+                      <div id="aspera-instruct"/>
+
+
+
+                       <input id="aspera-dl-button" class="button" type="button" value="Download"/>
+
+                  </div>
+              </li>
+        </ul>
+    </div>
+    <script>
+     $(document).ready(function() {
+        $(document).foundation();
+     })
+    </script>
+</script>
+
+<script id='ftp-dl-instruction' type='text/x-handlebars-template'>
+  <ol>
+    <li>Click the button below to download the script and save it to the folder where you want to download your files e.g. <code>{{fname.dldir}}</code></li>
+    <li>Press Windows key+R, type <code>cmd</code> and press <b>Enter</b> </li>
+    <li>Change your console directory to the place that you put downloaded script e.g. <code>cd {{fname.dldir}}</code> .</li>
+    <li>Run downloaded script file in cmd with this command: <code> ftp -i -s:./{{fname.acc}}-{{fname.os}}-ftp{{fname.ps}} </code></li>
+  </ol>
+</script>
+
+<script id='aspera-dl-instruction' type='text/x-handlebars-template'>
+  <ol>
+    <li>Download aspera cli from <a href="https://downloads.asperasoft.com/en/downloads/62">https://downloads.asperasoft.com/en/downloads/62</a></li>
+    <li>Unzip downloaded file in e.g. <code>{{fname.asperaDir}}</code></li>
+    <li>Click the button below to download the script and save it to the folder where you want to download your files e.g. <code>{{fname.dldir}}</code></li>
+    <li>Edit script <code>{{fname.acc}}-{{fname.os}}-aspera{{fname.ps}}</code> and change default directory address of <b>asperaweb_id_dsa.openssh</b> with the directory that you have installed your Aspera client e.g. <code>{{fname.asperaDir}}/cli/etc/asperaweb_id_dsa.openssh</code></li>
+    <li>Press Windows key+R, type <code>cmd</code> and press <b>Enter</b> </li>
+    <li>Change your console directory to the place that you put downloaded script e.g. <code>cd {{fname.dldir}} </code></li>
+    <li>Run downloaded script from command line <code>./{{fname.acc}}-{{fname.os}}-aspera{{fname.ps}}</code></li>
+  </ol>
 </script>
 
 <script id='batchdl-template' type='text/x-handlebars-template'>
