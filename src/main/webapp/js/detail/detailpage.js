@@ -103,7 +103,7 @@ var DetailPage = (function (_self) {
         'biostudies': 'BioStudies'
     };
 
-    _self.projectScripts = [
+    _self.collectionScripts = [
         {regex: /^E-*/, script: 'arrayexpress.js'},
         {regex: /^S-SCDT-*/, script: 'sourcedata.js'}
     ];

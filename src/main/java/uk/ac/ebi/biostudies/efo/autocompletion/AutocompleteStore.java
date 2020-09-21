@@ -86,7 +86,7 @@ public class AutocompleteStore {
                 if ("".equals(fieldName)) {
                     // in this case we put "keyword" data, EFO and fieldNames, EFO will override keywords
                     if (    AutocompleteData.DATA_TEXT.equals(data.getDataType())
-                                 && ("content project title".contains(data.getData().toLowerCase())
+                                 && ("content collection title".contains(data.getData().toLowerCase())
                             ) || !AutocompleteData.DATA_TEXT.equals(data.getDataType())) {
                         shouldAdd = true;
                     }

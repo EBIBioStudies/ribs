@@ -1,22 +1,22 @@
-Home.ProjectLoader = (function () {
+Home.CollectionLoader = (function () {
     var _self ={};
     _self.render = function () {
-        if ($('#projects').length===0) {
-            $('#ProjectLoader').slideDown();
+        if ($('#collections').length===0) {
+            $('#CollectionLoader').slideDown();
             return;
         }
-        $.getJSON( contextPath + "/api/v1/search",{type:'project'}, function( data ) {
+        $.getJSON( contextPath + "/api/v1/search",{type:'collection'}, function( data ) {
             if (data && data.totalHits && data.totalHits>0) {
                 data.hits = data.hits.sort(function(a, b) {
                     return a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1
                 });
-                var maxProject = 5;
-                if (data.hits.length>maxProject) data.hits = data.hits.slice(0,maxProject);
+                var maxCollection = 5;
+                if (data.hits.length>maxCollection) data.hits = data.hits.slice(0,maxCollection);
 
-                var template = Handlebars.compile($('script#projects-template').html());
-                $('#projects').html(template(data));
-                $('#ProjectLoader').slideDown();
-                $("a[data-type='project']").each( function() {
+                var template = Handlebars.compile($('script#collections-template').html());
+                $('#collections').html(template(data));
+                $('#CollectionLoader').slideDown();
+                $("a[data-type='collection']").each( function() {
                     var $prj = $(this), accession = $(this).data('accession');
                     $(this).attr('href',contextPath+'/'+accession+'/studies');
                     $.getJSON(contextPath+ '/api/v1/studies/'+accession, function (data) {

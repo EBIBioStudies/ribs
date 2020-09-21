@@ -59,39 +59,39 @@ public class Search {
 
 
     @PublicRESTMethod
-    @RequestMapping(value = "/{project}/search", produces = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.GET)
-    public String searchProject(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+    @RequestMapping(value = "/{collection}/search", produces = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.GET)
+    public String searchCollection(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                 @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize,
                                 @RequestParam(value = "sortBy", required = false, defaultValue = "") String sortBy,
                                 @RequestParam(value = "sortOrder", required = false, defaultValue = "descending") String sortOrder,
                                 @RequestParam MultiValueMap<String, String> params,
-                                @PathVariable String project) throws Exception {
+                                @PathVariable String collection) throws Exception {
         ObjectNode selectedFacets = checkSelectedFacetsAndFields(params);
         String queryString = params.getFirst("query");
         params.remove("query");
         queryString = queryString == null ? "" : queryString;
-        return searchService.search(URLDecoder.decode(queryString, String.valueOf(UTF_8)), selectedFacets, project,
+        return searchService.search(URLDecoder.decode(queryString, String.valueOf(UTF_8)), selectedFacets, collection,
                 page, pageSize, sortBy, sortOrder);
     }
 
-    @RequestMapping(value = "/{project}/facets", produces = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.GET)
-    public String getDefaultFacets(@PathVariable String project,
+    @RequestMapping(value = "/{collection}/facets", produces = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.GET)
+    public String getDefaultFacets(@PathVariable String collection,
                                    @RequestParam(value = "query", required = false, defaultValue = "") String queryString,
                                    @RequestParam(value = "limit", required = false, defaultValue = "" + Constants.TOP_FACET_COUNT) Integer limit,
                                    @RequestParam MultiValueMap<String, String> params
     ) throws Exception {
         ObjectNode selectedFacets = checkSelectedFacetsAndFields(params);
-        return facetService.getDefaultFacetTemplate(project, queryString, limit, selectedFacets).toString();
+        return facetService.getDefaultFacetTemplate(collection, queryString, limit, selectedFacets).toString();
     }
 
 
-    @RequestMapping(value = "/{project}/facets/{dimension}/", produces = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.GET)
-    public String getDefaultFacets(@PathVariable String project,
+    @RequestMapping(value = "/{collection}/facets/{dimension}/", produces = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.GET)
+    public String getDefaultFacets(@PathVariable String collection,
                                    @PathVariable String dimension,
                                    @RequestParam(value = "query", required = false, defaultValue = "") String queryString,
                                    @RequestParam MultiValueMap<String, String> params) throws Exception {
         ObjectNode selectedFacets = checkSelectedFacetsAndFields(params);
-        return facetService.getDimension(project, dimension, queryString, selectedFacets).toString();
+        return facetService.getDimension(collection, dimension, queryString, selectedFacets).toString();
     }
 
     private ObjectNode checkSelectedFacetsAndFields(MultiValueMap<String, String> params) {

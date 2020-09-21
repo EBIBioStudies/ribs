@@ -2,13 +2,13 @@
     <div id="left-column" class="row small-up-3">
         {{#if hits}}
             {{#each hits}}
-                <div class="column project-container">{{&result this}}</div>
+                <div class="column collection-container">{{&result this}}</div>
             {{/each}}
         {{else}}
             <section id="error-message">
             <div class="bigicon"><i class="icon icon-functional" data-icon="j"></i></div>
             <br/>
-            <h3>No projects found!</h3>
+            <h3>No collections found!</h3>
             <p>If you require further assistance locating missing page or file, please <a
                     href="mailto://biostudies@ebi.ac.uk" class="feedback">contact us</a> and we will look into it
                 for you.</p>

@@ -51,10 +51,10 @@ public class IndexManager implements InitializingBean, DisposableBean {
     private IndexSearcher efoIndexSearcher;
     private IndexWriter efoIndexWriter;
     private Map<String, JsonNode> indexEntryMap = new LinkedHashMap<>();
-    private Map<String, Set<String>> projectRelatedFields = new LinkedHashMap<>();
+    private Map<String, Set<String>> collectionRelatedFields = new LinkedHashMap<>();
     private SpellChecker spellChecker;
     private JsonNode indexDetails;
-    private Map<String, List<String>> subProjectMap = new LinkedHashMap<>();
+    private Map<String, List<String>> subCollectionMap = new LinkedHashMap<>();
 
     @Autowired
     IndexConfig indexConfig;
@@ -80,17 +80,17 @@ public class IndexManager implements InitializingBean, DisposableBean {
     }
 
     public void refreshIndexWriterAndWholeOtherIndices(){
-        InputStream indexJsonFile = this.getClass().getClassLoader().getResourceAsStream("project-fields.json");
+        InputStream indexJsonFile = this.getClass().getClassLoader().getResourceAsStream("collection-fields.json");
         indexDetails = readJson(indexJsonFile);
         fillAllFields();
         analyzerManager.init(indexEntryMap);
         parserManager.init(indexEntryMap);
         String indexDir = indexConfig.getIndexDirectory();
         try {
-            //TODO: Start - Remove this when backend supports subprojects
-            setSubProject("BioImages","JCB" );
-            setSubProject("BioImages", "BioImages-EMPIAR");
-            //TODO: End - Remove this when backend supports subprojects
+            //TODO: Start - Remove this when backend supports subcollections
+            setSubCollection("BioImages","JCB" );
+            setSubCollection("BioImages", "BioImages-EMPIAR");
+            //TODO: End - Remove this when backend supports subcollections
             indexDirectory = FSDirectory.open(Paths.get(indexDir));
             indexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
             getIndexWriterConfig().setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
@@ -168,21 +168,21 @@ public class IndexManager implements InitializingBean, DisposableBean {
                 indexEntryMap.put(curField.get("name").asText(), curField);
                 curPrjRelatedFields.add(curField.get("name").asText());
             }
-            projectRelatedFields.put(key, curPrjRelatedFields);
+            collectionRelatedFields.put(key, curPrjRelatedFields);
         }
-        projectRelatedFields.keySet().forEach(s -> {
+        collectionRelatedFields.keySet().forEach(s -> {
             if (s.equalsIgnoreCase(Constants.PUBLIC)) return;
-            projectRelatedFields.get(s).addAll(projectRelatedFields.get(Constants.PUBLIC));
+            collectionRelatedFields.get(s).addAll(collectionRelatedFields.get(Constants.PUBLIC));
         });
 
     }
 
 
-    public Set<String> getProjectRelatedFields(String prjName){
-        if(!projectRelatedFields.containsKey(prjName))
-            return projectRelatedFields.get(Constants.PUBLIC);
+    public Set<String> getCollectionRelatedFields(String prjName){
+        if(!collectionRelatedFields.containsKey(prjName))
+            return collectionRelatedFields.get(Constants.PUBLIC);
         else
-            return projectRelatedFields.get(prjName);
+            return collectionRelatedFields.get(prjName);
     }
 
     public IndexReader getIndexReader() {
@@ -229,26 +229,26 @@ public class IndexManager implements InitializingBean, DisposableBean {
         return indexDetails;
     }
 
-    public Map<String, List<String>> getSubProjectMap() {
-        return subProjectMap;
+    public Map<String, List<String>> getSubCollectionMap() {
+        return subCollectionMap;
     }
 
-    public void setSubProject(String parent, String subproject) {
+    public void setSubCollection(String parent, String subcollection) {
         parent = parent.toLowerCase();
-        if (!subProjectMap.containsKey(parent)) {
-            subProjectMap.put(parent, Lists.newArrayList(subproject));
+        if (!subCollectionMap.containsKey(parent)) {
+            subCollectionMap.put(parent, Lists.newArrayList(subcollection));
         } else {
-            subProjectMap.get(parent).add(subproject);
+            subCollectionMap.get(parent).add(subcollection);
         }
     }
 
-    public void unsetProjectParent(String project) {
-        final String lowerCaseProject = project.toLowerCase();
-        subProjectMap.entrySet().stream().filter(entry -> entry.getValue().contains(lowerCaseProject))
+    public void unsetCollectionParent(String collection) {
+        final String lowerCaseCollection = collection.toLowerCase();
+        subCollectionMap.entrySet().stream().filter(entry -> entry.getValue().contains(lowerCaseCollection))
                 .forEach(entry -> {
-                    entry.getValue().remove(lowerCaseProject);
+                    entry.getValue().remove(lowerCaseCollection);
                     if (entry.getValue().size() == 0) {
-                        subProjectMap.remove(entry.getKey());
+                        subCollectionMap.remove(entry.getKey());
                     }
                 });
     }

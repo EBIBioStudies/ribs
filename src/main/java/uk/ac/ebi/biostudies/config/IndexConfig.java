@@ -58,8 +58,8 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     @Value("${indexer.queryTypeFilter}")
     private String typeFilterQuery;
 
-    @Value("${default.project.list}")
-    private List<String> defaultProjectList;
+    @Value("${default.collection.list}")
+    private List<String> defaultCollectionList;
 
     public static CharArraySet STOP_WORDS;
 
@@ -125,8 +125,8 @@ public class IndexConfig implements InitializingBean, DisposableBean {
         return typeFilterQuery;
     }
 
-    public List<String> getDefaultProjectList() {
-        return defaultProjectList;
+    public List<String> getDefaultCollectionList() {
+        return defaultCollectionList;
     }
 
     @Override

@@ -1,10 +1,10 @@
-var ProjectsPage = (function (_self) {
+var CollectionsPage = (function (_self) {
 
     _self.registerHelpers = function (params) {
 
         Handlebars.registerHelper('result', function(o) {
-            var template = Handlebars.compile($('script#project-result-template').html());
-            o.project = project;
+            var template = Handlebars.compile($('script#collection-result-template').html());
+            o.collection = collection;
             return template(o);
         });
 
@@ -20,4 +20,4 @@ var ProjectsPage = (function (_self) {
     }
 
     return _self;
-})(ProjectsPage || {});
+})(CollectionsPage || {});

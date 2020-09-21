@@ -52,7 +52,7 @@ public interface Constants {
     }
 
     interface Facets {
-        String PROJECT = "facet.project";
+        String PROJECT = "facet.collection";
         String FILE_TYPE = "facet.file_type";
         String LINK_TYPE = "facet.link_type";
         String RELEASED_YEAR_FACET = "facet.released_year";

@@ -2,7 +2,7 @@ var Home = (function (_self) {
 
     _self.render = function(){
         this.registerHelpers();
-        this.ProjectLoader.render();
+        this.CollectionLoader.render();
         this.StatsLoader.render();
         this.LatestFeedLoader.render();
     };

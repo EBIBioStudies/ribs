@@ -1,7 +1,7 @@
 $(function() {
     function handleBioImagesUI() {
-        $('#local-title').html('<h1><img src="' + contextPath + '/images/projects/bioimages/logo.png"></img></h1>');
-        $('#masthead').css("background-image","url("+contextPath +"/images/projects/bioimages/background.jpg)");
+        $('#local-title').html('<h1><img src="' + contextPath + '/images/collections/bioimages/logo.png"></img></h1>');
+        $('#masthead').css("background-image","url("+contextPath +"/images/collections/bioimages/background.jpg)");
         $('.masthead, #ebi_search .button, .pagination .current').css("background-color","rgb(0, 124, 130)");
         $('.menu.float-left li a').first().attr('href','/bioimage-archive/');
         $('.menu.float-left').append('<li role="menuitem"><a href="/bioimage-archive/our-roadmap/">Our roadmap</a></li>')
@@ -18,7 +18,7 @@ $(function() {
         $('#elixir-banner').hide();
     }
 
-    if (project && project.toLowerCase()=='bioimages') {
+    if (collection && collection.toLowerCase()=='bioimages') {
         handleBioImagesUI();
     }
     $('#login-button').click(function () {
@@ -45,12 +45,12 @@ $(function() {
         $('#pass-field').focus();
     }*/
 
-    if (project && project!=='projects') {
-        // display project banner
-        $.getJSON(contextPath + "/api/v1/studies/" + project, function (data) {
-            if (!data || !data.section || !data.section.type || data.section.type.toLowerCase()!='project') return;
-            var projectObj = showProjectBanner(data);
-            updateMenuForProject(projectObj);
+    if (collection && collection!=='collections') {
+        // display collection banner
+        $.getJSON(contextPath + "/api/v1/studies/" + collection, function (data) {
+            if (!data || !data.section || !data.section.type || data.section.type.toLowerCase()!='collection') return;
+            var collectionObj = showCollectionBanner(data);
+            updateMenuForCollection(collectionObj);
         }).fail(function (error) {
             //showError(error);
         });
@@ -134,38 +134,38 @@ function showError(error) {
 }
 
 
-function showProjectBanner(data) {
-    var templateSource = $('script#project-banner-template').html();
+function showCollectionBanner(data) {
+    var templateSource = $('script#collection-banner-template').html();
     var template = Handlebars.compile(templateSource);
-    var projectObj={};
+    var collectionObj={};
     try {
-        projectObj = {accno : data.accno , logo: contextPath + '/files/' + data.accno + '/' + data.section.files[0][0].path};
+        collectionObj = {accno : data.accno , logo: contextPath + '/files/' + data.accno + '/' + data.section.files[0][0].path};
     } catch(e){}
     $(data.section.attributes).each(function () {
-        projectObj[this.name.toLowerCase()] = this.value
+        collectionObj[this.name.toLowerCase()] = this.value
     })
-    var html = template(projectObj);
-    if (project.toLowerCase()!='bioimages') {
-        $('#project-banner').html(html);
+    var html = template(collectionObj);
+    if (collection.toLowerCase()!='bioimages') {
+        $('#collection-banner').html(html);
     }
-    // add project search checkbox
-    $('#example').append('<label id="project-search"'+ ( project.toLowerCase()=='bioimages'? 'style="display:none;"' : '')
-        +'><input id="search-in-project" type="checkbox" />Search in '+projectObj.title+' only</label>');
-    $('#search-in-project').bind('change', function(){
+    // add collection search checkbox
+    $('#example').append('<label id="collection-search"'+ ( collection.toLowerCase()=='bioimages'? 'style="display:none;"' : '')
+        +'><input id="search-in-collection" type="checkbox" />Search in '+collectionObj.title+' only</label>');
+    $('#search-in-collection').bind('change', function(){
         $('#ebi_search').attr('action', ($(this).is(':checked')) ? contextPath+'/'+data.accno+'/studies' : contextPath+'/studies');
     });
-    $('#search-in-project').click();
+    $('#search-in-collection').click();
 
     //fix breadcrumbs
-    $('ul.breadcrumbs').children().first().next().html('<a href="'+contextPath+'/'+project+'/studies">'+projectObj.title+'</a>')
-    return projectObj;
+    $('ul.breadcrumbs').children().first().next().html('<a href="'+contextPath+'/'+collection+'/studies">'+collectionObj.title+'</a>')
+    return collectionObj;
 }
 
 function formatNumber(s) {
     return new Number(s).toLocaleString();
 }
 
-function updateMenuForProject(data) {
+function updateMenuForCollection(data) {
     var helpLink = $('#masthead nav ul.float-left li.active a');
     var activeClass = '';
     if (helpLink.attr('href')!='help') {

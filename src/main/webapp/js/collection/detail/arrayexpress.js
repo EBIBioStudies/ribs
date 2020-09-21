@@ -38,7 +38,7 @@ if ($minseqTitleDiv.text().trim().toLowerCase()=='minseqe score') {
 var newIcon = $('<span class="fa-icon" title="Click to expand"><i class="fa fa-external-link-alt"></i></span>')
     .css({'float':'right', 'padding-left': '3px', 'cursor': 'pointer'})
     .click(function() {
-        window.open( contextPath + (project? '/'+project:'')+'/studies/'+ $('#accession').text() + '/files' );
+        window.open( contextPath + (collection? '/'+collection:'')+'/studies/'+ $('#accession').text() + '/files' );
     });
 $('#all-files-expander').before(newIcon);
 
@@ -48,6 +48,6 @@ var sdrfIcon = $('<div class="bs-name">Detailed sample information and links to 
     ' view table <i class="fas fa-external-link-square-alt"></i></a>' +
     '</div>').click(function() {
         var acc = $('#accession').text();
-        window.open( contextPath + (project? '/'+project:'')+'/studies/'+ acc + '/sdrf');
+        window.open( contextPath + (collection? '/'+collection:'')+'/studies/'+ acc + '/sdrf');
     });
 sdrfIcon.insertAfter($('.bs-name:contains("Description")').first().next());

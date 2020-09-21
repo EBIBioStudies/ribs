@@ -4,7 +4,7 @@ $(function() {
     var url = window.location.pathname.replace('/csv','');
     var accession = url.substr(url.lastIndexOf('/')+1);
     var params = getParams();
-    $('#accession').html('<a href="'+contextPath + (project? '/'+project:'')+'/studies/'+accession+'">'+accession+'</a>')
+    $('#accession').html('<a href="'+contextPath + (collection? '/'+collection:'')+'/studies/'+accession+'">'+accession+'</a>')
         .parent().parent().append('<li>Viewer</li>');
     updateTitleFromBreadCrumbs();
     $.get(params.file).done(function(data) {

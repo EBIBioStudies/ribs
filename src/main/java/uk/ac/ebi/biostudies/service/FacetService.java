@@ -14,6 +14,6 @@ public interface FacetService {
     List<FacetResult> getFacetsForQuery(Query query, int limit, Map<String, Map<String, Integer>> selectedFacetFreq, JsonNode selectedFacets);
     JsonNode getDefaultFacetTemplate(String prjName, String queryString, int limit, JsonNode facets);
     Query addFacetDrillDownFilters(Query primaryQuery, Map<JsonNode, List<String>> userSelectedDimValues);
-    JsonNode getDimension(String project, String dimension, String queryString, JsonNode facetAndFields);
+    JsonNode getDimension(String collection, String dimension, String queryString, JsonNode facetAndFields);
     public Query applyFacets(Query query, JsonNode facets);
 }

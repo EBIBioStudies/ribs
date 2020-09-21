@@ -5,7 +5,7 @@
             {{#ifCond isPublic '==' true}}
                 <span class="release-date">{{formatDateString release_date}}</span>
             {{/ifCond}}
-            {{#ifCond type '!=' 'project'}}
+            {{#ifCond type '!=' 'collection'}}
                 {{#ifCond links '!=' 0}}
                     <span class="release-links">{{links}} link{{#ifCond links '>' 1}}s{{/ifCond}}</span>
                 {{/ifCond}}
@@ -24,14 +24,14 @@
 
         <div class="title" data-type="{{type}}" data-accession="{{accession}}">
             {{#if query}}
-                {{#if project}}
-                <a href="${contextPath}/{{project}}/studies/{{accession}}?query={{query}}">{{title}}</a>
+                {{#if collection}}
+                <a href="${contextPath}/{{collection}}/studies/{{accession}}?query={{query}}">{{title}}</a>
                 {{else}}
                 <a href="${contextPath}/studies/{{accession}}?query={{query}}">{{title}}</a>
                 {{/if}}
             {{else}}
-                {{#if project}}
-                <a href="${contextPath}/{{project}}/studies/{{accession}}">{{title}}</a>
+                {{#if collection}}
+                <a href="${contextPath}/{{collection}}/studies/{{accession}}">{{title}}</a>
                 {{else}}
                 <a href="${contextPath}/studies/{{accession}}">{{title}}</a>
                 {{/if}}

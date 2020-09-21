@@ -88,7 +88,7 @@
     padding: 8px;
 }
 
-#projectsIcon:before {
+#collectionsIcon:before {
     color: #7882CE;
     border: 1px solid #7882CE;
     background: #D2D6F6;
@@ -172,15 +172,15 @@
     margin-left: 0;
 }
 
-ul#projectList{
+ul#collectionList{
     list-style: none;
     margin-left: unset;
 }
-ul#projectList li{
+ul#collectionList li{
     padding-bottom: 12pt;
 }
 
-ul#projectList li a{
+ul#collectionList li a{
     border:none;
 }
 
@@ -190,12 +190,12 @@ ul#projectList li a{
     color: #466B7D;
     margin-bottom: 8pt
 }
-ul#projectList li img {
+ul#collectionList li img {
     max-width: 120px;
     max-height: 40px;
 }
 
-#latestList li a, #projectList li a{
+#latestList li a, #collectionList li a{
     color: #267799
 }
 

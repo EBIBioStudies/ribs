@@ -37,7 +37,7 @@ public class TitleParser extends AbstractParser  {
             }
         }
         if(title.isEmpty())
-            LOGGER.error("title is empty accession: {}", valueMap.toString());
+            LOGGER.error("title is empty in accession: {}", valueMap.toString());
         valueMap.put(indexKey, title);
         return title;
 

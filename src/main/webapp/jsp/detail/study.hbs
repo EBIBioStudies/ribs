@@ -1,7 +1,7 @@
 <script id='study-template' type='text/x-handlebars-template'>
     <div id="left-column"  itemscope="itemscope" itemtype="http://schema.org/Dataset">
-        {{#if project}}
-        <meta itemprop="url" content="${contextPath}/{{project}}/studies/{{accession}}" />
+        {{#if collection}}
+        <meta itemprop="url" content="${contextPath}/{{collection}}/studies/{{accession}}" />
         <meta itemprop="sameAs" content="${contextPath}/studies/{{accession}}" />
         {{else}}
         <meta itemprop="url" content="${contextPath}/studies/{{accession}}" />

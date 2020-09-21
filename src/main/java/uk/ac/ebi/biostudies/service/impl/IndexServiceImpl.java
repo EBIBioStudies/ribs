@@ -285,28 +285,28 @@ public class IndexServiceImpl implements IndexService {
                     AbstractParser abstractParser = parserManager.getParser(fieldMetadataNode.get("name").asText());
                     abstractParser.parse(valueMap, json, jsonPathContext);
                 }
-                //projects do not need more parsing
-                if(valueMap.getOrDefault(Fields.TYPE,"").toString().equalsIgnoreCase("project"))
+                //collections do not need more parsing
+                if(valueMap.getOrDefault(Fields.TYPE,"").toString().equalsIgnoreCase("collection"))
                 {
-                    addProjectToHierarchy(valueMap, accession);
+                    addCollectionToHierarchy(valueMap, accession);
                     updateDocument(valueMap);
                     return;
                 }
 
-                // remove repeating projects
-                Set<String> projectFacets = new HashSet<>();
+                // remove repeating collections
+                Set<String> collectionFacets = new HashSet<>();
                 if (valueMap.containsKey(Facets.PROJECT)) {
-                    projectFacets.addAll(Arrays.asList(valueMap.get(Facets.PROJECT).toString().toLowerCase().split("\\" + Facets.DELIMITER)));
-                    //TODO: Remvoe this when project field is okay
-                    projectFacets.addAll(Arrays.stream(valueMap.get(Fields.ACCESS).toString().toLowerCase().split(" ")).filter(f -> !f.contains("@") && !f.startsWith("#") && !f.equalsIgnoreCase(PUBLIC)).map( f-> f.replaceAll("\\d","")).collect(Collectors.toList()));
-                    projectFacets.remove("");
-                    valueMap.put(Facets.PROJECT, String.join(Facets.DELIMITER, projectFacets));
+                    collectionFacets.addAll(Arrays.asList(valueMap.get(Facets.PROJECT).toString().toLowerCase().split("\\" + Facets.DELIMITER)));
+                    //TODO: Remvoe this when collection field is okay
+                    collectionFacets.addAll(Arrays.stream(valueMap.get(Fields.ACCESS).toString().toLowerCase().split(" ")).filter(f -> !f.contains("@") && !f.startsWith("#") && !f.equalsIgnoreCase(PUBLIC)).map( f-> f.replaceAll("\\d","")).collect(Collectors.toList()));
+                    collectionFacets.remove("");
+                    valueMap.put(Facets.PROJECT, String.join(Facets.DELIMITER, collectionFacets));
                 }
 
-                for (String projectName:  projectFacets ) {
-                    JsonNode projectSpecificFields = indexManager.getIndexDetails().findValue(projectName);
-                    if(projectSpecificFields != null) {
-                        for (JsonNode fieldMetadataNode : projectSpecificFields) {//parsing project's facet and fields
+                for (String collectionName:  collectionFacets ) {
+                    JsonNode collectionSpecificFields = indexManager.getIndexDetails().findValue(collectionName);
+                    if(collectionSpecificFields != null) {
+                        for (JsonNode fieldMetadataNode : collectionSpecificFields) {//parsing collection's facet and fields
                             AbstractParser abstractParser = parserManager.getParser(fieldMetadataNode.get("name").asText());
                             abstractParser.parse(valueMap, json, jsonPathContext);
                         }
@@ -327,17 +327,17 @@ public class IndexServiceImpl implements IndexService {
             }
         }
 
-        private void addProjectToHierarchy(Map<String, Object> valueMap, String accession) {
+        private void addCollectionToHierarchy(Map<String, Object> valueMap, String accession) {
             Object parent =valueMap.getOrDefault (Facets.PROJECT, null);
-            //TODO: Start - Remove this when backend supports subprojects
+            //TODO: Start - Remove this when backend supports subcollections
             if (accession.equalsIgnoreCase("JCB") || accession.equalsIgnoreCase("BioImages-EMPIAR")) {
                 parent="BioImages";
             }
-            //TODO: End - Remove this when backend supports subprojects
+            //TODO: End - Remove this when backend supports subcollections
             if (parent==null || StringUtils.isEmpty(parent.toString())) {
-                indexManager.unsetProjectParent(accession);
+                indexManager.unsetCollectionParent(accession);
             } else {
-                indexManager.setSubProject(parent.toString(), accession);
+                indexManager.setSubCollection(parent.toString(), accession);
             }
         }
 
@@ -347,9 +347,9 @@ public class IndexServiceImpl implements IndexService {
             //TODO: replace by classes if possible
             String value;
             String prjName = (String)valueMap.get(Facets.PROJECT);
-            //updateProjectParents(valueMap);
+            //updateCollectionParents(valueMap);
             addFileAttributes(doc, (Set<String>) valueMap.get(Constants.File.FILE_ATTS));
-            for (String field: indexManager.getProjectRelatedFields(prjName.toLowerCase())) {
+            for (String field: indexManager.getCollectionRelatedFields(prjName.toLowerCase())) {
                 JsonNode curNode = indexManager.getIndexEntryMap().get(field);
                 String fieldType = curNode.get(IndexEntryAttributes.FIELD_TYPE).asText();
                 try{
@@ -388,16 +388,16 @@ public class IndexServiceImpl implements IndexService {
 
         }
 
-        /*private void updateProjectParents(Map<String, Object> valueMap) {
-            String project = valueMap.getOrDefault (Facets.PROJECT, "").toString();
-            if (StringUtils.isEmpty(project)) return;
-            Map<String, String> projectParentMap = indexManager.getProjectParentMap();
+        /*private void updateCollectionParents(Map<String, Object> valueMap) {
+            String collection = valueMap.getOrDefault (Facets.PROJECT, "").toString();
+            if (StringUtils.isEmpty(collection)) return;
+            Map<String, String> collectionParentMap = indexManager.getCollectionParentMap();
             List<String> parents = new ArrayList<>();
-            parents.add(project);
-            while (projectParentMap.containsKey(project)) {
-                String parent = projectParentMap.get(project);
+            parents.add(collection);
+            while (collectionParentMap.containsKey(collection)) {
+                String parent = collectionParentMap.get(collection);
                 parents.add(parent);
-                project = parent;
+                collection = parent;
             }
             valueMap.put(Facets.PROJECT, StringUtils.join(parents,Facets.DELIMITER));
         }*/

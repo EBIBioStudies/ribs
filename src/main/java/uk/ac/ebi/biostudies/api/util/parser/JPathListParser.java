@@ -60,7 +60,7 @@ public class JPathListParser extends AbstractParser{
 
 
         } catch (Exception e) {
-            if(valueMap.containsKey(Constants.Fields.TYPE) && valueMap.getOrDefault(Constants.Fields.TYPE, "").toString().equalsIgnoreCase("project"))
+            if(valueMap.containsKey(Constants.Fields.TYPE) && valueMap.getOrDefault(Constants.Fields.TYPE, "").toString().equalsIgnoreCase("collection"))
                 return "";
             if(indexKey.equalsIgnoreCase("author") || indexKey.equalsIgnoreCase("orcid"))
                 return "";

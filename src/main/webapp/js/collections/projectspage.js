@@ -1,4 +1,4 @@
-var ProjectsPage = (function (_self) {
+var CollectionsPage = (function (_self) {
 
     _self.render = function() {
         var params = getParams();
@@ -9,7 +9,7 @@ var ProjectsPage = (function (_self) {
         var template = Handlebars.compile(templateSource);
 
         // do search
-        $.getJSON(contextPath+"/api/v1/search?type=project", params,function (data) {
+        $.getJSON(contextPath+"/api/v1/search?type=collection", params,function (data) {
             var html = template(data);
             $('#renderedContent').html(html);
             postRender(data, params);
@@ -19,8 +19,8 @@ var ProjectsPage = (function (_self) {
     }
 
     function postRender(data, params) {
-        // get project logo
-        $("div[data-type='project']").each( function() {
+        // get collection logo
+        $("div[data-type='collection']").each( function() {
             var $prj = $(this), accession = $(this).data('accession');
             $('a',$prj).attr('href',contextPath+'/'+accession+'/studies');
             $.getJSON(contextPath+ '/api/v1/studies/'+accession, function (data) {
@@ -28,7 +28,7 @@ var ProjectsPage = (function (_self) {
                 if (!path && data.section.files[0]) path =data.section.files[0].path;
                 if (!path && data.section.files[0][0]) path = data.section.files[0][0].path;
                 if (path) {
-                    $prj.prepend('<div><a class="project-logo" href="' + contextPath + '/' + accession + '/studies">' +
+                    $prj.prepend('<div><a class="collection-logo" href="' + contextPath + '/' + accession + '/studies">' +
                         '<img src="' + contextPath + '/files/' + accession + '/' + path + '"/>'
                         + '</a></div>');
                 }
@@ -38,4 +38,4 @@ var ProjectsPage = (function (_self) {
     }
 
     return _self;
-})(ProjectsPage || {});
+})(CollectionsPage || {});

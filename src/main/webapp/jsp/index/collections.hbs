@@ -1,0 +1,10 @@
+<script id='collections-template' type='text/x-handlebars-template'>
+    {{#each this.hits}}
+    {{#if @first}}<ul id="collectionList">{{/if}}
+        <li>
+            <a data-type="{{type}}" data-accession="{{accession}}" href="studies/{{accession}}"></a>
+        </li>
+        {{#if @last}}<span class="more"><a href="collections">more...</a></span></ul>{{/if}}
+    {{/each}}
+
+</script>

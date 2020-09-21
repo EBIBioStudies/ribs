@@ -20,8 +20,8 @@ var Metadata = (function (_self) {
         var params = getParams();
 
         $.getJSON(url, params, function (data) {
-            // redirect to project page if accession is a project
-            if (data.section.type.toLowerCase()==='project') {
+            // redirect to collection page if accession is a collection
+            if (data.section.type.toLowerCase()==='collection') {
                 location.href= contextPath + '/'+ accession + '/studies';
                 return;
             }
@@ -96,7 +96,7 @@ var Metadata = (function (_self) {
         handleORCIDIntegration();
         handleSimilarStudies(data.type);
         handleImageURLs();
-        handleProjectBasedScriptInjection();
+        handleCollectionBasedScriptInjection();
         handleTableCentering();
         handleAnchors(params);
         handleHighlights(params);
@@ -109,12 +109,12 @@ var Metadata = (function (_self) {
         });
     }
 
-    function handleProjectBasedScriptInjection() {
+    function handleCollectionBasedScriptInjection() {
         var acc = $('#accession').text();
-        $(DetailPage.projectScripts.filter(function (r) {
+        $(DetailPage.collectionScripts.filter(function (r) {
             return r.regex.test(acc)
         })).each(function (i,v) {
-            var scriptURL = window.contextPath + '/js/project/detail/' + v.script;
+            var scriptURL = window.contextPath + '/js/collection/detail/' + v.script;
             $.getScript(scriptURL);
         });
 

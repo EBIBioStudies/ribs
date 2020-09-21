@@ -6,7 +6,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
-<c:set var="defaultProjects"><spring:eval expression="@indexConfig.getDefaultProjectList()"/></c:set>
+<c:set var="defaultCollections"><spring:eval expression="@indexConfig.getDefaultCollectionList()"/></c:set>
 
 <t:generic>
     <jsp:attribute name="head">
@@ -70,29 +70,29 @@
                     </a>
                 </h6>
             </div>
-            <div  class="callout" id="ProjectLoader" style="display: none">
+            <div  class="callout" id="CollectionLoader" style="display: none">
                 <h5>
-                    <a href="projects" title="Projects">
-                        Projects
+                    <a href="collections" title="Collections">
+                        Collections
                     </a>
                 </h5>
 
                 <c:choose>
                     <c:when test="${Session.getCurrentUser()!=null}">
-                        <div id="projects"></div>
+                        <div id="collections"></div>
                     </c:when>
                     <c:otherwise>
 
-                        <div id="preloaded-projects">
-                            <ul id="projectList">
-                                <c:forEach items="${defaultProjects}" var="project">
+                        <div id="preloaded-collections">
+                            <ul id="collectionList">
+                                <c:forEach items="${defaultCollections}" var="collection">
                                 <li>
-                                    <a href="${contextPath}/${project}/studies">
-                                        <img src="${contextPath}/images/projects/${fn:toLowerCase(project)}/defaultlogo.png"/>
+                                    <a href="${contextPath}/${collection}/studies">
+                                        <img src="${contextPath}/images/collections/${fn:toLowerCase(collection)}/defaultlogo.png"/>
                                     </a>
                                 </li>
                                 </c:forEach>
-                                <span class="more"><a href="${contextPath}/projects">more...</a></span>
+                                <span class="more"><a href="${contextPath}/collections">more...</a></span>
                             </ul>
                         </div>
                     </c:otherwise>
@@ -101,7 +101,7 @@
             </div>
         </div>
         <%@include file="index/latest.hbs" %>
-        <%@include file="index/projects.hbs" %>
+        <%@include file="index/collections.hbs" %>
     </jsp:body>
 
 

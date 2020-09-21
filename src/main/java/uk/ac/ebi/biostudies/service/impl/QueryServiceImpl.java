@@ -68,7 +68,7 @@ public class QueryServiceImpl implements QueryService {
     }
 
     @Override
-    public Pair<Query, EFOExpansionTerms> makeQuery(String queryString, String projectName, JsonNode selectedFields) {
+    public Pair<Query, EFOExpansionTerms> makeQuery(String queryString, String collectionName, JsonNode selectedFields) {
         String[] fields = indexConfig.getIndexFields();
         Analyzer analyzer = analyzerManager.getPerFieldAnalyzerWrapper();
         QueryParser parser = new BioStudiesQueryParser(fields, analyzer, indexManager);
@@ -94,8 +94,8 @@ public class QueryServiceImpl implements QueryService {
                 }
             }
 
-            if(!StringUtils.isEmpty(projectName) && !projectName.equalsIgnoreCase(Constants.PUBLIC)) {
-                expandedQuery = applyProjectFilter(expandedQuery, projectName.toLowerCase());
+            if(!StringUtils.isEmpty(collectionName) && !collectionName.equalsIgnoreCase(Constants.PUBLIC)) {
+                expandedQuery = applyCollectionFilter(expandedQuery, collectionName.toLowerCase());
             }
             Query queryAfterSecurity = securityQueryBuilder.applySecurity(expandedQuery);
             logger.trace("Lucene query: {}",queryAfterSecurity.toString());
@@ -113,13 +113,13 @@ public class QueryServiceImpl implements QueryService {
         return  excludeBuilder.build();
     }
 
-    public Query applyProjectFilter(Query query, String prjName){
+    public Query applyCollectionFilter(Query query, String prjName){
         Map<JsonNode, List<String>> hm = new HashMap<JsonNode, List<String>>();
-        List<String> projects = Lists.newArrayList(prjName);
-        if (indexManager.getSubProjectMap().containsKey(prjName)) {
-            projects.addAll(indexManager.getSubProjectMap().get(prjName));
+        List<String> collections = Lists.newArrayList(prjName);
+        if (indexManager.getSubCollectionMap().containsKey(prjName)) {
+            collections.addAll(indexManager.getSubCollectionMap().get(prjName));
         }
-        hm.put(taxonomyManager.PROJECT_FACET, projects);
+        hm.put(taxonomyManager.PROJECT_FACET, collections);
         return facetService.addFacetDrillDownFilters(query, hm);
     }
 

@@ -44,7 +44,7 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addRedirectViewController("/{project:.+}/studies/EMPIAR-{id:.+}", "https://www.ebi.ac.uk/pdbe/emdb/empiar/entry/{id}/");
+        registry.addRedirectViewController("/{collection:.+}/studies/EMPIAR-{id:.+}", "https://www.ebi.ac.uk/pdbe/emdb/empiar/entry/{id}/");
         registry.addRedirectViewController("/studies/EMPIAR-{id:.+}", "https://www.ebi.ac.uk/pdbe/emdb/empiar/entry/{id}/");
         registry.addViewController("/").setViewName("index");
         registry.addViewController("/about").setViewName("about");
@@ -53,15 +53,15 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addViewController("/help/").setViewName("help");
         registry.addViewController("/studies/help").setViewName("help");
         registry.addViewController("/studies/help/").setViewName("help");
-        registry.addViewController("/{project:.+}/help").setViewName("help");
-        registry.addViewController("/{project:.+}/help/").setViewName("help");
-        registry.addViewController("/{project:.+}/**/help").setViewName("help");
-        registry.addViewController("/{project:.+}/**/help/").setViewName("help");
+        registry.addViewController("/{collection:.+}/help").setViewName("help");
+        registry.addViewController("/{collection:.+}/help/").setViewName("help");
+        registry.addViewController("/{collection:.+}/**/help").setViewName("help");
+        registry.addViewController("/{collection:.+}/**/help/").setViewName("help");
         registry.addViewController("/submit").setViewName("submit");
         registry.addViewController("/submit/*").setViewName("submit");
 
-        registry.addViewController("/projects").setViewName("projects");
-        registry.addViewController("/projects/").setViewName("projects");
+        registry.addViewController("/collections").setViewName("collections");
+        registry.addViewController("/collections/").setViewName("collections");
         registry.addViewController("/studies").setViewName("search");
         registry.addViewController("/studies/*").setViewName("search");
         registry.addViewController("/studies/{accession:.+}").setViewName("detail");
@@ -69,24 +69,24 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addViewController("/studies/{accession:.+}/files").setViewName("files");
         registry.addViewController("/studies/{accession:.+}/files/").setViewName("files");
 
-        registry.addViewController("/{project:.+}/studies").setViewName("search");
-        registry.addViewController("/{project:.+}/studies/").setViewName("search");
+        registry.addViewController("/{collection:.+}/studies").setViewName("search");
+        registry.addViewController("/{collection:.+}/studies/").setViewName("search");
 
-        registry.addViewController("/{project:.+}/studies/{accession:.+}").setViewName("detail");
-        registry.addViewController("/{project:.+}/studies/{accession:.+}/").setViewName("detail");
+        registry.addViewController("/{collection:.+}/studies/{accession:.+}").setViewName("detail");
+        registry.addViewController("/{collection:.+}/studies/{accession:.+}/").setViewName("detail");
 
-        registry.addViewController("/{project:.+}/studies/{accession:.+}/files").setViewName("files");
-        registry.addViewController("/{project:.+}/studies/{accession:.+}/files/").setViewName("files");
+        registry.addViewController("/{collection:.+}/studies/{accession:.+}/files").setViewName("files");
+        registry.addViewController("/{collection:.+}/studies/{accession:.+}/files/").setViewName("files");
 
         registry.addViewController("/studies/{accession:.+}/sdrf").setViewName("sdrf");
         registry.addViewController("/studies/{accession:.+}/sdrf/").setViewName("sdrf");
-        registry.addViewController("/{project:.+}/studies/{accession:.+}/sdrf").setViewName("sdrf");
-        registry.addViewController("/{project:.+}/studies/{accession:.+}/sdrf/").setViewName("sdrf");
+        registry.addViewController("/{collection:.+}/studies/{accession:.+}/sdrf").setViewName("sdrf");
+        registry.addViewController("/{collection:.+}/studies/{accession:.+}/sdrf/").setViewName("sdrf");
 
         registry.addViewController("/studies/{accession:.+}/csv").setViewName("csv");
         registry.addViewController("/studies/{accession:.+}/csv").setViewName("csv");
-        registry.addViewController("/{project:.+}/studies/{accession:.+}/csv").setViewName("csv");
-        registry.addViewController("/{project:.+}/studies/{accession:.+}/csv/").setViewName("csv");
+        registry.addViewController("/{collection:.+}/studies/{accession:.+}/csv").setViewName("csv");
+        registry.addViewController("/{collection:.+}/studies/{accession:.+}/csv/").setViewName("csv");
 
         registry.addViewController("{accession:.+}").setViewName("detail");
         registry.addViewController("{accession:.+}/").setViewName("detail");

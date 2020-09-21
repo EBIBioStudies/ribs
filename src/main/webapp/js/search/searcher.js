@@ -1,6 +1,6 @@
 var Searcher = (function (_self) {
 
-    var projectScripts = ['arrayexpress'];
+    var collectionScripts = ['arrayexpress'];
     var responseData;
 
     _self.render = function () {
@@ -11,13 +11,13 @@ var Searcher = (function (_self) {
         var template = Handlebars.compile(templateSource);
 
         // do search
-        $.getJSON(contextPath+(project ? "/api/v1/"+project+"/search" : "/api/v1/search"), params,function (data) {
+        $.getJSON(contextPath+(collection ? "/api/v1/"+collection+"/search" : "/api/v1/search"), params,function (data) {
             if (params.first && data.hits) {
                 location.href= contextPath+'/studies/' +data.hits[0].accession;
                 return;
             }
-            if(project) {
-                data.project = project;
+            if(collection) {
+                data.collection = collection;
             }
             responseData = data;
             var html = template(data);
@@ -32,12 +32,12 @@ var Searcher = (function (_self) {
     _self.getResponseData = function() { return responseData; };
 
     _self.setSortParameters = function (data, params) {
-        var projectPath = contextPath + (project ? '/' + project : '');
+        var collectionPath = contextPath + (collection ? '/' + collection : '');
         $('#sort-by').val(data.sortBy);
         $('#sort-by').change(function (e) {
             params.sortBy = $(this).val();
             params.sortOrder = 'descending';
-            window.location = projectPath + '/studies/?' + $.param(params, true);
+            window.location = collectionPath + '/studies/?' + $.param(params, true);
         });
         if (data.sortOrder == 'ascending') {
             $('#sort-desc').removeClass('selected');
@@ -49,27 +49,27 @@ var Searcher = (function (_self) {
         $('#sort-desc').click(function (e) {
             if ($(this).hasClass('selected')) return;
             params.sortOrder = 'descending';
-            window.location = projectPath + '/studies/?' + $.param(params, true);
+            window.location = collectionPath + '/studies/?' + $.param(params, true);
         });
         $('#sort-asc').click(function (e) {
             if ($(this).hasClass('selected')) return;
             params.sortOrder = 'ascending';
-            window.location = projectPath + '/studies/?' + $.param(params, true);
+            window.location = collectionPath + '/studies/?' + $.param(params, true);
         });
     };
 
 
     function postRender(data, params) {
         addHighlights('#search-results',data);
-        getProjectLogo();
+        getCollectionLogo();
         Searcher.setSortParameters(data, params);
         limitAuthors();
-        handleProjectBasedScriptInjection(data);
+        handleCollectionBasedScriptInjection(data);
     }
 
-    function handleProjectBasedScriptInjection(data) {
-        if ($.inArray(data.project && data.project.toLowerCase(), projectScripts)==-1 ) return;
-        var scriptURL = window.contextPath + '/js/project/search/' + project.toLowerCase() + '.js';
+    function handleCollectionBasedScriptInjection(data) {
+        if ($.inArray(data.collection && data.collection.toLowerCase(), collectionScripts)==-1 ) return;
+        var scriptURL = window.contextPath + '/js/collection/search/' + collection.toLowerCase() + '.js';
         $.getScript(scriptURL);
     }
 
@@ -89,8 +89,8 @@ var Searcher = (function (_self) {
         })
     }
 
-    function getProjectLogo() {
-        $("div[data-type='project']").each(function () {
+    function getCollectionLogo() {
+        $("div[data-type='collection']").each(function () {
             var $prj = $(this), accession = $(this).data('accession');
             $('a', $prj).attr('href', contextPath + '/' + accession + '/studies');
             $.getJSON(contextPath + '/api/v1/studies/' + accession, function (data) {
@@ -98,7 +98,7 @@ var Searcher = (function (_self) {
                 if (!path && data.section.files[0]) path = data.section.files[0].path;
                 if (!path && data.section.files[0][0]) path = data.section.files[0][0].path;
                 if (path) {
-                    $prj.prepend('<a class="project-logo" href="' + contextPath + '/' + accession + '/studies">' +
+                    $prj.prepend('<a class="collection-logo" href="' + contextPath + '/' + accession + '/studies">' +
                         '<img src="' + contextPath + '/files/' + accession + '/' + path + '"/>'
                         + '</a>');
                 }

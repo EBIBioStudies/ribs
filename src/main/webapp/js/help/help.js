@@ -1,8 +1,8 @@
 var Help = (function (_self) {
 
     _self.render = function(){
-        if (project && $.inArray(project.toLowerCase(), ['bioimages','arrayexpress'] >=0) ) {
-            $('#renderedContent').load(contextPath + '/help/' + (project ? project.toLowerCase()+'-' : '')+'help.html',
+        if (collection && $.inArray(collection.toLowerCase(), ['bioimages','arrayexpress'] >=0) ) {
+            $('#renderedContent').load(contextPath + '/help/' + (collection ? collection.toLowerCase()+'-' : '')+'help.html',
                 function ( responseText, textStatus, jqXHR) {
                     if (textStatus=='error') {
                         loadCommonHelp()

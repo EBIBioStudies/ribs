@@ -93,22 +93,22 @@
     background-color: #FFCCAA;
 }
 
-.project {
+.collection {
     float:right;
     padding-top: 3px;
 }
 
-#project-banner {
+#collection-banner {
     background-color: #f8f8f8;
 }
 
 
-.project-text{vertical-align: middle;
+.collection-text{vertical-align: middle;
     color: #777;
     padding-left: 10px;
     font-size: 11pt;
 }
-.project-title{
+.collection-title{
     font-size: 150%;
     color: #555;
 }
@@ -117,21 +117,21 @@
     border: 0px !important;
 }
 
-.project-logo {
+.collection-logo {
     padding-right:15px;
     height: 50px;
     /* display: table-cell; */
 }
-.project-logo img{
+.collection-logo img{
     height: 50px !important;
     padding-right:5px;
 }
-.project-banner-content {
+.collection-banner-content {
     padding: 10px;
     text-align: left;
 }
 
-#project-search {
+#collection-search {
     color: white;
     font-size: 10pt;
     float: right;
@@ -144,7 +144,7 @@
     cursor: pointer;
 }
 
-#project-search input{
+#collection-search input{
     vertical-align: middle;
     margin: 0px 3px 3px !important;
 }

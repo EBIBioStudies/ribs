@@ -4,7 +4,7 @@ var Searcher = (function (_self) {
 
         Handlebars.registerHelper('result', function(o,q) {
             var template = Handlebars.compile($('script#result-template').html());
-            o.project = project;
+            o.collection = collection;
             o.query = q ? encodeURIComponent(q) : q;
             return template(o);
         });
@@ -23,13 +23,13 @@ var Searcher = (function (_self) {
             var prms = $.extend({}, params);
             if (page>1) {
                 prms.page = o.data.root.page-1;
-                ul += '<li class="pagination-previous"><a href="'+contextPath+(project ? '/'+project : '')+'/studies?'+$.param(prms, true)+'" aria-label="Previous page">Previous <span class="show-for-sr">page</span></a></li>';
+                ul += '<li class="pagination-previous"><a href="'+contextPath+(collection ? '/'+collection : '')+'/studies?'+$.param(prms, true)+'" aria-label="Previous page">Previous <span class="show-for-sr">page</span></a></li>';
             }
 
             if (maxPage<=10) {
                 for (var i = 1; i <= maxPage; i++) {
                     prms.page = i;
-                    ul += '<li ' + (i == page ? 'class="current"' : '') + '><a href="'+contextPath+(project ? '/'+project : '')+'/studies?' + $.param(prms, true) + '" aria-label="Page ' + i + '">' + i + '</a></li>';
+                    ul += '<li ' + (i == page ? 'class="current"' : '') + '><a href="'+contextPath+(collection ? '/'+collection : '')+'/studies?' + $.param(prms, true) + '" aria-label="Page ' + i + '">' + i + '</a></li>';
                 }
             } else {
                 var arr;
@@ -67,14 +67,14 @@ var Searcher = (function (_self) {
                     if (arr[i]==page) {
                         ul += '<li class="current">' + formatNumber(arr[i]) + '</li>';
                     } else {
-                        ul += '<li><a href="'+contextPath+(project ? '/'+project : '')+'/studies?' + $.param(prms, true) + '" aria-label="Page ' + arr[i] + '">' + formatNumber(arr[i]) + '</a></li>';
+                        ul += '<li><a href="'+contextPath+(collection ? '/'+collection : '')+'/studies?' + $.param(prms, true) + '" aria-label="Page ' + arr[i] + '">' + formatNumber(arr[i]) + '</a></li>';
                     }
                 };
             }
 
             if (o.data.root.page && o.data.root.pageSize &&  o.data.root.page*o.data.root.pageSize < o.data.root.totalHits) {
                 prms.page = page+1;
-                ul += '<li class="pagination-next"><a href="'+contextPath+(project ? '/'+project : '')+'/studies?'+$.param(prms, true)+'" aria-label="Next page">Next <span class="show-for-sr">page</span></a></li>';
+                ul += '<li class="pagination-next"><a href="'+contextPath+(collection ? '/'+collection : '')+'/studies?'+$.param(prms, true)+'" aria-label="Next page">Next <span class="show-for-sr">page</span></a></li>';
             }
             // ul += '<li class="result-count"> (Showing ' + formatNumber((o.data.root.page-1)*20+1) + ' ‒ '
             //     + formatNumber(o.data.root.page*20 < o.data.root.totalHits ? o.data.root.page*20 : o.data.root.totalHits)

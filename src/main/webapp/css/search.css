@@ -15,7 +15,7 @@ ul#search-results li {
     padding: 16pt 0;
 }
 
-.project-container {
+.collection-container {
     margin: 1.5em 0pt;
     text-align: center;
 }
@@ -32,12 +32,12 @@ ul#search-results li {
     padding: 10px;
 }
 
-.project-logo {
+.collection-logo {
     padding-right:15px;
     height: 50px;
     border: 0px !important
 }
-.project-logo img{
+.collection-logo img{
     height: 50px !important;
     padding-right:5px;
 

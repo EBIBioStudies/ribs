@@ -12,7 +12,7 @@
 <c:set var="pathname" value="${requestScope['javax.servlet.forward.request_uri']}"/>
 <c:set var="pagename" value="${fn:replace(pageContext.request.requestURI,pageContext.request.contextPath,'')}"/>
 <c:set var="announce"><spring:eval expression="@announcementConfig.isEnabled()"/></c:set>
-<c:set var="project" value="${requestScope['org.springframework.web.servlet.HandlerMapping.uriTemplateVariables']['project']}"/>
+<c:set var="collection" value="${requestScope['org.springframework.web.servlet.HandlerMapping.uriTemplateVariables']['collection']}"/>
 
 <!doctype html>
 <html lang="en">
@@ -21,13 +21,13 @@
     <!-- shared variables -->
     <script>
         var contextPath = '${contextPath}';
-        var project = '${project}';
-        if (project==='undefined') project = undefined;
+        var collection = '${collection}';
+        if (collection==='undefined') collection = undefined;
     </script>
     <meta charset="utf-8">
     <title>The European Bioinformatics Institute &lt; EMBL-EBI</title>
     <meta name="description" content="EMBL-EBI" /><!-- Describe what this page is about -->
-    <meta name="keywords" content="bioinformatics, europe, institute" /><!-- A few keywords that relate to the content of THIS PAGE (not the whol project) -->
+    <meta name="keywords" content="bioinformatics, europe, institute" /><!-- A few keywords that relate to the content of THIS PAGE (not the whole project) -->
     <meta name="author" content="EMBL-EBI" /><!-- Your [project-name] here -->
     <meta name="HandheldFriendly" content="true" />
     <meta name="MobileOptimized" content="width" />
@@ -124,7 +124,7 @@
                         <li class="${pagename.equals('/jsp/index.jsp')? 'active':''}" title="BioStudies v1.2.<spring:eval expression="@externalServicesConfig.gitCommitIdAbbrev"/>"><a href="${contextPath}/">Home</a></li>
                         <li class="${pagename.equals('/jsp/search.jsp')? 'active':''}"><a href="${contextPath}/studies/" title="Browse BioStudies">Browse</a></li>
                         <li class="${pagename.equals('/jsp/submit.jsp')? 'active':''}"><a href="${contextPath}/submit" title="Submit a study">Submit</a></li>
-                        <li class="${pagename.equals('/jsp/help.jsp')? 'active':''}"><a href="${contextPath}/${project !=null ? project.concat("/") : ''}help" title="Help">Help</a></li>
+                        <li class="${pagename.equals('/jsp/help.jsp')? 'active':''}"><a href="${contextPath}/${collection !=null ? collection.concat("/") : ''}help" title="Help">Help</a></li>
                         <li class="${pagename.equals('/jsp/about.jsp')? 'active':''}"><a id="about-link" href="${contextPath}/about" title="About BioStudies">About BioStudies</a></li>
                     </ul>
                     <ul class="dropdown menu float-right" data-description="tasks">
@@ -150,15 +150,15 @@
 
 
 
-    <div id="project-banner"></div>
-    <script id='project-banner-template' type='text/x-handlebars-template'>
-        <div class="project-banner-content columns medium-12 clearfix row">
-                <span class="project-logo">
+    <div id="collection-banner"></div>
+    <script id='collection-banner-template' type='text/x-handlebars-template'>
+        <div class="collection-banner-content columns medium-12 clearfix row">
+                <span class="collection-logo">
                     <a class="no-border" href="{{url}}" target="_blank">
                         <img src="{{logo}}"></a>
                 </span>
-            <span class="project-text">
-                    <span class="project-description">{{description}}</span>
+            <span class="collection-text">
+                    <span class="collection-description">{{description}}</span>
                 </span>
         </div>
     </script>

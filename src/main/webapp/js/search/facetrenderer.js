@@ -1,18 +1,18 @@
 var FacetRenderer = (function (_self) {
-    var projectScripts = ['arrayexpress'];
+    var collectionScripts = ['arrayexpress'];
 
     _self.render = function (params) {
         $('#left-column').slideDown("fast", function () {
             // fill facets
-            $.getJSON(contextPath + "/api/v1/" + (project||"public") + "/facets", params, function (data) {
+            $.getJSON(contextPath + "/api/v1/" + (collection||"public") + "/facets", params, function (data) {
                 var templateSource = $('script#facet-list-template').html();
                 var template = Handlebars.compile(templateSource);
-                data.project = (project||"public");
+                data.collection = (collection||"public");
                 data.existing = getExistingParams(params, 'facet.');
                 var html = template(data);
                 $('#facets').html(html);
-                if (project && project.toLowerCase() =='bioimages') {
-                    var ul = $('#facet_facet\\.project');
+                if (collection && collection.toLowerCase() =='bioimages') {
+                    var ul = $('#facet_facet\\.collection');
                     handleBioImagesFacets(ul);
                 }
             }).fail(function (error) {
@@ -86,11 +86,11 @@ var FacetRenderer = (function (_self) {
         // handle show more
         $('.facet-more').click(function(e) {
             e.stopPropagation();
-            //if (!project) return;
+            //if (!collection) return;
             $('body').append('<div id="blocker" class="blocker"></div>');
             $('body').append('<div id="facet-loader"><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i><div class="sr-only">Loading...</div></div>');
             var thisFacet = $(this).data('facet');
-            $.getJSON(contextPath+"/api/v1/"+(project? project : 'public')+'/facets/'+thisFacet+'/',params,
+            $.getJSON(contextPath+"/api/v1/"+(collection? collection : 'public')+'/facets/'+thisFacet+'/',params,
                 function(data) { showAllFacets(thisFacet, params, data)});
         });
 
@@ -112,7 +112,7 @@ var FacetRenderer = (function (_self) {
             $('.toggle-facet', this).find('[data-fa-i2svg]').toggleClass('fa-angle-right fa-angle-down');
         });
 
-        handleProjectBasedScriptInjection(data);
+        handleCollectionBasedScriptInjection(data);
     }
 
     function showAllFacets (thisFacet, params, data) {
@@ -122,7 +122,7 @@ var FacetRenderer = (function (_self) {
         var template = Handlebars.compile(templateSource);
         var existing = getExistingParams(params, thisFacet);
         $('body').append(template({facets:data, existing:  existing}));
-        if (project && project.toLowerCase() =='bioimages') {
+        if (collection && collection.toLowerCase() =='bioimages') {
             handleBioImagesFacets($('.allfacets ul'));
         }
         $('#facet-search').focus()
@@ -183,9 +183,9 @@ var FacetRenderer = (function (_self) {
 
     }
 
-    function handleProjectBasedScriptInjection(data) {
-        if ($.inArray(data.project && data.project.toLowerCase(), projectScripts)==-1 ) return;
-        var scriptURL = window.contextPath + '/js/project/facets/' + project.toLowerCase() + '.js';
+    function handleCollectionBasedScriptInjection(data) {
+        if ($.inArray(data.collection && data.collection.toLowerCase(), collectionScripts)==-1 ) return;
+        var scriptURL = window.contextPath + '/js/collection/facets/' + collection.toLowerCase() + '.js';
         $.getScript(scriptURL);
     }
 

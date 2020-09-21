@@ -49,7 +49,7 @@ public class FacetServiceImpl implements FacetService {
     @Autowired
     QueryService queryService;
 
-    public JsonNode getDimension(String project, String dimension, String queryString, JsonNode facetAndFields) {
+    public JsonNode getDimension(String collection, String dimension, String queryString, JsonNode facetAndFields) {
         Query queryWithoutFacet = null;
         Query queryAfterFacet = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -58,7 +58,7 @@ public class FacetServiceImpl implements FacetService {
         try {
             JsonNode selectedFacets = facetAndFields.get("facets")==null?mapper.createObjectNode():facetAndFields.get("facets");
             JsonNode selectedFields = facetAndFields.get("fields")==null?mapper.createObjectNode():facetAndFields.get("fields");
-            queryWithoutFacet = queryService.makeQuery(queryString, project, selectedFields).getKey();
+            queryWithoutFacet = queryService.makeQuery(queryString, collection, selectedFields).getKey();
             queryAfterFacet = applyFacets(queryWithoutFacet, selectedFacets);
             queryAfterFacet = securityQueryBuilder.applySecurity(queryAfterFacet);
             FacetsCollector.search(indexManager.getIndexSearcher(), queryAfterFacet, Integer.MAX_VALUE, facetsCollector);
@@ -89,9 +89,9 @@ public class FacetServiceImpl implements FacetService {
 
 
         } catch (Exception e) {
-            logger.debug("problem in parsing project {} dimension {}", project, dimension, e);
+            logger.debug("problem in parsing collection {} dimension {}", collection, dimension, e);
         } catch (Throwable e) {
-            logger.debug("problem in parsing project {} dimension {}", project, dimension, e);
+            logger.debug("problem in parsing collection {} dimension {}", collection, dimension, e);
         }
 
         return facetJSON;
@@ -109,7 +109,7 @@ public class FacetServiceImpl implements FacetService {
             facets = new FastTaxonomyFacetCounts(taxonomyManager.getTaxonomyReader(), taxonomyManager.getFacetsConfig(), facetsCollector);
             for (JsonNode field:indexManager.getIndexEntryMap().values()) {
                 if(field.get(Constants.IndexEntryAttributes.FIELD_TYPE).asText().equalsIgnoreCase(Constants.IndexEntryAttributes.FieldTypeValues.FACET)){
-                    // Private fields (e.g.modification_year) are available only to users of a project with unreleased submissions e.g.
+                    // Private fields (e.g.modification_year) are available only to users of a collection with unreleased submissions e.g.
                     if(field.has(Constants.IndexEntryAttributes.PRIVATE) && field.get(Constants.IndexEntryAttributes.PRIVATE).asBoolean()==true && Session.getCurrentUser()==null) {
                         continue;
                     }
@@ -179,18 +179,18 @@ public class FacetServiceImpl implements FacetService {
                     facetTemplateHash.put(fc.dim+lAndB.label, lAndB);
         }
         List<ObjectNode> list = new ArrayList<>();
-        Set<String> validFacets = indexManager.getProjectRelatedFields(prjName.toLowerCase());
+        Set<String> validFacets = indexManager.getCollectionRelatedFields(prjName.toLowerCase());
         for (FacetResult fcResult : facetResultsWithSelectedFacets) {
             if (fcResult == null || !validFacets.contains(fcResult.dim)) {
                 continue;
             }
             ObjectNode facet = mapper.createObjectNode();
             JsonNode facetNode = indexManager.getIndexEntryMap().get(fcResult.dim);
-            // show project facet only when the current project has sub-projects
+            // show collection facet only when the current collection has sub-collections
             if (!prjName.equalsIgnoreCase(Constants.PUBLIC)
                     && facetNode.get("name")!=null
                     && facetNode.get("name").asText().equalsIgnoreCase(Constants.Facets.PROJECT)
-                    &&  !indexManager.getSubProjectMap().containsKey(prjName.toLowerCase())) {
+                    &&  !indexManager.getSubCollectionMap().containsKey(prjName.toLowerCase())) {
                 continue;
             }
             boolean invisibleNA = false;

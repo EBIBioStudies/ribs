@@ -24,7 +24,7 @@ var Home = (function (_self) {
             return ret;
         });
 
-        Handlebars.registerHelper('eachProject', function (key, val, arr, options) {
+        Handlebars.registerHelper('eachCollection', function (key, val, arr, options) {
             var mod = arr.reduce(function (r, i) {
                 r[i[key]] = r[i[key]] || [];
                 r[i[key]].push(i[val]);
