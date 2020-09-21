@@ -128,9 +128,7 @@ var FileTable = (function (_self) {
             if (!col.visible() || !columnDefinitions[index].searchable ) continue;
             var title = $(col.header()).text();
             var txtbox= $('<input style="display:none" type="text" class="col-advsearch-input col-' + title.toLowerCase() + '" placeholder="Search ' + title + '"  />')
-
             $(col.header()).append(txtbox);
-            //$('.col-advsearch-input', this.header()).val(this.search())
         }
 
         $('#file-list_filter').after('<label id="advanced-search" for="advsearch"  title="Search in columns"><input style=" margin:0;width:0; height:0; opacity: 0" type="checkbox" id="advsearchinput"></input>' +
@@ -392,43 +390,73 @@ var FileTable = (function (_self) {
         });
         $('#batchdl-popup').foundation();
         $("#download-selected-files").on('click', function () {
-            var os = $("#script-os :selected").val();
-            var fileName = {os:"unix", ps:".sh", acc:$('#accession').text()};
-            if (os.indexOf("win")!=-1 || (os.indexOf("default")!=-1 && navigator.appVersion.indexOf("Win")!=-1)) {
-                fileName.os ="windows";
-                fileName.ps = ".bat";
-            }
-            var templateSource = $('script#batchdl-template').html();
-            var template = Handlebars.compile(templateSource);
-            $('#batchdl-popup').html(template({fname:fileName}));
+            var fileName = {os:"unix", ps:".sh", acc:$('#accession').text(), dldir:"/home/user/"};
+            var popUpTemplateSource = $('script#batchdl-accordion-template').html();
+            var compiledPopUpTemplate = Handlebars.compile(popUpTemplateSource);
+            var ftpDlInstructionTemplate = $('script#ftp-dl-instruction').html();
+            var ftpCompiledInstructionTemplate = Handlebars.compile(ftpDlInstructionTemplate);
+            var asperaDlInstructionTemplate = $('script#aspera-dl-instruction').html();
+            var asperaCompiledInstructionTemplate = Handlebars.compile(asperaDlInstructionTemplate);
+            $('#batchdl-popup').html(compiledPopUpTemplate({fname:fileName}));
             $('#batchdl-popup').foundation('open');
             var dltype = "/zip";
-            $("#download-files-tabs li").on('click', function () {
-                // remove classes from all
-                $("#download-files-tabs li").removeClass("is-active");
-                $("#download-files-tabs a").removeAttr('aria-selected');
-                $(this).addClass("is-active");
-                $(this).children(":first").attr('aria-selected',true);
-                $(".tabs-panel.is-active").removeClass("is-active");
-                if($(this).text().trim() == "HTTP") {
-                    $("#via-http").addClass("is-active");
-                    dltype = "/zip";
-                }
-                else if($(this).text().trim() == "FTP") {
-                    $("#via-ftp").addClass("is-active");
-                    dltype = "/ftp";
-                }
-                else if($(this).text().trim() == "Aspera") {
-                    $("#via-aspera").addClass("is-active");
-                    dltype="/aspera";
-                }
-
+            fileName = getOsData('');
+            $('#ftp-instruct').html(ftpCompiledInstructionTemplate({fname:fileName}));
+            $('#aspera-instruct').html(asperaCompiledInstructionTemplate({fname:fileName}));
+            $("#ftp-script-os-select").on('change', function () {
+                var os = $("#ftp-script-os-select :selected").val();
+                fileName = getOsData(os);
+                $('#ftp-instruct').html(ftpCompiledInstructionTemplate({fname:fileName}));
             });
-            $("input.button").on('click', function () {
-                getSelectedFilesForm(key, dltype, fileName.os);
+            $("#zip-dl-button").on('click', function () {
+                getSelectedFilesForm(key, '/zip', fileName.os);
+            });
+
+            $("#ftp-dl-button").on('click', function () {
+                getSelectedFilesForm(key, '/ftp', fileName.os);
+            });
+
+            $("#aspera-script-os-select").on('change', function () {
+                var os = $("#aspera-script-os-select :selected").val();
+                fileName = getOsData(os);
+                $('#aspera-instruct').html(asperaCompiledInstructionTemplate({fname:fileName}));
+            });
+            $("#aspera-dl-button").on('click', function () {
+                getSelectedFilesForm(key, '/aspera', fileName.os);
             });
 
         });
+    }
+
+    function getOsData(os, acc){
+        var fileName={acc:$('#accession').text()};
+        if(os===''){
+            if(navigator.appVersion.indexOf("Win")!=-1)
+                os='win';
+            else if(navigator.appVersion.indexOf("Linux")!=-1 || navigator.appVersion.indexOf("X11")!=-1)
+                os='unix';
+            else if(navigator.appVersion.indexOf("Mac")!=-1)
+                os='mac';
+        }
+        if(os==='win'){
+            fileName.os ="windows";
+            fileName.ps = ".bat";
+            fileName.dldir="C:\\data";
+            fileName.asperaDir = "C:/aspera";
+        }
+        if(os==='unix'){
+            fileName.os ="linux";
+            fileName.ps = ".sh";
+            fileName.dldir="/home/user/";
+            fileName.asperaDir = "/home/usr/bin/aspera";
+        }
+        if(os==='mac'){
+            fileName.os ="mac";
+            fileName.ps = ".sh";
+            fileName.dldir="/home/user/";
+            fileName.asperaDir = "/home/usr/bin/aspera";
+        }
+        return fileName;
     }
 
     function getSelectedFilesForm(key, type, os){
