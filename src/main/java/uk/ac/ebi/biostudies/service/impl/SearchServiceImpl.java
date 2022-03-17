@@ -333,7 +333,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public ObjectNode getSimilarStudies(String accession, String secretKey) throws Exception {
+    public ObjectNode getSimilarStudies(String accession, String secretKey) throws Throwable {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode result = mapper.createObjectNode();
         if (secretKey != null)
@@ -342,9 +342,10 @@ public class SearchServiceImpl implements SearchService {
         MoreLikeThis mlt = new MoreLikeThis(indexManager.getIndexReader());
         mlt.setFieldNames(new String[]{Fields.CONTENT, Fields.TITLE, Facets.COLLECTION});
         mlt.setAnalyzer(analyzerManager.getPerFieldAnalyzerWrapper());
-        Integer docNumber = getDocumentNumberByAccession(accession, secretKey);
+        Integer docNumber = getDocumentNumberByAccession(accession, null);
         Query likeQuery = mlt.like(docNumber);
-        TopDocs mltDocs = indexManager.getIndexSearcher().search(likeQuery, maxHits);
+        Query similarityQuery = securityQueryBuilder.applySecurity(likeQuery, null);
+        TopDocs mltDocs = indexManager.getIndexSearcher().search(similarityQuery, maxHits);
         ArrayNode similarStudies = mapper.createArrayNode();
         for (int i = 1; i < mltDocs.scoreDocs.length; i++) {
             ObjectNode study = mapper.createObjectNode();

@@ -69,7 +69,7 @@ public class Study {
     @RequestMapping(value = "/studies/{accession:.+}/similar", produces = {JSON_UNICODE_MEDIA_TYPE}, method = RequestMethod.GET)
     public ResponseEntity<String> getSimilarStudies(@PathVariable("accession") String accession,
                                                     @RequestParam(value = "key", required = false) String seckey)
-            throws Exception {
+            throws Throwable {
         if ("null".equalsIgnoreCase(seckey)) {
             seckey = null;
         }
