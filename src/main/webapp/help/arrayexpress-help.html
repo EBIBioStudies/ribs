@@ -43,12 +43,90 @@
     old version of ArrayExpress help page.</a>
 </div>
 
-<p>&nbsp;</p>
-<h3>How to submit data</h3>
-<p>To submit your functional genomics data to the ArrayExpress collection, go to <a href="https://www.ebi.ac.uk/fg/annotare/login/">Annotare</a> and see the <a href="https://www.ebi.ac.uk/fg/annotare/help/">submission guide</a> for more information about the submission process and how to access privately held data.</p>
+<ul>
+  <li><a href="#submit">How to submit data</a></li>
+  <li><a href="#ae-access">How to access private data</a></li>
+  <li><a href="#programmatic">Programmatic Access</a></li>
+  <li><a href="#ae-data">Learn more about the data in ArrayExpress</a></li>
+</ul>
+
 
 <p>&nbsp;</p>
-<h3>Programmatic access</h3>
+<h3 id="submit">How to submit data</h3>
+<p>To submit your functional genomics data to the ArrayExpress collection, go to <a href="https://www.ebi.ac.uk/fg/annotare/login/">Annotare</a> and see the <a href="https://www.ebi.ac.uk/fg/annotare/help/">submission guide</a> for more information about the submission process and how to access privately held data. </p>
+
+<p>&nbsp;</p>
+<h3 id="ae-access">How to access private data</h3>
+
+<h4 id="activate">First time users: Activate your BioStudies account</h4>
+<p>At the time of submission, the submitter nominates one email address as the data owner
+   in BioStudies (contact role "submitter") in whose name we have created an account
+   for the BioStudies website and <a href="/biostudies/submissions">submission tool</a>.
+   Once the experiment has been loaded into the database, this person will receive an email
+   with an activation link. With that account, the data owner can: </p>
+   <ul>
+     <li>view and share studies in the database before public release</li>
+     <li>make post-submission updates, such as changing the release date or adding a publication reference</li>
+   </ul>
+
+<details>
+   <summary>How to activate your BioStudies account</summary>
+    <p>If your data has been loaded into ArrayExpress before the migration to BioStudies,
+     we have created an account for you that you can activate following the steps below.</p>
+
+    <p><i class="icon icon-generic" data-icon="l"></i>You must use the same email address
+      that you currently use as ArrayExpress login,
+    which may differ from your Annotare login. If this email address is no longer active,
+    please <a href="mailto:annotare@ebi.ac.uk?subject=New email address for BioStudies account">contact us</a>
+    to update the email address.
+
+    <p><strong>Step 1: Identify the email address to use</strong></p>
+    <p>When your experiment was first loaded, a curator sent an email to the Annotare submitter
+       containing the ArrayExpress access account details. This email account will be your BioStudies account.
+       If you don't have this email any more, don't worry, there are a few more ways to find out
+       which email address to use:</p>
+      <ul>
+        <li>The email account you have used to log in to the old ArrayExpress website or access control tool.</li>
+        <li>The email account to which we have sent regular reminders about upcoming releases,
+          with the subject: <i>"E-MTAB-1234: ArrayExpress release in 60/30/7 days time"</i>.</li>
+        <li>The email account that is named as "submitter" in the IDF metadata file or the "Contacts"
+             list in the Annotare submission form.</li>
+    </ul>
+    <p><strong>Step 2: Set a password</strong></p>
+    <ul>
+      <li> Go to "BioStudies Home > Submit > Submit a Study" to access the
+      <a href="/biostudies/submissions" target=_blank>BioStudies submission tool</a></li>
+      <li>Click on <a href="/biostudies/submissions/password_reset_request" target=_blank>Forgot your password</a></li>
+      <li>Enter your ArrayExpress access account email (from Step 1) and press "Get reset link".</li>
+      <li>Check your emails and follow the activation link to set a password to your account.</li>
+      <li><a href="/biostudies/submissions" target=_blank>Log in</a> to view/manage your studies.</li>
+    </ul>
+</details>
+
+<h4 id="manage">Manage your archived submissions</h4>
+
+<p>Coming soon... (this is currently still done via the
+   <a href="https://www.ebi.ac.uk/fg/acext/" target=_blank>ArrayExpress access control tool</a>)</p>
+
+<h4 id="reviewer">Get access for reviewers</h4>
+
+<p>If you are a submitter, you can find a "secret link" to your experiment on the study page.
+  For this you must be logged in to the BioStudies website (<a href="#ae-access">see above</a>).
+  Once you are logged in, search for your accession number and navigate to the study page
+  you want to share. You will find a "Share" icon at the top right.
+</p>
+<img src="../images/collections/arrayexpress/ae_share_study.png" alt="Share button marked on the study page"/>
+
+<p>If you are a reviewer, you should have been provided with a "secret link"
+  that will give you direct access to the private study page. If you do not
+  have the link to access private data connected to a publication, please contact
+  the data submitter, via the journal, to request this information.
+  We cannot provide access to private data without first getting authorisation
+  from the submitter.</p>
+
+
+<p>&nbsp;</p>
+<h3 id="programmatic">Programmatic access</h3>
 
 <p>Data can be downloaded via FTP or Aspera, following the general instructions for <a href="https://www.ebi.ac.uk/biostudies/help#download">BioStudies data download</a>.</p>
 <p>The <a href="https://www.ebi.ac.uk/biostudies/help#rest-api-docs">BioStudies API</a> can be used to programmatically search and access all data in the ArrayExpress collection.</p>
@@ -303,7 +381,7 @@
 </details>
 
 <p>&nbsp;</p>
-<h3>Learn more about the data in ArrayExpress</h3>
+<h3 id="ae-data">Learn more about the data in ArrayExpress</h3>
 
 <h4 id="magetab">MAGE-TAB metadata format</h4>
 <p>The MicroArray Gene Expression Tabular (MAGE-TAB) format has been developed and adopted by the functional genomics community as a means of representing and communicating data about a functional genomics experiment in a structured and standardised way <a href="http://europepmc.org/abstract/MED/17087822" target="_blank">(Rayner et al., 2006)</a>. It was designed for data collection and annotation, as well as for data exchange between tools and databases, including submission tools to public repositories such as ArrayExpress. The full <a href="http://fged.org/projects/mage-tab/" target="_blank">specification</a> outlines the format.</p>
