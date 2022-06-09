@@ -85,7 +85,7 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
         InputStream zipInputStream = null;
         for (String fileEntry : files) {
             final String fileName = StringUtils.replace(fileEntry, "..", ".");
-            IDownloadFile fireFile = fireService.getFireFile(relativePath, fileName);
+            IDownloadFile fireFile = fireService.getFireFile(accession, relativePath, fileName);
             zipInputStream = fireFile.getInputStream();
             try {
                 String curFileName = fileName.replaceAll(canonicalPath, "");

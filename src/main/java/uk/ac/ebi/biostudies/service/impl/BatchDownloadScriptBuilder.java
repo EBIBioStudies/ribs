@@ -21,11 +21,11 @@ public class BatchDownloadScriptBuilder {
     static{
         loadDlTemplates();
     }
-    public String fillTemplate(String downloadType, List<String> fileNames , String baseDirectory, String os){
+    public String fillTemplate(String downloadType, List<String> fileNames, String baseDirectory, String os, Constants.File.StorageMode storageMode){
         String content="";
         try{
             String fileTemplate = DownloadTemplates.get(getTemplate(downloadType, os));
-            content = fillFileTemplate(fileTemplate, fileNames, baseDirectory, downloadType);
+            content = fillFileTemplate(fileTemplate, fileNames, baseDirectory, downloadType, storageMode);
             if(!os.equalsIgnoreCase(Constants.OS.WINDOWS))
                 content = "#!/bin/bash\r\n"+content;
         }catch (Exception ex){
@@ -42,11 +42,11 @@ public class BatchDownloadScriptBuilder {
         return result.toString();
     }
 
-    String fillFileTemplate(String fileTemplate,List<String> fileNames, String baseDirectory, String downloadType){
+    String fillFileTemplate(String fileTemplate, List<String> fileNames, String baseDirectory, String downloadType, Constants.File.StorageMode storageMode){
         String content = "";
         if(downloadType.equalsIgnoreCase("ftp")){
             String allFiles = fileNames.stream().map(name -> "mget \""+name+"\"").collect(Collectors.joining("\r\n"));
-            content = String.format(fileTemplate, baseDirectory, allFiles);
+            content = String.format(fileTemplate, storageMode.toString().toLowerCase() + "/" + baseDirectory, allFiles);
         }
         else if(downloadType.equalsIgnoreCase("aspera")){
             content = fileNames.stream().map(name -> String.format(fileTemplate, "\""+baseDirectory+"/Files/"+name+"\"")).collect(Collectors.joining("\r\n"));

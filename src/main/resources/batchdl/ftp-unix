@@ -3,7 +3,7 @@
 open ftp.ebi.ac.uk
 anonymous
 youremail@domain.com
-cd biostudies/nfs/%s/Files
+cd biostudies/%s/Files
 binary
 %s
 disconnect

@@ -103,7 +103,8 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             if (key != null &&
                     (requestedFilePath.equalsIgnoreCase(accession + ".xml")
                             || requestedFilePath.equalsIgnoreCase(accession + ".json")
-                            || requestedFilePath.equalsIgnoreCase(accession + ".pagetab.tsv"))) {
+                            || requestedFilePath.equalsIgnoreCase(accession + ".pagetab.tsv"))
+                            || requestedFilePath.equalsIgnoreCase(accession + ".tsv")) {
                 throw new SubmissionNotAccessibleException();
             }
 
@@ -142,7 +143,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
 
     public IDownloadFile getDownloadFile(String accession, String relativePath, String requestedFilePath, Constants.File.StorageMode storageMode) throws FileNotFoundException {
         return storageMode == Constants.File.StorageMode.FIRE
-                ? fireService.getFireFile(relativePath, requestedFilePath)
+                ? fireService.getFireFile(accession, relativePath, requestedFilePath)
                 : getNFSFile(accession, relativePath, requestedFilePath)
                 ;
     }
@@ -151,7 +152,11 @@ public class FileDownloadServiceImpl implements FileDownloadService {
 
         if (requestedFilePath.equalsIgnoreCase(accession + ".json")
                 || requestedFilePath.equalsIgnoreCase(accession + ".xml")
-                || requestedFilePath.equalsIgnoreCase(accession + ".pagetab.tsv")) {
+                || requestedFilePath.equalsIgnoreCase(accession + ".pagetab.tsv")
+                || requestedFilePath.equalsIgnoreCase(accession + ".tsv")) {
+            if (requestedFilePath.equalsIgnoreCase(accession+".tsv")) { // exception for fire file
+                requestedFilePath = accession + ".pagetab.tsv";
+            }
             return new RegularDownloadFile(Paths.get(indexConfig.getFileRootDir(), relativePath + "/" + requestedFilePath));
         }
 

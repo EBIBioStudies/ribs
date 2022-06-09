@@ -65,7 +65,7 @@ public class FileDownload {
             response.setContentType("application/txt");
             response.addHeader("Content-Disposition", "attachment; filename="+accession+"-" + os+"-"+dlType+"."+fileExtension);
             response.addHeader("Cache-Control", "no-cache");
-            response.getOutputStream().print(batchDownloadScriptBuilder.fillTemplate(dlType, fileNames, relativeBaseDir, os));
+            response.getOutputStream().print(batchDownloadScriptBuilder.fillTemplate(dlType, fileNames, relativeBaseDir, os, storageMode));
             response.getOutputStream().close();
         }
 

@@ -30,9 +30,14 @@ public class FireService {
     @Autowired
     AmazonS3 s3;
 
-    public IDownloadFile getFireFile(String relativePath, String requestedFilePath) throws FileNotFoundException {
+    public IDownloadFile getFireFile(String accession, String relativePath, String requestedFilePath) throws FileNotFoundException {
 
         String path = relativePath + "/Files/" + requestedFilePath;
+
+        // For study json/xml/tsv pagetab files
+        if (requestedFilePath.equals(accession+".json") || requestedFilePath.equals(accession+".xml")|| requestedFilePath.equals(accession + ".tsv")  ) {
+            path = relativePath + "/" + requestedFilePath;
+        }
 
         S3Object fireObject = null;
         boolean isDirectory = false;
@@ -40,18 +45,11 @@ public class FireService {
             fireObject = getFireObjectByPath(path);
         } catch (Exception ex1) {
             try {
-                fireObject = getFireObjectByPath(relativePath + "/" + requestedFilePath);
-            } catch (Exception ex2) {
-                try {
-                    fireObject = getFireObjectByPath(requestedFilePath);
-                } catch (Exception ex3) {
-                    try {
-                        fireObject = getFireObjectByPath(path + ".zip");
-                        isDirectory = true;
-                    } catch (Exception ex4) {
-                        throw new FileNotFoundException(ex3.getMessage());
-                    }
-                }
+                // For folders
+                fireObject = getFireObjectByPath(path + ".zip");
+                isDirectory = true;
+            } catch (Exception ex4) {
+                throw new FileNotFoundException(ex4.getMessage());
             }
         }
         return new FIREDownloadFile(path,
