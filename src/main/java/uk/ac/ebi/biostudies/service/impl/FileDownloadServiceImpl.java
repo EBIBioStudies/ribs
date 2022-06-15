@@ -103,8 +103,9 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             if (key != null &&
                     (requestedFilePath.equalsIgnoreCase(accession + ".xml")
                             || requestedFilePath.equalsIgnoreCase(accession + ".json")
-                            || requestedFilePath.equalsIgnoreCase(accession + ".pagetab.tsv"))
-                            || requestedFilePath.equalsIgnoreCase(accession + ".tsv")) {
+                            || requestedFilePath.equalsIgnoreCase(accession + ".pagetab.tsv")
+                            || requestedFilePath.equalsIgnoreCase(accession + ".tsv")
+                    )) {
                 throw new SubmissionNotAccessibleException();
             }
 
