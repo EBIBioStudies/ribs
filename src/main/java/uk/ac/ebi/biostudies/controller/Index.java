@@ -161,4 +161,9 @@ public class Index {
         }
     }
 
+    @RequestMapping(value = "/index/synctime", method = RequestMethod.GET, produces = STRING_UNICODE_MEDIA_TYPE)
+    String getBackupSyncTime() {
+        return indexManager.getBackUpSynchTime();
+    }
+
 }

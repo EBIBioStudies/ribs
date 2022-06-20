@@ -70,6 +70,9 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     @Value("${index.backup.directory}")
     private String indexBackupDirectory;
 
+    @Value("${index.backup.sync.filename}")
+    private String indexSyncBackupFileName;
+
     @Value("${index.sync.command}")
     private String indexSyncCommand;
 
@@ -163,5 +166,9 @@ public class IndexConfig implements InitializingBean, DisposableBean {
 
     public String getFileIndexDirectory() {
         return fileIndexDirectory;
+    }
+
+    public String getIndexSyncBackupFileName() {
+        return indexSyncBackupFileName;
     }
 }
