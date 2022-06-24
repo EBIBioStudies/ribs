@@ -30,7 +30,7 @@ $(function() {
         $('#example').append('<label id="collection-search"'+ ( $.inArray(collection.toLowerCase(), specialCollections)>=0 ? 'style="display:none;"' : '')
             +'><input id="search-in-collection" type="checkbox" />Search in '+collectionObj.title+' only</label>');
         $('#search-in-collection').bind('change', function(){
-            $('#ebi_search').attr('action', ($(this).is(':checked')) ? contextPath+'/'+data.accno+'/studies' : contextPath+'/studies');
+            $('#ebi_search').attr('action', ($(this).is(':checked')) ? contextPath+'/'+data.accno.toLowerCase()+'/studies' : contextPath+'/studies');
         });
         $('#search-in-collection').click();
         //fix breadcrumbs
