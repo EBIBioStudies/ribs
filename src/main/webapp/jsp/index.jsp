@@ -87,7 +87,7 @@
                             <ul id="collectionList">
                                 <c:forEach items="${defaultCollections}" var="collection">
                                 <li>
-                                    <a href="${contextPath}/${collection}/studies">
+                                    <a href="${contextPath}/${fn:toLowerCase(collection)}/studies">
                                         <img src="${contextPath}/images/collections/${fn:toLowerCase(collection)}/defaultlogo.png" alt="${fn:toLowerCase(collection)}"/>
                                     </a>
                                 </li>

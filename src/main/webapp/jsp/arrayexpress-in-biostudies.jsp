@@ -38,7 +38,7 @@
             <li>There will be differences in how the search and browsing interface works, in particular, the “samples”
                 view such as <a href="http://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-5395/samples/">http://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-5395/samples/</a></li>
             <li>The existing API functionality will be available from BioStudies, but changes will be necessary -
-                see <a href="https://wwwdev.ebi.ac.uk/biostudies/ArrayExpress/help">https://wwwdev.ebi.ac.uk/biostudies/ArrayExpress/help</a> for a migration guide.</li>
+                see <a href="https://www.ebi.ac.uk/biostudies/arrayexpress/help">https://wwwdev.ebi.ac.uk/biostudies/ArrayExpress/help</a> for a migration guide.</li>
         </ol>
 
         <p>

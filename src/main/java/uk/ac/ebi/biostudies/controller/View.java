@@ -57,9 +57,10 @@ public class View {
     public ModelAndView detail(@PathVariable(required = false) String collection,
                                @PathVariable(value = "accession") String accession) throws Exception {
         var mav = new ModelAndView();
+        boolean isArrayExpressStudy = collection==null && (accession.toUpperCase().startsWith("E-") || accession.toUpperCase().startsWith("A-"));
         mav.addObject("collection", collection);
         mav.addObject("accession", accession);
-        mav.setViewName("detail");
+        mav.setViewName( isArrayExpressStudy ? String.format("redirect:/arrayexpress/studies/{accession}", accession) : "detail");
         return mav;
     }
 

@@ -5,9 +5,12 @@ var Help = (function (_self) {
             $('#renderedContent').load(contextPath + '/help/' + (collection ? collection.toLowerCase()+'-' : '')+'help.html',
                 function ( responseText, textStatus, jqXHR) {
                     if (textStatus=='error') {
-                        loadCommonHelp()
+                        loadCommonHelp();
                     } else {
-                        $('#renderedContent').foundation()
+                        $('#renderedContent').foundation();
+                        if (location.hash) {
+                            location.hash=location.hash;
+                        }
                     }
                 }
             );
