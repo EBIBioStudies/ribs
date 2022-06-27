@@ -461,13 +461,21 @@ a.thumbnail-icon {
     cursor: pointer;
 }
 
-.publication:not(:first-child)::before {
-    display: inline-block;
+.publication::before {
     content: ' ▪ ';
     padding: 0 4pt;
     color: #aaa;
 }
-
+.publication {
+    display: block;
+    padding-bottom: 0.5em;
+}
+.bs-value .publication:first-child:nth-last-child(1)::before{
+    content: '' ;
+}
+.bs-value .publication:first-child:nth-last-child(1){
+    display: unset ;
+}
 .publication-link {
     display: inline-block;
 }
