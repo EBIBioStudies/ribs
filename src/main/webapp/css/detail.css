@@ -472,6 +472,7 @@ a.thumbnail-icon {
 }
 .bs-value .publication:first-child:nth-last-child(1)::before{
     content: '' ;
+    padding: 0 0pt;
 }
 .bs-value .publication:first-child:nth-last-child(1){
     display: unset ;
