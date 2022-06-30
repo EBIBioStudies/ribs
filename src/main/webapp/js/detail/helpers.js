@@ -13,7 +13,7 @@ var Metadata = (function (_self) {
         Handlebars.registerHelper('valueWithName', function(val, obj) {
             if (obj==null) return;
             if (!Array.isArray(obj)) obj = [obj];
-            var e = obj.filter( function(o) { return o['name'].trim()==val.trim()})[0];
+            var e = obj.filter( function(o) { return o['name'].trim().toLowerCase()==val.trim().toLowerCase()})[0];
             if (e==undefined) return '';
             $.each(e.valqual, function(i,v){
                 if (v.name.toLowerCase()==='url') {
@@ -251,6 +251,7 @@ var Metadata = (function (_self) {
                         author[v.name] = [author[v.name], v.value];
                     }
                 });
+                if (!author.Name) author.Name = author.name;
                 if (!author.affiliation && author.Affiliation) {
                     author.affiliation = author.Affiliation;
                     delete author.Affiliation;
