@@ -704,3 +704,9 @@ span.file-list-buttons .fa-file-download {
     text-align: center;
     padding-top: 1em;
 }
+
+.annotation-icon {
+    color: var(--B2);
+    margin-left: 2px;
+    border: 0;
+}

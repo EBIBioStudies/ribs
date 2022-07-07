@@ -113,8 +113,15 @@ var Metadata = (function (_self) {
         handleCollectionBasedScriptInjection();
         handleTableCentering();
         handleCitation(data.accno);
+        handleAnnotations();
         handleAnchors(params);
         handleHighlights(params);
+    }
+
+    function handleAnnotations() {
+        $("span[data-curator]").each(function () {
+            $(this).append('<a class="annotation-icon"><i class="fas fa-hand-holding-medical"></i></a>');
+        });
     }
 
     function handleHighlights(params) {

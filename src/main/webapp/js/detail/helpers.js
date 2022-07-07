@@ -509,7 +509,7 @@ var Metadata = (function (_self) {
         var ret = '';
         if (!attrs || !attrs.length) return ret;
         $.each(attrs, function (i,o) {
-            ret += 'data-'+ o.name.toLowerCase() +'="' + escape(o.value) + '"';
+            ret += ' data-'+ o.name.toLowerCase() +'="' + escape(o.value) + '"';
         });
         return ret;
     }
