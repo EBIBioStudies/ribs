@@ -254,9 +254,9 @@ public class FacetServiceImpl implements FacetService {
             Collections.sort(children, Comparator.comparing(o -> o.get("name").textValue()));
             if (facet.get("name").asText().equalsIgnoreCase(Constants.Facets.RELEASED_YEAR_FACET)) {
                 Collections.reverse(children);
+                if (children.size()>=1 && children.get(0).get("name").asText().equalsIgnoreCase("N/A"))
+                    children.remove(0);
                 if (children.size() > limit) {
-                    if (children.get(0).get("name").asText().equalsIgnoreCase("N/A"))
-                        children.remove(0);
                     children = children.stream().limit(limit).collect(Collectors.toList());
                 }
             }

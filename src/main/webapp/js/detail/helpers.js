@@ -91,8 +91,8 @@ var Metadata = (function (_self) {
         });
 
         Handlebars.registerHelper('formatDateString', function(v) {
-            var date = (new Date(v)).toLocaleDateString("en-gb", { year: 'numeric', month: 'long', day: 'numeric' });
-            return date == 'Invalid Date' ? (new Date()).getFullYear() : date;
+            const date = (new Date(v)).toLocaleDateString("en-gb", {year: 'numeric', month: 'long', day: 'numeric'});
+            return date == 'Invalid Date' ? "N/A" : date;
         });
 
         Handlebars.registerHelper('accToLink', function(val) {
