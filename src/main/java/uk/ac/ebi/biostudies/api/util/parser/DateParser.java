@@ -72,8 +72,8 @@ public class DateParser extends AbstractParser {
         }
 
         valueMap.put(Constants.Fields.RELEASE_TIME, releaseDateLong);
-        valueMap.put(RELEASE_DATE, releaseDateLong==null ? "" : simpleDateFormat.format(DateTools.round(releaseDateLong, DateTools.Resolution.DAY)));
-        valueMap.put(Constants.Facets.RELEASED_YEAR_FACET, releaseDateLong==null ? "" :DateTools.timeToString(releaseDateLong, DateTools.Resolution.YEAR));
+        valueMap.put(RELEASE_DATE, releaseDateLong==null ? Constants.NA : simpleDateFormat.format(DateTools.round(releaseDateLong, DateTools.Resolution.DAY)));
+        valueMap.put(Constants.Facets.RELEASED_YEAR_FACET, releaseDateLong==null ? Constants.NA :DateTools.timeToString(releaseDateLong, DateTools.Resolution.YEAR));
         return "";
     }
 }
