@@ -71,13 +71,9 @@ public class DateParser extends AbstractParser {
             }
         }
 
-        if (releaseDateLong==null) {
-            releaseDateLong = creationDateLong;
-            logger.error("Cannot find release date. {} ", valueMap);
-        }
         valueMap.put(Constants.Fields.RELEASE_TIME, releaseDateLong);
-        valueMap.put(RELEASE_DATE, simpleDateFormat.format(DateTools.round(releaseDateLong, DateTools.Resolution.DAY)));
-        valueMap.put(Constants.Facets.RELEASED_YEAR_FACET, DateTools.timeToString(releaseDateLong, DateTools.Resolution.YEAR));
+        valueMap.put(RELEASE_DATE, releaseDateLong==null ? "" : simpleDateFormat.format(DateTools.round(releaseDateLong, DateTools.Resolution.DAY)));
+        valueMap.put(Constants.Facets.RELEASED_YEAR_FACET, releaseDateLong==null ? "" :DateTools.timeToString(releaseDateLong, DateTools.Resolution.YEAR));
         return "";
     }
 }

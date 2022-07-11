@@ -386,7 +386,7 @@ public class IndexServiceImpl implements IndexService {
                                 doc.add(new SortedDocValuesField(String.valueOf(field), new BytesRef(valueMap.get(field).toString())));
                             break;
                         case IndexEntryAttributes.FieldTypeValues.LONG:
-                            if (!valueMap.containsKey(field) || StringUtils.isEmpty(valueMap.get(field).toString()))
+                            if (!valueMap.containsKey(field) || valueMap.get(field)==null || StringUtils.isEmpty(valueMap.get(field).toString()))
                                 break;
                             doc.add(new SortedNumericDocValuesField(String.valueOf(field), (Long) valueMap.get(field)));
                             doc.add(new StoredField(String.valueOf(field), valueMap.get(field).toString()));
