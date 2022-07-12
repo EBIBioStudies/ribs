@@ -7,7 +7,6 @@ import org.junit.runners.MethodSorters;
 import org.mockito.Mockito;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -35,9 +34,8 @@ import static org.mockito.Mockito.doReturn;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-public class DetailTest {
+public class DetailTest extends WebDriverTest {
 
-    private static WebDriver webDriver = IntegrationTestSuite.webDriver;
     @Autowired
     IntegrationTestProperties integrationTestProperties;
     @LocalServerPort

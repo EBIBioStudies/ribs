@@ -6,8 +6,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +17,7 @@ import uk.ac.ebi.biostudies.auth.UserSecurityService;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.integration.utils.IntegrationTestProperties;
 import uk.ac.ebi.biostudies.service.SearchService;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.doReturn;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-public class IndexTest {
+public class IndexTest extends WebDriverTest {
 
     @Autowired
     private IntegrationTestProperties integrationTestProperties;
@@ -43,9 +42,6 @@ public class IndexTest {
 
     @SpyBean
     UserSecurityService userSecurityServiceMock;
-
-
-    private static WebDriver webDriver = IntegrationTestSuite.webDriver;
 
     @LocalServerPort
     int randomPort;

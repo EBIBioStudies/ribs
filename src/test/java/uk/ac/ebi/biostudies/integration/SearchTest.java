@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -28,9 +27,8 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElem
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SearchTest {
+public class SearchTest  extends WebDriverTest {
 
-    private static WebDriver webDriver = IntegrationTestSuite.webDriver;
     @LocalServerPort
     int randomPort;
     @Autowired
@@ -219,7 +217,6 @@ public class SearchTest {
         List<WebElement> list = webDriver.findElements(By.cssSelector(".release-date"));
         Date[] values = new Date[list.size()];
         SimpleDateFormat formatter1 = new SimpleDateFormat("d MMM yyyy");
-        SimpleDateFormat formatter2 = new SimpleDateFormat("MMM d, yyyy");
         for (int i = 0; i < values.length; i++) {
             String date = list.get(i).getAttribute("innerText").trim();
             if (date.equalsIgnoreCase("today")) {
@@ -236,7 +233,7 @@ public class SearchTest {
                 try {
                     values[i] = formatter1.parse(date);
                 } catch (Exception ex) {
-                    values[i] = formatter2.parse(date);
+                    values[i] = new Date(Long.MAX_VALUE);
                 }
             }
         }
@@ -249,8 +246,7 @@ public class SearchTest {
 
 
     @Test
-    public void testReleasedAscendingSort() throws Exception {
-        ;
+    public void testReleasedAscendingSort() {
         WebDriverWait wait = new WebDriverWait(webDriver, 20);
         wait.until(visibilityOfElementLocated(By.cssSelector("#sort-by")));
         new Select(webDriver.findElement(By.cssSelector("#sort-by"))).selectByVisibleText("Released");
@@ -259,9 +255,7 @@ public class SearchTest {
         wait.until(visibilityOfElementLocated(By.cssSelector(".release-date")));
         List<WebElement> list = webDriver.findElements(By.cssSelector(".release-date"));
         Date[] values = new Date[list.size()];
-        SimpleDateFormat[] formatters = {new SimpleDateFormat("d MMM yyyy"),
-                new SimpleDateFormat("MMM d, yyyy"),
-                new SimpleDateFormat("MMM d, yyyy")};
+        SimpleDateFormat format = new SimpleDateFormat("d MMM yyyy");
 
         for (int i = 0; i < values.length; i++) {
             String date = list.get(i).getAttribute("innerText").trim();
@@ -276,12 +270,12 @@ public class SearchTest {
                 cal.add(Calendar.DATE, 1);
                 values[i] = cal.getTime();
             } else {
-                for (var formatter : formatters) {
-                    try {
-                        values[i] = formatter.parse(date);
-                    } catch (Exception ignored) {
-                    }
+                try {
+                    values[i] = format.parse(date);
+                } catch (Exception ignored) {
+                    values[i] = new Date(Long.MAX_VALUE);
                 }
+
             }
         }
         Date[] unsortedValues = values.clone();

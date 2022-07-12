@@ -60,7 +60,7 @@ var Metadata = (function (_self) {
                 if (!data.section.attributes.filter(function (v, i) {
                     return v.name.trim() == 'Title';
                 }).length) {
-                    data.section.attributes.push({name: 'Title', value: title[0].value});
+                    data.section.attributes.push({name: 'Title', value: title[0]?title[0].value:""});
                 }
                 data.section.isFromSubmissionTool = document.referrer.toLowerCase().indexOf("ebi.ac.uk/biostudies/submissions/")>0
                 && $('#logout-button') && $('#logout-button').text().trim().startsWith("Logout");

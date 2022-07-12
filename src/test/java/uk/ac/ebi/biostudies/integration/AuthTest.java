@@ -2,13 +2,11 @@ package uk.ac.ebi.biostudies.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
-import org.junit.runner.RunWith;;
-import org.openqa.selenium.WebDriver;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.web.server.LocalServerPort;
-
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.biostudies.auth.UserSecurityService;
 import uk.ac.ebi.biostudies.config.IndexConfig;
@@ -19,11 +17,13 @@ import uk.ac.ebi.biostudies.service.SearchService;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
+;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-public class AuthTest {
+public class AuthTest extends WebDriverTest {
     @Autowired
     private IntegrationTestProperties integrationTestProperties;
 
