@@ -30,6 +30,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -434,6 +436,24 @@ public class IndexManager implements DisposableBean {
         if (exitCode != 0) {
             throw new Exception("Error running remote copying script");
         }
+    }
+
+    public String getBackUpSyncTime() {
+        StringBuilder syncFileAddress = new StringBuilder();
+        String fname = indexConfig.getIndexSyncBackupFile();
+        if (fname == null || fname.isEmpty()) {
+            syncFileAddress.append(indexConfig.getIndexBackupDirectory()).append("/").append(Constants.LATEST_INDEX_SYNC_TIME_FILE);
+        } else {
+            syncFileAddress.append(fname);
+        }
+        try {
+            Path path = Path.of(syncFileAddress.toString());
+            String content = Files.readString(path);
+            return content;
+        } catch (Exception ex) {
+            logger.error("sync file not found");
+        }
+        return "0";
     }
 
     public IndexSearcher getFileIndexSearcher() {
