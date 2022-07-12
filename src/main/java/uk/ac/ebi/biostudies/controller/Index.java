@@ -40,7 +40,7 @@ public class Index {
     UpdateOntologyJob updateOntologyJob;
     @Autowired
     IndexConfig indexConfig;
-    private Logger logger = LogManager.getLogger(Index.class.getName());
+    private final Logger logger = LogManager.getLogger(Index.class.getName());
 
     /**
      * Method handling HTTP GET requests. The returned object will be sent
@@ -163,7 +163,7 @@ public class Index {
 
     @RequestMapping(value = "/index/synctime", method = RequestMethod.GET, produces = STRING_UNICODE_MEDIA_TYPE)
     String getBackupSyncTime() {
-        return indexManager.getBackUpSynchTime();
+        return indexManager.getBackUpSyncTime();
     }
 
 }

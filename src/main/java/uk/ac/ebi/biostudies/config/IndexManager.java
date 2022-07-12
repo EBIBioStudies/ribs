@@ -438,14 +438,16 @@ public class IndexManager implements DisposableBean {
         }
     }
 
-    public String getBackUpSynchTime() {
-        StringBuilder synchFileAddress = new StringBuilder(indexConfig.getIndexBackupDirectory());
-        String fname = indexConfig.getIndexSyncBackupFileName();
-        if (fname == null || fname.isEmpty())
-            fname = "sync.txt";
-        synchFileAddress.append("/").append(fname);
+    public String getBackUpSyncTime() {
+        StringBuilder syncFileAddress = new StringBuilder();
+        String fname = indexConfig.getIndexSyncBackupFile();
+        if (fname == null || fname.isEmpty()) {
+            syncFileAddress.append(indexConfig.getIndexBackupDirectory()).append("/").append(Constants.LATEST_INDEX_SYNC_TIME_FILE);
+        } else {
+            syncFileAddress.append(fname);
+        }
         try {
-            Path path = Path.of(synchFileAddress.toString());
+            Path path = Path.of(syncFileAddress.toString());
             String content = Files.readString(path);
             return content;
         } catch (Exception ex) {

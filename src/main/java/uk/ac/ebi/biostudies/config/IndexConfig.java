@@ -19,72 +19,51 @@ import java.util.List;
 @PropertySource("classpath:index.properties")
 public class IndexConfig implements InitializingBean, DisposableBean {
 
+    public static CharArraySet STOP_WORDS;
     @Value("${index.directory}")
     private String indexDirectory;
-
     @Value("${index.fileIndexDirectory}")
     private String fileIndexDirectory;
-
     @Value("${index.facetDirectory}")
     private String facetDirectory;
-
     @Value("${files.baseDirectory}")
     private String baseDirectory;
-
     @Value("${files.submissionsDirectory}")
     private String submissionsDirectory;
-
     @Value("${indexer.threadCount}")
     private int threadCount;
-
     @Value("${indexer.queueSize}")
     private int queueSize;
-
     @Value("${index.fields}")
     private String indexFields;
-
     @Value("${index.defaultField}")
     private String defaultField;
-
     @Value("${index.searchSnippetFragmentSize}")
     private int searchSnippetFragmentSize;
-
     @Value("${files.thumbnailsDirectory}")
     private String thumbnailDir;
-
     @Value("${files.ftpUrl}")
     private String ftpDir;
-
     @Value("${indexer.stopwords}")
     private String stopwords;
-
     @Value("${index.spellcheckerDirectory}")
     private String spellcheckerLocation;
-
     @Value("${indexer.queryTypeFilter}")
     private String typeFilterQuery;
-
     @Value("${default.collection.list}")
     private List<String> defaultCollectionList;
-
     @Value("${index.backup.directory}")
     private String indexBackupDirectory;
-
-    @Value("${index.backup.sync.filename}")
-    private String indexSyncBackupFileName;
-
+    @Value("${index.backup.sync.file}")
+    private String indexSyncBackupFile;
     @Value("${index.sync.command}")
     private String indexSyncCommand;
-
     @Value("${index.api.enabled}")
     private boolean apiEnabled;
 
-    public static CharArraySet STOP_WORDS;
-
-
     @Override
     public void afterPropertiesSet() {
-        STOP_WORDS =  new CharArraySet(Arrays.asList(stopwords.split(",")), false);
+        STOP_WORDS = new CharArraySet(Arrays.asList(stopwords.split(",")), false);
     }
 
 
@@ -113,8 +92,7 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     }
 
 
-
-    public String[] getIndexFields(){
+    public String[] getIndexFields() {
         String[] fields = indexFields.split(",");
         return fields;
     }
@@ -131,7 +109,7 @@ public class IndexConfig implements InitializingBean, DisposableBean {
         return ftpDir;
     }
 
-    public int getQueueSize(){
+    public int getQueueSize() {
         return queueSize;
     }
 
@@ -168,7 +146,7 @@ public class IndexConfig implements InitializingBean, DisposableBean {
         return fileIndexDirectory;
     }
 
-    public String getIndexSyncBackupFileName() {
-        return indexSyncBackupFileName;
+    public String getIndexSyncBackupFile() {
+        return indexSyncBackupFile;
     }
 }
