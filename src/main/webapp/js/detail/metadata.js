@@ -119,8 +119,14 @@ var Metadata = (function (_self) {
     }
 
     function handleAnnotations() {
-        $("span[data-curator]").each(function () {
-            $(this).append('<a class="annotation-icon"><i class="fas fa-hand-holding-medical"></i></a>');
+        $("span[data-curator]").each(function (index) {
+            const template = Handlebars.compile($('script#annotations-template').html());
+            let data = $(this).data();
+            if (!data.id) { data.id = Metadata.getNextGeneratedId() };
+            if (data.added_at) {
+                data.added_at = unescape(data.added_at)
+            }
+            $(this).append(template(data));
         });
     }
 
