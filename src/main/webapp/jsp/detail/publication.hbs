@@ -1,24 +1,24 @@
 <script id='publication-template' type='text/x-handlebars-template'>{{#if this}}
-    <span class="publication">{{#if authors}}{{authors}}{{#if year}} ({{year}}){{/if}}.{{/if}}
-        {{#if title}}
+    <span class="publication">{{#ifCond attributes 'hasname' 'authors'}}{{valueWithName 'authors' attributes}}{{#ifCond attributes 'hasname' 'year'}} ({{valueWithName 'year' attributes}}){{/ifCond}}.{{/ifCond}}
+        {{#ifCond this.attributes 'hasname' 'title'}}
             {{#if URLs}}
-                    <a href="{{URLs.0.url}}" target="_blank">{{title}}</a>
+                    <a href="{{URLs.0.url}}" target="_blank">{{valueWithName 'title' attributes}}</a>
                 {{else}}
                 {{title}}
             {{/if}}
-        {{/if}}
-        {{#if journal}} <i>{{journal}}</i>.{{/if}}
-        {{#if publication_date}} {{publication_date}};{{/if}}
-        {{#if volume}} Volume {{volume}}.{{/if}}
-        {{#if issue}} Issue {{issue}}.{{/if}}
-        {{#if pages}} Page: {{pages}}.{{/if}}
+        {{/ifCond}}
+        {{#ifCond attributes 'hasname' 'journal'}} <i>{{valueWithName 'journal' attributes}}</i>.{{/ifCond}}
+        {{#ifCond attributes 'hasname' 'publication date'}} {{valueWithName 'publication date' attributes}};{{/ifCond}}
+        {{#ifCond attributes 'hasname' 'volume'}} Volume {{valueWithName 'volume' attributes}}.{{/ifCond}}
+        {{#ifCond attributes 'hasname' 'issue'}} Issue {{valueWithName 'issue' attributes}}.{{/ifCond}}
+        {{#ifCond attributes 'hasname' 'pages'}} Page: {{valueWithName 'pages' attributes}}.{{/ifCond}}
         {{#each URLs}}
             <span class="publication-link">
                 <span class="publication-link-type"><i class="fa fa-external-link-alt" aria-hidden="true"></i> {{type}}</span>
-                <a href="{{url}}" target="_blank">{{text}}</a>
+                <a href="{{url}}" target="_blank">{{valueWithName 'text' attributes}}</a>
             </span>
         {{/each}}
-        {{#each this}}{{#ifCond @key 'notin' "['authors','accno','title','journal','publication_date','volume','issue','pages','URLs']"}}, {{this}}{{/ifCond}}{{/each}}
+        {{#each attributes}}{{#ifCond @key 'notincaseignored' "['authors','accno','title','journal','publication date','volume','issue','pages','URLs']"}},{{asString this }} {{this}}{{/ifCond}}{{/each}}
     </span>
     {{/if}}
 </script>
