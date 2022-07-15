@@ -1,10 +1,10 @@
 <script id='annotations-template' type='text/x-handlebars-template'>
-<span class="attribute-container" data-card-id="annotation-card-{{id}} title="This is a curated annotation">
-    <i class="fas fa-hand-holding-medical annotation-icon"></i>
-    <div class="attribute-card" id="annotation-card-{{id}}">
-        This is a curated annotation. <a class="no-border" href="help"><i class="fa-solid fa-circle-question"></i></a><br/>
-        {{#if curator}}<b>Curator:</b> {{curator}}{{/if}}<br/>
-        {{#if added_at}}<b>Added at:</b> {{added_at}}{{/if}}
-    </div>
+<span data-tooltip class="right annotation-icon" data-hover-delay="0" data-template-classes="annotation-tooltip" tabindex="2" data-allow-html="true"
+title="This is a <a href='help' target='_blank'>curated annotation</a>.
+<br/>
+{{#if curator}}<b>Curator:</b> {{curator}}{{/if}}
+<br/>
+{{#if added_at}}<b>Added at:</b> {{added_at}}{{/if}}">
+  <i class="fas fa-hand-holding-medical annotation-icon"></i>
 </span>
 </script>

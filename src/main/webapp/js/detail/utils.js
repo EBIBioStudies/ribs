@@ -31,7 +31,7 @@ function accToLink(acc) {
 }
 
 
-function getURL(accession, type) {
+function getURL(accession, type, valqual) {
     if (!type) {
         type = /^[a-zA-z]+/.exec(accession);
         if (type && type.length) {
@@ -49,10 +49,10 @@ function getURL(accession, type) {
         for(var r in DetailPage.reverseLinkMap) {
             var acc = new RegExp(r).exec(value);
             if (acc && acc.length>0) {
-                return {url:accession, type: DetailPage.reverseLinkMap[r], text:acc[1] }
+                return {url:accession, type: DetailPage.reverseLinkMap[r], attributes:[ {name: 'text', value:acc[1] , valqual: valqual}]}
             }
         }
         url = accession;
     }
-    return url ?  {url:url, type:type, text:accession} : null;
+    return url ?  {url:url, type:type, attributes:[ {name: 'text', value:accession , valqual: valqual}]} : null;
 }

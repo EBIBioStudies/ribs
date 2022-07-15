@@ -41,20 +41,22 @@ var Metadata = (function (_self) {
         });
 
         Handlebars.registerHelper('renderLinkTableRow', function(val, obj) {
+
             if (obj==null) return new Handlebars.SafeString('<td></td>');
-            var e = obj.filter( function(o) { return o['name']==val})[0];
-            if (e==undefined) return new Handlebars.SafeString('<td></td>') ;
+            var e = obj.filter( function(attribute) { return attribute['name'].trim().toLowerCase()==val.trim().toLowerCase()})[0];
             e.value = e.value || '';
             var value = val.toLowerCase()=='type' && DetailPage.linkTypeMap[e.value.toLowerCase()] ? DetailPage.linkTypeMap[e.value.toLowerCase()] : e.value;
             if (val=='Section') {
                 Metadata.updateSectionLinkCount(e.search);
             }
+            console.log(e)
             return new Handlebars.SafeString( e.url ?
                 '<td'+ ( val=='Section' && e.search ? ' data-search="'+e.search +'" ' :'') + '><a href="'
                 + e.url
                 + (e.url[0]!='#' ? '" target="_blank"':'"')
                 + (e.title ? ' title="'+e.title+'"' : '')
-                +'>'+ htmlEncode(value)+'</a></td>' : '<td>'+ htmlEncode(value) +'</td>');
+                + ' ' +addValQualAttributes(e.valqual)
+                +'>'+ htmlEncode(value)+'</a></td>' : '<td><span '+ addValQualAttributes(e.valqual)+' >'+htmlEncode(value) +'</span></td>');
         });
 
         Handlebars.registerHelper('ifHasAttribute', function(val, obj, options) {
@@ -351,16 +353,17 @@ var Metadata = (function (_self) {
                 +'</span><span class="bs-value">';
             $.each(pubs, function(i,pub) {
                 var publication = {}
+                //parse URLs
                 publication.URLs = [];
                 $.each(pub.attributes, function (i, v) {
                     var name = v.name.toLowerCase().replace(' ', '_');
-                    var url = getURL(v.value, name);
+                    var url = getURL(v.value, name, v.valqual);
+
                     if (url) {
                         publication.URLs.push(url);
-                    } else {
-                        publication[name] = v.value
                     }
                 });
+                publication.attributes = pub.attributes;
                 publication.accno = pub.accno;
                 if (publication.accno) {
                     const url = getURL(publication.accno);
@@ -378,7 +381,7 @@ var Metadata = (function (_self) {
                     })[0].value));
                 });
 
-                if (!publication.URLs.length) delete publication.URLs
+                if (!publication.URLs.length) delete publication.URLs;
                 html += template(publication);
             });
             html+='</span></div>'
@@ -415,8 +418,12 @@ var Metadata = (function (_self) {
                     return $.inArray(v2, v1)>=0 ? options.fn(this) : options.inverse(this);
                 case 'notin':
                     return $.inArray(v1, eval(v2))<0 ? options.fn(this) : options.inverse(this);
+                case 'notincaseignored':
+                    return eval(v2).filter( (v) => { return v.toLowerCase()==v2.toLowerCase() }).length>0 ? options.fn(this) : options.inverse(this);
                 case 'haslength':
                     return v1.length == v2 ? options.fn(this) : options.inverse(this);
+                case 'hasname':
+                    return v1.filter( (v) => { return v.name.toLowerCase()==v2.toLowerCase() }).length>0  ? options.fn(this) : options.inverse(this);
                 default:
                     return options.inverse(this);
             }

@@ -669,12 +669,12 @@ span.file-list-buttons .fa-file-download {
 #file-list_filter input {
     width: 140px;
 }
-.author-card , .attribute-card {
+.author-card, .attribute-card {
     position: absolute;
     background: #fafafa;
     padding: 6pt;
     border: 1px solid darkgray;
-    z-index: 2;
+    z-index: 999999;
     display: none;
     max-width: 500px;
     cursor: text;
@@ -706,7 +706,20 @@ span.file-list-buttons .fa-file-download {
 }
 
 .annotation-icon {
-    color: var(--P2);
+    color: var(--B2);
     margin-left: 2px;
     border: 0;
+    background-color: inherit !important;
 }
+
+.tooltip.right::before {
+    border-color: transparent var(--B5) transparent transparent;;
+}
+
+.annotation-tooltip {
+    max-width: inherit;
+    background: var(--B5);
+    padding: 6pt;
+    color: #222222;
+}
+
