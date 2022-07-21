@@ -113,8 +113,24 @@ var Metadata = (function (_self) {
         handleCollectionBasedScriptInjection();
         handleTableCentering();
         handleCitation(data.accno);
+        handleAnnotations();
         handleAnchors(params);
         handleHighlights(params);
+    }
+
+    function handleAnnotations() {
+        $("span[data-curator]").each(function (index) {
+            const template = Handlebars.compile($('script#annotations-template').html());
+            let data = $(this).data();
+            if (!data.id) { data.id = Metadata.getNextGeneratedId() };
+            if (data.added_at) {
+                data.added_at = unescape(data.added_at)
+            }
+            const icon = $(template(data));
+            $(this).append(icon);
+            $(this).foundation();
+
+        });
     }
 
     function handleHighlights(params) {
@@ -364,33 +380,6 @@ var Metadata = (function (_self) {
                 });
             });
         });
-
-
-        $('#bs-autdddhors li .author span[itemprop="name"]').hover(
-            function () {
-                $('#'+$(this).data('card-id')).show();
-                /*$(this).addClass('highlight-author');
-                var isVisible = false;
-                $('.org-link',$(this).parent().parent()).each(function () {
-                    $('#'+$(this).data('affiliation')).addClass('highlight-author');
-                    isVisible |= $('#'+$(this).data('affiliation')+':visible').length>0;
-                });
-                if (!isVisible) {
-                    $('#expand-orgs').addClass('highlight-author');
-                }*/
-
-            }, function () {
-                //if('#'+$(this).data('card-id').)  $('#'+$(this).data('card-id')).hide();
-                /*$(this).removeClass('highlight-author')
-                $('.org-link',$(this).parent().parent()).each(function () {
-                    $('#'+$(this).data('affiliation')).removeClass('highlight-author');
-                })
-                $('#expand-orgs').removeClass('highlight-author');
-
-                 */
-
-            }
-        );
 
 
         $('#bs-orgs li').hover(
