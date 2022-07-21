@@ -243,7 +243,7 @@ var FileTable = (function (_self) {
                             + '"' + (row.md5 ? (' data-md5="' + row.md5 +'"') : '')
                             + ' title="' + data
                             + '" href="'
-                            + window.contextPath +'/files/'+acc+'/' + encodeURI(row.path).replaceAll('#','%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
+                            + window.contextPath +'/files/'+acc+'/' + unescape(encodeURIComponent(row.path)).replaceAll('#','%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
                             + (params.key ? '?key='+params.key : '')
                             + '" target="_blank" style="max-width: 500px;">'
                             + data +'</a>';
