@@ -18,7 +18,9 @@ import uk.ac.ebi.biostudies.service.impl.BatchDownloadScriptBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by ehsan on 22/03/2017.
@@ -62,11 +64,11 @@ public class FileDownload {
         if(dlType.equalsIgnoreCase("zip"))
             zipDownloadService.sendZip(request, response, files, storageMode);
         else if(dlType.equalsIgnoreCase("ftp") || dlType.equalsIgnoreCase("aspera")){
-            response.setContentType("application/txt");
+            response.setContentType("application/txt; charset=UTF-8");
             response.addHeader("Content-Disposition", "attachment; filename="+accession+"-" + os+"-"+dlType+"."+fileExtension);
             response.addHeader("Cache-Control", "no-cache");
-            response.getOutputStream().print(batchDownloadScriptBuilder.fillTemplate(dlType, fileNames, relativeBaseDir, os, storageMode));
-            response.getOutputStream().close();
+            response. getWriter().print(batchDownloadScriptBuilder.fillTemplate(dlType, fileNames, relativeBaseDir, os, storageMode));
+            response.getWriter().close();
         }
 
     }
