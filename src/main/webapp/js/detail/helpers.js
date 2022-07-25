@@ -44,6 +44,7 @@ var Metadata = (function (_self) {
 
             if (obj==null) return new Handlebars.SafeString('<td></td>');
             var e = obj.filter( function(attribute) { return attribute['name'].trim().toLowerCase()==val.trim().toLowerCase()})[0];
+            if (e==undefined) return new Handlebars.SafeString('<td></td>') ;
             e.value = e.value || '';
             var value = val.toLowerCase()=='type' && DetailPage.linkTypeMap[e.value.toLowerCase()] ? DetailPage.linkTypeMap[e.value.toLowerCase()] : e.value;
             if (val=='Section') {
