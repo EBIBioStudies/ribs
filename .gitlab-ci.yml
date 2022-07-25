@@ -108,13 +108,6 @@ deploy:k8s-hl:
     name: hl
   when: manual
 
-deploy:k8s-hx-preview:
-  extends: .deploy-k8s
-  environment:
-    name: hx-preview
-  when: manual
-
-
 beta:
   <<: *deploy-template
   environment: beta
