@@ -326,7 +326,7 @@ var Metadata = (function (_self) {
         $('.table-expander').click(function () {
             lastExpandedTable = this;
             $('.fullscreen .table-wrapper').css('max-height','');
-            $(this).find('[data-fa-i2svg]').toggleClass('fa-window-close fa-expand');
+            $(this).find('[data-fa-i2svg]').toggleClass('fa-rectangle-xmark fa-expand');
             $(this).attr('title', $(this).hasClass('fa-expand') ? 'Click to expand' : 'Click to close');
             $('html').toggleClass('stop-scrolling');
             $('#blocker').toggleClass('blocker');
