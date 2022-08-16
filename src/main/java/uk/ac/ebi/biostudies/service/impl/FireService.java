@@ -45,9 +45,16 @@ public class FireService {
             fireObject = getFireObjectByPath(path);
         } catch (Exception ex1) {
             try {
+                if (requestedFilePath.equals(accession + ".tsv")  ) {
+                    logger.debug("{} not found. Trying old .pagetab.tsv file.", path);
+                    path = relativePath + "/" + accession + ".pagetab.tsv";
+                } else {
+                    logger.debug("{} not found and might be a folder. Trying zipped archive.", path);
+                    isDirectory = true;
+                    path = path + ".zip";
+                }
                 // For folders
-                fireObject = getFireObjectByPath(path + ".zip");
-                isDirectory = true;
+                fireObject = getFireObjectByPath(path);
             } catch (Exception ex4) {
                 throw new FileNotFoundException(ex4.getMessage());
             }

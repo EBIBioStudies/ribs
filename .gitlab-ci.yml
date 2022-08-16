@@ -5,7 +5,7 @@ cache:
 
 stages:
   - build
-  - build_docker
+  - dockerify
   - deploy
 
 variables:
@@ -35,7 +35,7 @@ services:
         sleep 220
       done
 
-dev-build:
+build-develop:
   stage: build
   artifacts:
     paths:
@@ -52,26 +52,28 @@ dev-build:
   only:
     - develop
 
-dev:
-  <<: *deploy-template
-  environment: dev
+build-master:
+  stage: build
+  artifacts:
+    paths:
+      - target/biostudies.war
+  script:
+    - mvn -Dmaven.test.skip=true clean install spring-boot:repackage
   only:
-    - develop
+    - master
 
-ribs-manual:
-  <<: *deploy-template
-  environment: dev
+build-branch:
+  stage: build
+  artifacts:
+    paths:
+      - target/biostudies.war
+  script:
+    - mvn -Dmaven.test.skip=true clean install spring-boot:repackage
   when: manual
 
-beta-manual:
-  <<: *deploy-template
-  environment: beta
-  when: manual
-
-
-build-docker:
+push-docker-image:
   image: docker
-  stage: build_docker
+  stage: dockerify
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
@@ -81,7 +83,8 @@ build-docker:
     - docker rmi ${DOCKER_IMAGE}
     - docker rmi ${CI_REGISTRY_IMAGE}:latest
     - docker logout $CI_REGISTRY
-  when: manual
+  only:
+    - master
 
 .deploy-k8s:
   stage: deploy
@@ -96,17 +99,16 @@ build-docker:
     - envsubst < deployment.tmpl | kubectl apply -f -
     - kubectl rollout restart statefulset "$LABEL" -n "$NAMESPACE"
 
-deploy:k8s:hx:
-  extends: .deploy-k8s
-  environment:
-    name: hx
-  when: manual
+deploy-branch:
+    <<: *deploy-template
+    environment: $TARGET_ENVIRONMENT
+    when: manual
 
-deploy:k8s-hl:
-  extends: .deploy-k8s
-  environment:
-    name: hl
-  when: manual
+dev:
+  <<: *deploy-template
+  environment: dev
+  only:
+    - develop
 
 beta:
   <<: *deploy-template
@@ -115,23 +117,25 @@ beta:
     - develop
   when: manual
 
-master-build:
-  stage: build
-  artifacts:
-    paths:
-      - target/biostudies.war
-  script:
-    - mvn -Dmaven.test.skip=true clean install spring-boot:repackage
+hx-k8s:
+  extends: .deploy-k8s
+  environment:
+    name: hx
   only:
     - master
 
-manual-branch-build:
-  stage: build
-  artifacts:
-    paths:
-      - target/biostudies.war
-  script:
-    - mvn -Dmaven.test.skip=true clean install spring-boot:repackage
+hl-k8s:
+  extends: .deploy-k8s
+  environment:
+    name: hl
+  only:
+    - master
+
+preview:
+  <<: *deploy-template
+  environment: preview
+  only:
+    - master
   when: manual
 
 prod-backup:
@@ -148,9 +152,3 @@ prod:
     - master
   when: manual
 
-preview:
-  <<: *deploy-template
-  environment: preview
-  only:
-    - master
-  when: manual
