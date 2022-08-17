@@ -59,32 +59,23 @@ public class FileDownload {
             os = "unix";
         String fileExtension = "sh";
         fileExtension = getFileExtension(os);
-        List<String> fileNames = new ArrayList<>();
-        Document submissionDoc = getFilePaths(request, response, fileNames);
+        Document submissionDoc = getFilePaths(request, response);
         String relativeBaseDir = submissionDoc.get(Constants.Fields.RELATIVE_PATH);
         String accession = submissionDoc.get(Constants.Fields.ACCESSION);
         String storageModeString = submissionDoc.get(Constants.Fields.STORAGE_MODE);
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
         dlType = dlType.replaceFirst("/", "");
         String[] files = request.getParameterMap().get("files");
+        if (storageMode == Constants.File.StorageMode.FIRE){
+            files = createFireCompatibleFileNames(files);
+        }
         if (dlType.equalsIgnoreCase("zip"))
             zipDownloadService.sendZip(request, response, files, storageMode);
         else if (dlType.equalsIgnoreCase("ftp") || dlType.equalsIgnoreCase("aspera")) {
-            List<String> newFileNames = new ArrayList<>();
-            if (storageMode == Constants.File.StorageMode.FIRE) {
-                newFileNames = Arrays.stream(files).map(name -> {
-                    try {
-                        return jsEngine.eval(String.format("unescape(encodeURIComponent('%s'))", name)).toString().replace("#", "%23").replace("+", "%2B").replace("=", "%3D").replace("@", "%40").replace("$", "%24");
-                    } catch (ScriptException e) {
-                        LOGGER.error(name + " problem in unescapeing", e);
-                    }
-                    return "";
-                }).collect(Collectors.toList());
-            }
             response.setContentType("application/txt; charset=UTF-8");
             response.addHeader("Content-Disposition", "attachment; filename=" + accession + "-" + os + "-" + dlType + "." + fileExtension);
             response.addHeader("Cache-Control", "no-cache");
-            response.getWriter().print(batchDownloadScriptBuilder.fillTemplate(dlType, storageMode == Constants.File.StorageMode.FIRE ? newFileNames : fileNames, relativeBaseDir, os, storageMode));
+            response.getWriter().print(batchDownloadScriptBuilder.fillTemplate(dlType, Arrays.asList(files), relativeBaseDir, os, storageMode));
             response.getWriter().close();
         }
 
@@ -96,7 +87,7 @@ public class FileDownload {
     }
 
 
-    private Document getFilePaths(HttpServletRequest request, HttpServletResponse response, List<String> fileNames) throws Exception {
+    private Document getFilePaths(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String[] args = request.getRequestURI().replaceAll(request.getContextPath() + "(/[a-zA-Z])?/files/", "").split("/");
         String key = request.getParameter("key");
         if ("null".equalsIgnoreCase(key)) {
@@ -120,8 +111,6 @@ public class FileDownload {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
-
-        fileNames.addAll(Arrays.asList(request.getParameterMap().get("files")));
         return doc;
 
     }
@@ -130,5 +119,17 @@ public class FileDownload {
         if (os.equalsIgnoreCase("windows"))
             return "bat";
         else return "sh";
+    }
+
+    private String[] createFireCompatibleFileNames(String[] inputFileNames){
+        String[] response = Arrays.stream(inputFileNames).map(name -> {
+            try {
+                return jsEngine.eval(String.format("unescape(encodeURIComponent('%s'))", name)).toString().replace("#", "%23").replace("+", "%2B").replace("=", "%3D").replace("@", "%40").replace("$", "%24");
+            } catch (ScriptException e) {
+                LOGGER.error(name + " problem in unescapeing", e);
+            }
+            return "";
+        }).toArray(String[]::new);
+        return response;
     }
 }
