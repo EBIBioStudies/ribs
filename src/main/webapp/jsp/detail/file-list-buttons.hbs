@@ -6,7 +6,7 @@
         <a href="${contextPath}/files/{{accno}}/{{file}}.xml{{keyString}}" target="_blank"
            title="Download file list as XML" class="source-icon source-icon-xml" data-icon="=">
             <i class="fa fa-file-download shrink-8"/>&lt;XML&gt;</a>
-        <a href="${contextPath}/files/{{accno}}/{{file}}.pagetab.tsv{{keyString}}" target="_blank"
+        <a href="${contextPath}/files/{{accno}}/{{file}}{{#ifCond hasZippedFolders '!=' true}}.pagetab{{/ifCond}}.tsv{{keyString}}" target="_blank"
            title="Download file list as PageTab" class="source-icon source-icon-pagetab"
            data-icon="="><i class="fa fa-file-download shrink-8"/>&rarr;PageTab&#8626;</a>
     </span>

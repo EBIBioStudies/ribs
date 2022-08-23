@@ -50,7 +50,7 @@ var Metadata = (function (_self) {
             if (val=='Section') {
                 Metadata.updateSectionLinkCount(e.search);
             }
-            console.log(e)
+            
             return new Handlebars.SafeString( e.url ?
                 '<td'+ ( val=='Section' && e.search ? ' data-search="'+e.search +'" ' :'') + '><a href="'
                 + e.url

@@ -16,9 +16,15 @@ import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
 import uk.ac.ebi.biostudies.service.ZipDownloadService;
 import uk.ac.ebi.biostudies.service.impl.BatchDownloadScriptBuilder;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by ehsan on 22/03/2017.
@@ -28,6 +34,8 @@ public class FileDownload {
 
     private static final Logger LOGGER = LogManager.getLogger(FileDownload.class.getName());
 
+
+    static ScriptEngine jsEngine = new ScriptEngineManager().getEngineByName("nashorn");
     @Autowired
     ZipDownloadService zipDownloadService;
 
@@ -44,44 +52,46 @@ public class FileDownload {
     BatchDownloadScriptBuilder batchDownloadScriptBuilder;
 
     @RequestMapping(value = "/files/**", method = RequestMethod.POST)
-    public void getFilesInZippedFormat(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    public void getFilesInZippedFormat(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String dlType = request.getParameter("type");
         String os = request.getParameter("os");
-        if(os==null || os.isEmpty())
-            os="unix";
+        if (os == null || os.isEmpty())
+            os = "unix";
         String fileExtension = "sh";
         fileExtension = getFileExtension(os);
-        List<String> fileNames = new ArrayList<>();
-        Document submissionDoc = getFilePaths(request,response, fileNames);
+        Document submissionDoc = getFilePaths(request, response);
         String relativeBaseDir = submissionDoc.get(Constants.Fields.RELATIVE_PATH);
         String accession = submissionDoc.get(Constants.Fields.ACCESSION);
         String storageModeString = submissionDoc.get(Constants.Fields.STORAGE_MODE);
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
         dlType = dlType.replaceFirst("/", "");
         String[] files = request.getParameterMap().get("files");
-        if(dlType.equalsIgnoreCase("zip"))
+        if (storageMode == Constants.File.StorageMode.FIRE){
+            files = createFireCompatibleFileNames(files);
+        }
+        if (dlType.equalsIgnoreCase("zip"))
             zipDownloadService.sendZip(request, response, files, storageMode);
-        else if(dlType.equalsIgnoreCase("ftp") || dlType.equalsIgnoreCase("aspera")){
-            response.setContentType("application/txt");
-            response.addHeader("Content-Disposition", "attachment; filename="+accession+"-" + os+"-"+dlType+"."+fileExtension);
+        else if (dlType.equalsIgnoreCase("ftp") || dlType.equalsIgnoreCase("aspera")) {
+            response.setContentType("application/txt; charset=UTF-8");
+            response.addHeader("Content-Disposition", "attachment; filename=" + accession + "-" + os + "-" + dlType + "." + fileExtension);
             response.addHeader("Cache-Control", "no-cache");
-            response.getOutputStream().print(batchDownloadScriptBuilder.fillTemplate(dlType, fileNames, relativeBaseDir, os, storageMode));
-            response.getOutputStream().close();
+            response.getWriter().print(batchDownloadScriptBuilder.fillTemplate(dlType, Arrays.asList(files), relativeBaseDir, os, storageMode));
+            response.getWriter().close();
         }
 
     }
 
     @RequestMapping(value = "/files/**", method = {RequestMethod.GET, RequestMethod.HEAD})
-    public void getSingleFile(HttpServletRequest request, HttpServletResponse response) throws Exception, SubmissionNotAccessibleException {
+    public void getSingleFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
         fileDownloadService.sendFile(request, response);
     }
 
 
-    private  Document getFilePaths(HttpServletRequest request, HttpServletResponse response, List<String> fileNames) throws Exception {
-        String[] args = request.getRequestURI().replaceAll(request.getContextPath()+"(/[a-zA-Z])?/files/"       ,"").split("/");
+    private Document getFilePaths(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String[] args = request.getRequestURI().replaceAll(request.getContextPath() + "(/[a-zA-Z])?/files/", "").split("/");
         String key = request.getParameter("key");
         if ("null".equalsIgnoreCase(key)) {
-            key=null;
+            key = null;
         }
 
         Document doc = null;
@@ -91,25 +101,35 @@ public class FileDownload {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return null;
         }
-        if(doc==null) {
+        if (doc == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
         String relativePath = doc.get(Constants.Fields.RELATIVE_PATH);
 
-        if (relativePath==null) {
+        if (relativePath == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
-
-        fileNames.addAll(Arrays.asList(request.getParameterMap().get("files")));
         return doc;
 
     }
 
-    private String getFileExtension(String os){
-        if(os.equalsIgnoreCase("windows"))
+    private String getFileExtension(String os) {
+        if (os.equalsIgnoreCase("windows"))
             return "bat";
         else return "sh";
+    }
+
+    private String[] createFireCompatibleFileNames(String[] inputFileNames){
+        String[] response = Arrays.stream(inputFileNames).map(name -> {
+            try {
+                return jsEngine.eval(String.format("unescape(encodeURIComponent('%s'))", name)).toString().replace("#", "%23").replace("+", "%2B").replace("=", "%3D").replace("@", "%40").replace("$", "%24");
+            } catch (ScriptException e) {
+                LOGGER.error(name + " problem in unescapeing", e);
+            }
+            return "";
+        }).toArray(String[]::new);
+        return response;
     }
 }

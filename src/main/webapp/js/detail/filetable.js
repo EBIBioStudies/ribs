@@ -27,7 +27,7 @@ var FileTable = (function (_self) {
                 handleAdvancedSearch(columnDefinitions);
                 if (isDetailPage) {
                     handleSectionButtons(acc, params, response.sections, response.relPath, hasZippedFolders);
-                    handleFileListButtons(acc, params.key);
+                    handleFileListButtons(acc, params.key, hasZippedFolders);
                 }
                 FileTable.getFilesTable().columns.adjust();
             }});
@@ -79,7 +79,7 @@ var FileTable = (function (_self) {
         }
     }
 
-    function handleFileListButtons(acc, key){
+    function handleFileListButtons(acc, key, hasZippedFolders){
         var templateSource = $('script#file-list-buttons-template').html();
         var template = Handlebars.compile(templateSource);
         $('.bs-name:contains("File List")').each( function (node) {
@@ -88,7 +88,8 @@ var FileTable = (function (_self) {
                 template({
                     accno:acc,
                     file: filename.toLowerCase().endsWith(".json") ? filename.substring( 0, filename.indexOf( ".json" ) ) : filename ,
-                    keyString: key ? '?key='+key : ''
+                    keyString: key ? '?key='+key : '',
+                    hasZippedFolders: hasZippedFolders
                 })
             );
         });
