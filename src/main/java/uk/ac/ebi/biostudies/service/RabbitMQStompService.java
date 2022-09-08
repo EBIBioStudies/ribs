@@ -40,7 +40,7 @@ public class RabbitMQStompService {
     private StompSession stompSession;
 
     public boolean isSessionConnected() {
-        return stompSession.isConnected();
+        return stompSession!=null && stompSession.isConnected();
     }
 
 
