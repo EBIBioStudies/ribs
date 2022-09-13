@@ -26,7 +26,7 @@ public class ViewCountLoader {
         return ACCESSION_VIEW_COUNT_MAP;
     }
 
-    public static void freeMemoryOfViewCountMap() {
+    public static void unloadViewCountMap() {
         ACCESSION_VIEW_COUNT_MAP.clear();
     }
 

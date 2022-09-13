@@ -255,7 +255,7 @@ public class IndexServiceImpl implements IndexService {
                 logger.info("loading view count file finished with {} entries!", ViewCountLoader.getViewCountMap().size());
                 indexAll(new FileInputStream(inputStudiesFilePath), removeFileDocuments);
                 logger.info("freeing view count map memory!");
-                ViewCountLoader.freeMemoryOfViewCountMap();
+                ViewCountLoader.unloadViewCountMap();
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.log(Level.ERROR, e);
