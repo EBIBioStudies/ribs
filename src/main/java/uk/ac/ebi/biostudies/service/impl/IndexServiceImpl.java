@@ -81,9 +81,8 @@ public class IndexServiceImpl implements IndexService {
     FacetService facetService;
     @Autowired
     ParserManager parserManager;
-//    @Autowired @Lazy
-//    RabbitMQStompService rabbitMQStompService;
-
+    @Autowired
+    ViewCountLoader viewCountLoader;
 
 
     @Override
@@ -251,7 +250,12 @@ public class IndexServiceImpl implements IndexService {
                     removeFileDocuments = false;
                 }
                 inputStudiesFilePath = getCopiedSourceFile(filename);
+                logger.info("loading view count file");
+                viewCountLoader.loadViewCountFile();
+                logger.info("loading view count file finished with {} entries!", ViewCountLoader.getViewCountMap().size());
                 indexAll(new FileInputStream(inputStudiesFilePath), removeFileDocuments);
+                logger.info("freeing view count map memory!");
+                ViewCountLoader.unloadViewCountMap();
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.log(Level.ERROR, e);
@@ -386,7 +390,7 @@ public class IndexServiceImpl implements IndexService {
                                 doc.add(new SortedDocValuesField(String.valueOf(field), new BytesRef(valueMap.get(field).toString())));
                             break;
                         case IndexEntryAttributes.FieldTypeValues.LONG:
-                            if (!valueMap.containsKey(field) || valueMap.get(field)==null || StringUtils.isEmpty(valueMap.get(field).toString()))
+                            if (!valueMap.containsKey(field) || valueMap.get(field) == null || StringUtils.isEmpty(valueMap.get(field).toString()))
                                 break;
                             doc.add(new SortedNumericDocValuesField(String.valueOf(field), (Long) valueMap.get(field)));
                             doc.add(new StoredField(String.valueOf(field), valueMap.get(field).toString()));

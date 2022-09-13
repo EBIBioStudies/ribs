@@ -15,6 +15,7 @@ public interface Constants {
     String NA = "n/a";
     String PUBLIC = "public";
     String LATEST_INDEX_SYNC_TIME_FILE = "latest-index-sync-time.txt";
+    String VIEW_COUNT_CSV = "submission_stats.csv";
 
     int TOP_FACET_COUNT = 10;
 
