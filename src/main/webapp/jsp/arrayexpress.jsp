@@ -20,10 +20,10 @@
             </ul>
         </jsp:attribute>
     <jsp:body>
-        <div class="row">
+        <!-- div class="row">
             <div class="callout warning">This the BioStudies ArrayExpress collection. <a
                     href="https://www.ebi.ac.uk/arrayexpress">Click here for the old ArrayExpress site.</a></div>
-        </div>
+        </div-->
 
 
         <div class="row">

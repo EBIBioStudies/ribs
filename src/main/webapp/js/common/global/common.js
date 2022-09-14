@@ -23,7 +23,7 @@ $(function() {
             collectionObj[this.name.toLowerCase()] = this.value
         })
         var html = template(collectionObj);
-        if ($.inArray(collection.toLowerCase(), specialCollections) < 0) {
+        if (collection.toLowerCase()!='bioimages') {
             $('#collection-banner').html(html);
         }
         // add collection search checkbox
@@ -148,8 +148,8 @@ function handleBioImagesUI() {
 }
 
 function handleArrayExpressUI() {
-    $('#local-title').html('<h1><img src="' + contextPath + '/images/collections/arrayexpress/ae-logo-64.svg"></img><span style="font-weight:lighter;padding-left: 4pt;vertical-align:bottom;">ArrayExpress</span></h1>');
-    $('#masthead').css("background-color","#5E8CC0");
+    //$('#local-title').html('<h1><img src="' + contextPath + '/images/collections/arrayexpress/ae-logo-64.svg"></img><span style="font-weight:lighter;padding-left: 4pt;vertical-align:bottom;">ArrayExpress</span></h1>');
+    //$('#masthead').css("background-color","#5E8CC0");
     $('#query').attr('placeholder','Search ArrayExpress');
     $('.sample-query').first().text('E-MEXP-31');
     $('.sample-query').first().next().text('cancer');
