@@ -98,9 +98,9 @@ var Metadata = (function (_self) {
             return date == 'Invalid Date' ? "N/A" : date;
         });
 
-        Handlebars.registerHelper('accToLink', function(val) {
-            if (!val) return '';
-            return accToLink(val);
+        Handlebars.registerHelper('accToLink', function(section) {
+            if (!section) return '';
+            return section.accno ? accToLink(section.accno) : section.type ? section.type : 'Section-'+Metadata.getNextGeneratedId();
         });
 
         Handlebars.registerHelper('ifRenderable', function(arr,options) {
