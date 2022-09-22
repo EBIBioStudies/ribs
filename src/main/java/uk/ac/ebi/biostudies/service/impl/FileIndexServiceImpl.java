@@ -30,16 +30,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
 public class FileIndexServiceImpl implements FileIndexService {
     private static final Logger LOGGER = LogManager.getLogger(FileIndexServiceImpl.class.getName());
+    private static final int FILE_THREAD_COUNT = 8;
+    public final static ExecutorService FileListThreadPool = new ThreadPoolExecutor(FILE_THREAD_COUNT, FILE_THREAD_COUNT * 2,
+            60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(FILE_THREAD_COUNT * 3), new ThreadPoolExecutor.CallerRunsPolicy());
 
     @Autowired
     IndexConfig indexConfig;
@@ -47,7 +47,7 @@ public class FileIndexServiceImpl implements FileIndexService {
     @Autowired
     FileDownloadService fileDownloadService;
 
-    private static Document getFileDocument(String accession, List<String> attributeColumns, JsonNode fNode, JsonNode parent, Set<String> pureTextFileAttKeyValues) {
+    private static Document getFileDocument(String accession, List<String> attributeColumns, JsonNode fNode, JsonNode parent, Set<String> pureTextFileAttKeyValues) throws Throwable {
         Long size;
         String path;
         String name;
@@ -241,11 +241,11 @@ public class FileIndexServiceImpl implements FileIndexService {
     }
 
     private void indexLibraryFile(String accession, IndexWriter writer, AtomicLong counter, List<String> columns, Set<String> sectionsWithFiles, Set<String> fileKeyValuePureTextForSearch, JsonNode parent, IDownloadFile libraryFile) throws IOException {
+        List<Future> submittedTasks = new ArrayList<>();
         try (InputStreamReader inputStreamReader = new InputStreamReader(libraryFile.getInputStream(), StandardCharsets.UTF_8)) {
             JsonFactory factory = new JsonFactory();
             JsonParser parser = factory.createParser(inputStreamReader);
             JsonToken token = parser.nextToken();
-            ExecutorService executor = Executors.newFixedThreadPool(10);
             while (token != null && !JsonToken.START_ARRAY.equals(token)) {
                 token = parser.nextToken();
             }
@@ -261,35 +261,43 @@ public class FileIndexServiceImpl implements FileIndexService {
                 }
                 JsonNode singleFile = mapper.readTree(parser);
                 SingleFileParser paralelParser = new SingleFileParser(accession, writer, counter, columns, sectionsWithFiles, parent, singleFile, fileKeyValuePureTextForSearch);
-                executor.submit(paralelParser);
+                submittedTasks.add(FileListThreadPool.submit(paralelParser));
             }
-            try {
-                executor.shutdown();
-                executor.awaitTermination(30, TimeUnit.MINUTES);
-                LOGGER.info("indexing of multithread library file finished");
-            } catch (Throwable er) {
-                LOGGER.error("problem in library file multithred parser", er);
-            }
+            submittedTasks.stream().forEach(task -> {
+                try {
+                    task.get(30, TimeUnit.MINUTES);
+                } catch (Throwable exception) {
+                    LOGGER.error("problem in parsing the attached file of submission, accession id: {} file number: {} ", accession, counter.get(), exception);
+                }
+            });
         }
     }
 
     private void indexSingleFile(String accession, IndexWriter writer, AtomicLong counter, List<String> columns, Set<String> sectionsWithFiles, JsonNode parent, JsonNode fNode, Set<String> pureFileAttKeyValues) throws IOException {
-        Document doc = getFileDocument(accession, columns, fNode, parent, pureFileAttKeyValues);
-        long curCounter = counter.incrementAndGet();
-        writer.updateDocument(new Term(Constants.Fields.ID, accession + "-" + curCounter), doc);
-        if (curCounter % 10000 == 0)
-            LOGGER.info("library file parsed: {}", curCounter);
-        if (doc.get(Constants.File.SECTION) != null) {
-            IndexableField[] sectionFields = doc.getFields(Constants.File.SECTION);
-            //To take stored section field from lucene doc instead of indexedField for case sensivity difference in search and UI presentation
-            if (sectionFields.length > 0) {
-                for (IndexableField secField : sectionFields) {
-                    if (secField.fieldType().stored() && secField.stringValue() != null) {
-                        sectionsWithFiles.add(secField.stringValue());
-                        break;
+        String docId = "";
+        String fileName = "";
+        try {
+            Document doc = getFileDocument(accession, columns, fNode, parent, pureFileAttKeyValues);
+            long curCounter = counter.incrementAndGet();
+            docId = accession + "-" + curCounter;
+            fileName = doc.get(Constants.File.NAME);
+            writer.updateDocument(new Term(Constants.Fields.ID, docId), doc);
+            if (curCounter % 10000 == 0)
+                LOGGER.info("library file parsed: {}", curCounter);
+            if (doc.get(Constants.File.SECTION) != null) {
+                IndexableField[] sectionFields = doc.getFields(Constants.File.SECTION);
+                //To take stored section field from lucene doc instead of indexedField for case sensivity difference in search and UI presentation
+                if (sectionFields.length > 0) {
+                    for (IndexableField secField : sectionFields) {
+                        if (secField.fieldType().stored() && secField.stringValue() != null) {
+                            sectionsWithFiles.add(secField.stringValue());
+                            break;
+                        }
                     }
                 }
             }
+        } catch (Throwable ex) {
+            LOGGER.error("problem in parsing the attached file of submission, file id: {} file name: {} ", docId, fileName, ex);
         }
     }
 
