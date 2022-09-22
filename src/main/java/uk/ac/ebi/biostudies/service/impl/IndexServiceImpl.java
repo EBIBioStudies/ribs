@@ -128,7 +128,9 @@ public class IndexServiceImpl implements IndexService {
             indexManager.getIndexWriter().setLiveCommitData(commitData.entrySet());
 
             executorService.shutdown();
-            executorService.awaitTermination(5, TimeUnit.MINUTES);
+            executorService.awaitTermination(30, TimeUnit.MINUTES);
+            FileIndexServiceImpl.FileListThreadPool.shutdown();
+            FileIndexServiceImpl.FileListThreadPool.awaitTermination(30, TimeUnit.MINUTES);
             indexManager.commitTaxonomy();
             indexManager.getIndexWriter().commit();
             indexManager.getFileIndexWriter().commit();
@@ -340,14 +342,20 @@ public class IndexServiceImpl implements IndexService {
                         (String) valueMap.get(Fields.RELATIVE_PATH), json, indexManager.getFileIndexWriter(), columnSet, removeFileDocuments);
                 if (fileValueMap != null) {
                     valueMap.putAll(fileValueMap);
+                    appendFileAttsToContent(valueMap);
                 }
-
                 valueMap.put(Constants.File.FILE_ATTS, columnSet);
                 updateDocument(valueMap);
 
             } catch (Exception ex) {
                 logger.debug("problem in parser for parsing accession: {}!", accession, ex);
             }
+        }
+
+        private void appendFileAttsToContent(Map<String, Object> valueMap) {
+            StringBuilder content = new StringBuilder(valueMap.get(Fields.CONTENT).toString());
+            content.append(" ").append(valueMap.get(FILE_ATT_KEY_VALUE).toString());
+            valueMap.put(Fields.CONTENT, content.toString());
         }
 
         private void addCollectionToHierarchy(Map<String, Object> valueMap, String accession) {
