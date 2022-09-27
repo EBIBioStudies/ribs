@@ -39,10 +39,11 @@ var Metadata = (function (_self) {
 
             if (data.attributes) { //v1
                 data.attributes.forEach(function (v, i) {
-                    if(v.name.trim() === 'AttachTo' && v.value.toLowerCase()===collection.toLowerCase()) {
-                        isCollectionCorrect = true;
+                    if(v.name.trim() === 'AttachTo') {
+                        if (v.value.toLowerCase() === collection.toLowerCase())
+                            isCollectionCorrect = true;
+                        lastCollection = v.value;
                     }
-                    lastCollection = v.value;
                 })
                 // redirect if collection of study does not match collection in url
                 if (!isCollectionCorrect && lastCollection) {
