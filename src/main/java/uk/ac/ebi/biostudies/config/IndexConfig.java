@@ -83,6 +83,10 @@ public class IndexConfig implements InitializingBean, DisposableBean {
         return baseDirectory + "updates/" + Constants.SUBMISSIONS_JSON;
     }
 
+    public String getViewCountInputFile() {
+        return baseDirectory + "updates/" + Constants.VIEW_COUNT_CSV;
+    }
+
     public String getDefaultField() {
         return defaultField;
     }

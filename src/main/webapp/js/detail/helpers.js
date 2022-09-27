@@ -98,9 +98,9 @@ var Metadata = (function (_self) {
             return date == 'Invalid Date' ? "N/A" : date;
         });
 
-        Handlebars.registerHelper('accToLink', function(val) {
-            if (!val) return '';
-            return accToLink(val);
+        Handlebars.registerHelper('accToLink', function(section) {
+            if (!section) return '';
+            return section.accno ? accToLink(section.accno) : section.type ? section.type : 'Section-'+Metadata.getNextGeneratedId();
         });
 
         Handlebars.registerHelper('ifRenderable', function(arr,options) {
@@ -345,8 +345,11 @@ var Metadata = (function (_self) {
         Handlebars.registerHelper('renderPublication', function(study, options) {
             var subsections = study.subsections ? study.subsections : study.sections;
             if (!subsections) return '';
-            var pubs = subsections.filter(function (o) {
-                return o.type && o.type.toLowerCase() == 'publication';
+            var pubs = [];
+            subsections.flatMap( section=> section).forEach(function (o) {
+                if ( o instanceof Object && o.type && o.type.toLowerCase() === 'publication') {
+                    pubs.push(o);
+                }
             });
             if (!pubs || pubs.length < 1) return null;
             var template = Handlebars.compile($('script#publication-template').html());

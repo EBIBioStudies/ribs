@@ -6,7 +6,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -65,7 +64,10 @@ public class IndexTest extends WebDriverTest {
     public void test3_updateDocument() throws Throwable{
         doReturn("src/test/resources/updates/"+ Constants.SUBMISSIONS_JSON).when(indexConfigMock).getStudiesInputFile();
         webDriver.navigate().to(integrationTestProperties.getBaseUrl(randomPort)+"api/v1/index/reload/smallJson.json");
-        Thread.sleep(2000);
+        do {
+            Thread.sleep(2000);
+            webDriver.navigate().to(integrationTestProperties.getBaseUrl(randomPort)+"api/v1/index/status");
+        } while (!webDriver.getPageSource().contains("{\"message\":\"UP\"}"));
         Document noDoc = searchService.getDocumentByAccession("S-EPMC3343805", null);
         assertNotNull(noDoc);
     }
@@ -76,7 +78,10 @@ public class IndexTest extends WebDriverTest {
         Document deletDoc = searchService.getDocumentByAccession("S-EPMC3343805", null);
         assertNotNull(deletDoc);
         webDriver.navigate().to(integrationTestProperties.getBaseUrl(randomPort)+"api/v1/index/delete/S-EPMC3343805");
-        WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        do {
+            Thread.sleep(2000);
+            webDriver.navigate().to(integrationTestProperties.getBaseUrl(randomPort)+"api/v1/index/status");
+        } while (!webDriver.getPageSource().contains("{\"message\":\"UP\"}"));
         deletDoc = searchService.getDocumentByAccession("S-EPMC3343805", null);
         assertNull(deletDoc);
     }

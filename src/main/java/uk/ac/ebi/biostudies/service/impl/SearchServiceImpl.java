@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -429,5 +430,8 @@ public class SearchServiceImpl implements SearchService {
         }
 
         return responseString;
+    }
+    public boolean isDocumentInCollection(Document submissionDoc, String collection) {
+        return StringUtils.isEmpty(collection) || submissionDoc.get("collection").contains(collection.toLowerCase());
     }
 }

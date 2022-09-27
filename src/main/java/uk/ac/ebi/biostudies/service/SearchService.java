@@ -23,5 +23,6 @@ public interface SearchService {
     Document getDocumentByAccession(String accession, String secretKey) throws SubmissionNotAccessibleException;
     boolean isDocumentPresent(String accession);
     String getLatestStudies() throws Exception;
+    boolean isDocumentInCollection(Document submissionDoc, String collection);
 }
 

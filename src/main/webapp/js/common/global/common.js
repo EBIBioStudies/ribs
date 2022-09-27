@@ -23,7 +23,7 @@ $(function() {
             collectionObj[this.name.toLowerCase()] = this.value
         })
         var html = template(collectionObj);
-        if ($.inArray(collection.toLowerCase(), specialCollections) < 0) {
+        if (collection.toLowerCase()!='bioimages') {
             $('#collection-banner').html(html);
         }
         // add collection search checkbox
@@ -130,6 +130,17 @@ function handleBioImagesUI() {
         '                            </ul>\n' +
         '                        </li>');
     helpmenu.replaceWith(newhelpmenu);
+    const rembimenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="REMBI Help" data-is-click="false">\n' +
+        '                            <a href="#" role="menuitem">REMBI Help</a>\n' +
+        '                            <ul class="menu submenu is-dropdown-submenu first-sub vertical" data-submenu="" role="menubar" style="">\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-help-overview" role="menuitem">REMBI Overview</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-help-lab/" role="menuitem">REMBI Lab Guidance</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-help-examples/" role="menuitem">REMBI Study Examples</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-help-spreadsheets/" role="menuitem">REMBI Spreadsheets</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-model-reference/" role="menuitem">REMBI Model Reference</a></li>\n' +
+        '                            </ul>\n' +
+        '                        </li>');
+    newhelpmenu.after(rembimenu);
     const about = $('.menu.float-left li:contains("About")')
     const newaboutmenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="About us" data-is-click="false">\n' +
         '                            <a href="#" role="menuitem">About us</a>\n' +
@@ -148,8 +159,8 @@ function handleBioImagesUI() {
 }
 
 function handleArrayExpressUI() {
-    $('#local-title').html('<h1><img src="' + contextPath + '/images/collections/arrayexpress/ae-logo-64.svg"></img><span style="font-weight:lighter;padding-left: 4pt;vertical-align:bottom;">ArrayExpress</span></h1>');
-    $('#masthead').css("background-color","#5E8CC0");
+    //$('#local-title').html('<h1><img src="' + contextPath + '/images/collections/arrayexpress/ae-logo-64.svg"></img><span style="font-weight:lighter;padding-left: 4pt;vertical-align:bottom;">ArrayExpress</span></h1>');
+    //$('#masthead').css("background-color","#5E8CC0");
     $('#query').attr('placeholder','Search ArrayExpress');
     $('.sample-query').first().text('E-MEXP-31');
     $('.sample-query').first().next().text('cancer');

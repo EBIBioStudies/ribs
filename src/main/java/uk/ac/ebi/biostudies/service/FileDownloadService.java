@@ -9,5 +9,5 @@ import java.io.FileNotFoundException;
 
 public interface FileDownloadService {
     IDownloadFile getDownloadFile(String accession, String relativePath, String requestedFilePath, Constants.File.StorageMode storageMode) throws FileNotFoundException;
-    void sendFile(HttpServletRequest request, HttpServletResponse response) throws Exception;
+    void sendFile(String collection, HttpServletRequest request, HttpServletResponse response) throws Exception;
 }
