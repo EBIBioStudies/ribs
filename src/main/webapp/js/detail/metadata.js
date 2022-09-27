@@ -34,18 +34,28 @@ var Metadata = (function (_self) {
             data.section.accno = data.accno;
             data.section.accessTags = data.accessTags;
             var title = data.accno, releaseDate = '';
+            var isCollectionCorrect = false;
+            var lastCollection;
+
             if (data.attributes) { //v1
-                data.attributes.filter(function (v, i) {
-                    if(v.name.trim() == 'AttachTo')
-                        collection=v.value;
-                });
+                data.attributes.forEach(function (v, i) {
+                    if(v.name.trim() === 'AttachTo' && v.value.toLowerCase()===collection.toLowerCase()) {
+                        isCollectionCorrect = true;
+                    }
+                    lastCollection = v.value;
+                })
+                // redirect if collection of study does not match collection in url
+                if (!isCollectionCorrect && lastCollection) {
+                    location.href= contextPath + '/'+lastCollection.toLowerCase() +'/studies/' + accession ;
+                    return;
+                }
                 if (location.href.toLowerCase().indexOf(collection.toLowerCase())<0)
                     handleProjectSpecificUI();
                 title = data.attributes.filter(function (v, i) {
-                    return v.name.trim() == 'Title';
+                    return v.name.trim() === 'Title';
                 });
                 data.attributes.forEach(function (v, i) {
-                    if (v.name.trim() == 'ReleaseDate') {
+                    if (v.name.trim() === 'ReleaseDate') {
                         releaseDate = v.value;
                     }
                 });
@@ -58,7 +68,7 @@ var Metadata = (function (_self) {
             if (data.section ) {
                 if (!data.section.attributes) data.section.attributes = [];
                 if (!data.section.attributes.filter(function (v, i) {
-                    return v.name.trim() == 'Title';
+                    return v.name.trim() === 'Title';
                 }).length) {
                     data.section.attributes.push({name: 'Title', value: title[0]?title[0].value:""});
                 }

@@ -82,13 +82,15 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 || Arrays.binarySearch(matchValues, "*") > -1;
     }
 
-    public void sendFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void sendFile(String collection, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         request.setCharacterEncoding("UTF-8");
         IDownloadFile downloadFile = null;
         try {
             List<String> requestArgs = new ArrayList<>(Arrays.asList(
-                    request.getRequestURI().replaceAll(request.getContextPath() + "/files/", "")
+                    request.getRequestURI().replaceAll(request.getContextPath()
+                                    + (StringUtils.isEmpty(collection) ? "" : "/"+collection )
+                                    + "/files/", "")
                             .split("/")));
 
             String accession = requestArgs.remove(0);
@@ -110,6 +112,10 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             }
 
             Document document = searchService.getDocumentByAccession(accession, key);
+
+            if (!searchService.isDocumentInCollection(document, collection)) {
+                throw new SubmissionNotAccessibleException();
+            }
             if (document == null) {
                 throw new FileNotFoundException("File does not exist or user does not have the rights to download it.");
             }

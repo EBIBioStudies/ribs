@@ -46,7 +46,7 @@ public class Study {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("{\"errorMessage\":\"Study not accessible\"}");
         }
-        if (document == null) {
+        if (document == null ) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .contentType(MediaType.APPLICATION_JSON).body("{\"errorMessage\":\"Study not found\"}");
         }

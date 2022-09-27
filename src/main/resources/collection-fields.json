@@ -70,6 +70,7 @@
     { "name": "sections_with_files", "title": "", "fieldType": "untokenized_string", "analyzer": "AccessFieldAnalyzer", "parser": "NullParser"},
     { "name": "link_type", "title": "Link Type", "fieldType": "tokenized_string", "analyzer": "ExperimentTextAnalyzer", "jsonPath": "$..links..attributes[?(@.name=='Type')].value OR $..links[?(@.extType=='link')]..attributes[?(@.name=='Type')].value", "parser": "JPathListParser"},
     { "name": "link_value", "title": "Link Value", "fieldType": "tokenized_string", "analyzer": "ExperimentTextAnalyzer", "jsonPath": "$..links..url OR $..links[?(@.extType=='link')].url", "parser": "JPathListParser"},
+    { "name": "collection", "title": "Collection", "fieldType": "untokenized_string", "jsonPath": "$.collections..accNo", "parser": "JPathListParser", "toLowerCase": "true"},
     { "name": "facet.collection", "title": "Collection", "fieldType": "facet", "jsonPath": "$.projects..accNo OR $.collections..accNo OR $.attributes[?(@.name==\"AttachTo\")].value", "parser": "JPathListParser", "toLowerCase": "true", "defaultValue": "None"},
     { "name": "facet.released_year", "title": "Released", "fieldType": "facet", "multiValued": false, "parser": "NullParser"},
     { "name": "facet.modification_year", "title": "Created/Modified", "fieldType": "facet", "multiValued": false, "private": true, "parser": "NullParser"},
