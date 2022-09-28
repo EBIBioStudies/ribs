@@ -128,9 +128,9 @@ public class IndexServiceImpl implements IndexService {
             indexManager.getIndexWriter().setLiveCommitData(commitData.entrySet());
 
             executorService.shutdown();
-            executorService.awaitTermination(30, TimeUnit.MINUTES);
+            executorService.awaitTermination(5, TimeUnit.HOURS);
             FileIndexServiceImpl.FileListThreadPool.shutdown();
-            FileIndexServiceImpl.FileListThreadPool.awaitTermination(30, TimeUnit.MINUTES);
+            FileIndexServiceImpl.FileListThreadPool.awaitTermination(5, TimeUnit.HOURS);
             indexManager.commitTaxonomy();
             indexManager.getIndexWriter().commit();
             indexManager.getFileIndexWriter().commit();

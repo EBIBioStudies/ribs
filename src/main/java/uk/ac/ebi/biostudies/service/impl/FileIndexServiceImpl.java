@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @Service
 public class FileIndexServiceImpl implements FileIndexService {
     private static final Logger LOGGER = LogManager.getLogger(FileIndexServiceImpl.class.getName());
-    private static final int FILE_THREAD_COUNT = 8;
+    private static final int FILE_THREAD_COUNT = 2;
     public final static ExecutorService FileListThreadPool = new ThreadPoolExecutor(FILE_THREAD_COUNT, FILE_THREAD_COUNT * 2,
             60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(FILE_THREAD_COUNT * 3), new ThreadPoolExecutor.CallerRunsPolicy());
 

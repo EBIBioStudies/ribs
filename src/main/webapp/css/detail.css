@@ -120,8 +120,9 @@ a.reference:hover {
 #right-column-expander, .table-expander {
     float:right;
     cursor: pointer;
-    border: 0px;
+    border: 0;
     padding-right: 3pt;
+    font-size: 12pt;
 }
 
 

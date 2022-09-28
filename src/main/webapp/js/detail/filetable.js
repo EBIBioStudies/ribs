@@ -152,12 +152,12 @@ var FileTable = (function (_self) {
         $('#file-list_filter').after('<span id="advanced-search" title="Search in columns"><input ' +
             'style=" margin:0;width:0; height:0; opacity: 0" type="checkbox" id="advsearchinput"' +
             'title="Advanced Search"></input>' +
-            '<i id="advanced-search-icon" class="far fa-plus-square"></i>' +
+            '<i id="advanced-search-icon" class="far fa-square-plus"></i>' +
             '</span>');
 
         $("#advanced-search").click(function () {
-            $('#advanced-search-icon').toggleClass('fa-plus-square').toggleClass('fa-minus-square');
-            if($('#advanced-search-icon').hasClass('fa-minus-square')) {
+            $('#advanced-search-icon').toggleClass('fa-square-plus').toggleClass('fa-square-minus').addClass('fa-regular');
+            if($('#advanced-search-icon').hasClass('fa-square-minus')) {
                 $(".col-advsearch-input").show();
                 $('#file-list_filter input[type=search]').val('').prop('disabled','disabled');
             } else {
