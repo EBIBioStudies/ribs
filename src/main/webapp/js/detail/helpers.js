@@ -398,7 +398,7 @@ var Metadata = (function (_self) {
         Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
         try{
             if(!v1 || !v2)
-                return options.inverse(this);
+                return (v1 === v2) ? options.fn(this) : options.inverse(this);
             switch (operator) {
                 case '==':
                     return (v1 == v2) ? options.fn(this) : options.inverse(this);
