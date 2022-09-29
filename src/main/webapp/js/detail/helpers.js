@@ -396,7 +396,9 @@ var Metadata = (function (_self) {
         Handlebars.registerHelper('makeAnchor', function makeAnchor(v) { return '#'+v} );
 
         Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
-
+        try{
+            if(!v1 || !v2)
+                return (v1 === v2) ? options.fn(this) : options.inverse(this);
             switch (operator) {
                 case '==':
                     return (v1 == v2) ? options.fn(this) : options.inverse(this);
@@ -419,18 +421,26 @@ var Metadata = (function (_self) {
                 case '||':
                     return (v1 || v2) ? options.fn(this) : options.inverse(this);
                 case 'contains':
-                    return $.inArray(v2, v1)>=0 ? options.fn(this) : options.inverse(this);
+                    return $.inArray(v2, v1) >= 0 ? options.fn(this) : options.inverse(this);
                 case 'notin':
-                    return $.inArray(v1, eval(v2))<0 ? options.fn(this) : options.inverse(this);
+                    return $.inArray(v1, eval(v2)) < 0 ? options.fn(this) : options.inverse(this);
                 case 'notincaseignored':
-                    return eval(v2).filter( (v) => { return v.toLowerCase()==v2.toLowerCase() }).length>0 ? options.fn(this) : options.inverse(this);
+                    return eval(v2).filter((v) => {
+                        return v.toLowerCase() == v2.toLowerCase()
+                    }).length > 0 ? options.fn(this) : options.inverse(this);
                 case 'haslength':
                     return v1.length == v2 ? options.fn(this) : options.inverse(this);
                 case 'hasname':
-                    return v1.filter( (v) => { return v.name.toLowerCase()==v2.toLowerCase() }).length>0  ? options.fn(this) : options.inverse(this);
+                    return v1.filter((v) => {
+                        return v.name.toLowerCase() == v2.toLowerCase()
+                    }).length > 0 ? options.fn(this) : options.inverse(this);
                 default:
                     return options.inverse(this);
             }
+        }catch(err){
+            console.log(err);
+        }
+
         });
 
     };

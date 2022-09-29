@@ -245,6 +245,7 @@ var FileTable = (function (_self) {
                             + ' title="' + data
                             + '" href="'
                             + window.contextPath +'/files/'+acc+'/' + unescape(encodeURIComponent(row.path)).replaceAll('#','%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
+                                .replaceAll("[", "%5B").replaceAll("]", "%5D")
                             + (params.key ? '?key='+params.key : '')
                             + '" target="_blank" style="max-width: 500px;">'
                             + data +'</a>';
