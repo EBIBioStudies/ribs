@@ -63,7 +63,7 @@ public class FileDownload {
         String storageModeString = submissionDoc.get(Constants.Fields.STORAGE_MODE);
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
 
-        if (searchService.isDocumentInCollection(submissionDoc, collection)) {
+        if (!searchService.isDocumentInCollection(submissionDoc, collection)) {
             throw new SubmissionNotAccessibleException();
         }
 
