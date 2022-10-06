@@ -59,10 +59,9 @@
             <h5 class="icon icon-generic" data-icon="i">What data can be submitted?</h5>
             <p class="justify">BioStudies accepts all biological data that does not fit within the traditional resources
                 of the EBI.
-            <div class="callout warning">Please note - although <a href="https://doi.org/10.1093/nar/gkaa1062">ArrayExpress
-                is in the process of being migrated to
-                BioStudies</a>, all gene expression and other functional genomics data should still be submitted
-                using the <a href="https://www.ebi.ac.uk/fg/annotare/">Annotare tool</a>.
+            <div class="callout warning">Please note - All gene expression and other functional genomics data should be
+                submitted to the <a href="https://www.ebi.ac.uk/biostudies/arrayexpress">ArrayExpress collection</a>
+                using <a href="https://www.ebi.ac.uk/fg/annotare/">Annotare</a>.
             </div>
             </p>
 

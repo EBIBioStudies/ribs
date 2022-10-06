@@ -32,19 +32,15 @@
         </div>
         <div class="row">
             <p>
-                ArrayExpress Archive of Functional Genomics Data stores data from high-throughput functional genomics
-                experiments, and provides these data for reuse to the research community. To streamline the data
-                management
-                systems and data representation at EMBL-EBI, we will start hosting data currently served from
-                ArrayExpress
-                in BioStudies under the ArrayExpress collection. This process will be largely seamless for our data
-                submitters and users. Submissions of the functional genomics data will continue via the
-                <a href="/fg/annotare">Annotare submission tool</a>, but data access will be provided through
-                BioStudies. The existing accessions
-                will
-                be maintained, and ArrayExpress URLs will be redirected to BioStudies.
+                ArrayExpress, the functional genomics collection, stores data from high-throughput functional genomics
+                experiments, and provides data for reuse to the research community. In line with community
+                guidelines, a study typically contains metadata such as detailed sample annotations, protocols,
+                processed data and raw data. Raw sequence reads from high-throughput sequencing studies are brokered to
+                the European Nucleotide Archive (ENA), and links are provided to download the sequence reads from ENA.
+                Data can be submitted to the ArrayExpress collection through its dedicated submission tool,
+                Annotare. For more information about submissions, see our <a
+                    href="https://www.ebi.ac.uk/fg/annotare/help/index.html">submission guide</a>.
             </p>
-            <p>For more details, please <a href="${contextPath}/arrayexpress-in-biostudies">click here.</a></p>
         </div>
         <div class="row" style="text-align: center; display: block; font-size: 18pt; margin-bottom: 2em">
             <section class="columns medium-3">&nbsp;</section>

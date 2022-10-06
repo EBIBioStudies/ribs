@@ -19,15 +19,11 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <spring:eval expression="@externalServicesConfig.getAnalyticsCode()"/>
-    <!-- shared variables -->
-    <script>
-        var contextPath = '${contextPath}';
-        var collection = '${collection}';
-        if (collection==='undefined') collection = undefined;
-    </script>
     <meta charset="utf-8">
     <title>BioStudies &lt; The European Bioinformatics Institute &lt; EMBL-EBI</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BioStudies &lt; The European Bioinformatics Institute &lt; EMBL-EBI" />
+    <meta property="og:description" content="BioStudies – one package for all the data supporting a study" />
     <meta name="description" content="BioStudies – one package for all the data supporting a study" />
     <meta name="keywords" content="bioinformatics, europe, institute, biostudies" />
     <meta name="author" content="BioStudies" />
@@ -36,6 +32,14 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#75C8EC" /> <!-- Android Chrome mobile browser tab color -->
     <meta http-equiv="pragma" content="no-cache" />
+
+    <spring:eval expression="@externalServicesConfig.getAnalyticsCode()"/>
+    <!-- shared variables -->
+    <script>
+        var contextPath = '${contextPath}';
+        var collection = '${collection}';
+        if (collection==='undefined') collection = undefined;
+    </script>
 
     <!-- If you link to any other sites frequently, consider optimising performance with a DNS prefetch -->
     <link rel="dns-prefetch" href="//embl.de" />
