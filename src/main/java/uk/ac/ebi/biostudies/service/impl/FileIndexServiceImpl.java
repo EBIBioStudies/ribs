@@ -263,11 +263,13 @@ public class FileIndexServiceImpl implements FileIndexService {
                 SingleFileParser paralelParser = new SingleFileParser(accession, writer, counter, columns, sectionsWithFiles, parent, singleFile, fileKeyValuePureTextForSearch);
                 submittedTasks.add(FileListThreadPool.submit(paralelParser));
             }
+
             submittedTasks.stream().forEach(task -> {
                 try {
                     task.get(30, TimeUnit.MINUTES);
                 } catch (Throwable exception) {
                     LOGGER.error("problem in parsing the attached file of submission, accession id: {} file number: {} ", accession, counter.get(), exception);
+                    task.cancel(true);
                 }
             });
         }

@@ -10,6 +10,16 @@
 <t:generic>
         <jsp:attribute name="head">
             <jwr:script src="/js/common.min.js"/>
+            <style>
+                .imglink {
+                    color: #5E8CC0 !important;
+                    border: 0;
+                    outline: none;
+                }
+                .imglink a:focus-visible {
+                    outline: none;
+                }
+            </style>
         </jsp:attribute>
     <jsp:attribute name="breadcrumbs">
             <ul class="breadcrumbs">
@@ -20,11 +30,6 @@
             </ul>
         </jsp:attribute>
     <jsp:body>
-        <!-- div class="row">
-            <div class="callout warning">This the BioStudies ArrayExpress collection. <a
-                    href="https://www.ebi.ac.uk/arrayexpress">Click here for the old ArrayExpress site.</a></div>
-        </div-->
-
 
         <div class="row">
             <h3>ArrayExpress - Functional Genomics Data
@@ -44,15 +49,18 @@
         </div>
         <div class="row" style="text-align: center; display: block; font-size: 18pt; margin-bottom: 2em">
             <section class="columns medium-3">&nbsp;</section>
-            <section class="columns medium-3"><a
-                    style="color: #5E8CC0 !important; border: 0" href="${contextPath}/arrayexpress/studies">
-                <img src="${contextPath}/images/collections/arrayexpress/search.svg"><br/> Browse
-                ArrayExpress</a></section>
-            <section class="columns medium-3"><a
-                    style="color: #5E8CC0 !important; border: 0" href="/fg/annotare">
-                <img width="50" src="${contextPath}/images/collections/arrayexpress/annotare-logo-64.svg"><br/> Submit an
-                Experiment
-            </a></section>
+            <section class="columns medium-3">
+                <a class="imglink" href="${contextPath}/arrayexpress/studies">
+                    <img src="${contextPath}/images/collections/arrayexpress/search.svg"><br/>
+                    Browse ArrayExpress
+                </a>
+            </section>
+            <section class="columns medium-3">
+                <a class="imglink" href="/fg/annotare">
+                    <img width="50" src="${contextPath}/images/collections/arrayexpress/annotare-logo-64.svg"><br/>
+                    Submit an Experiment
+                </a>
+            </section>
             <section class="columns medium-3">&nbsp;</section>
         </div>
         <section class="columns medium-4"><h4><i class="icon icon-generic" data-icon="L"></i> Links</h4>
