@@ -22,7 +22,7 @@ var Metadata = (function (_self) {
             if (!data.accno && data.submissions) data = data.submissions[0]; // for v0, when everything was a submission
             // redirect to collection page if accession is a collection
             if (data.section.type.toLowerCase()==='collection' || data.section.type.toLowerCase()==='project') {
-                location.href= contextPath + '/'+ accession + '/studies';
+                location.href= contextPath + '/'+ accession + '/studies' + (params.key ? '?key='+params.key : '');
                 return;
             }
             if (params.key) {
@@ -47,7 +47,7 @@ var Metadata = (function (_self) {
                 })
                 // redirect if collection of study does not match collection in url
                 if (!isCollectionCorrect && lastCollection) {
-                    location.href= contextPath + '/'+lastCollection.toLowerCase() +'/studies/' + accession ;
+                    location.href= contextPath + '/'+lastCollection.toLowerCase() +'/studies/' + accession + (params.key ? '?key='+params.key : '');
                     return;
                 }
                 if (location.href.toLowerCase().indexOf(collection.toLowerCase())<0)

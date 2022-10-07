@@ -4,7 +4,7 @@
             {{#if URLs}}
                     <a href="{{URLs.0.url}}" target="_blank">{{valueWithName 'title' attributes}}</a>
                 {{else}}
-                {{title}}
+                {{valueWithName 'title' attributes}}
             {{/if}}
         {{/ifCond}}
         {{#ifCond attributes 'hasname' 'journal'}} <i>{{valueWithName 'journal' attributes}}</i>.{{/ifCond}}
