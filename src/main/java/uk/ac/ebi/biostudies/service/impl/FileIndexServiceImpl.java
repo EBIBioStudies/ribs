@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 public class FileIndexServiceImpl implements FileIndexService {
     private static final Logger LOGGER = LogManager.getLogger(FileIndexServiceImpl.class.getName());
     private static final int FILE_THREAD_COUNT = 2;
-    public final static ExecutorService FileListThreadPool = new ThreadPoolExecutor(FILE_THREAD_COUNT, FILE_THREAD_COUNT * 2,
+    public static ExecutorService FileListThreadPool = new ThreadPoolExecutor(FILE_THREAD_COUNT, FILE_THREAD_COUNT * 2,
             60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(FILE_THREAD_COUNT * 3), new ThreadPoolExecutor.CallerRunsPolicy());
 
     @Autowired
@@ -46,6 +46,11 @@ public class FileIndexServiceImpl implements FileIndexService {
 
     @Autowired
     FileDownloadService fileDownloadService;
+
+    public static void renewFileThreadPool(){
+        FileListThreadPool = new ThreadPoolExecutor(FILE_THREAD_COUNT, FILE_THREAD_COUNT * 2,
+                60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(FILE_THREAD_COUNT * 3), new ThreadPoolExecutor.CallerRunsPolicy());
+    }
 
     private static Document getFileDocument(String accession, List<String> attributeColumns, JsonNode fNode, JsonNode parent, Set<String> pureTextFileAttKeyValues) throws Throwable {
         Long size;
