@@ -36,34 +36,12 @@ public class Study {
 
     @RequestMapping(value = "/studies/{accession:.+}", produces = {JSON_UNICODE_MEDIA_TYPE}, method = RequestMethod.GET)
     public ResponseEntity<String> getStudy(@PathVariable("accession") String accession, @RequestParam(value = "key", required = false) String seckey) {
-        if ("null".equalsIgnoreCase(seckey)) {
-            seckey = null;
-        }
-        Document document = null;
-        try {
-            document = searchService.getDocumentByAccession(accession, seckey);
-        } catch (SubmissionNotAccessibleException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("{\"errorMessage\":\"Study not accessible\"}");
-        }
-        if (document == null ) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .contentType(MediaType.APPLICATION_JSON).body("{\"errorMessage\":\"Study not found\"}");
-        }
-        accession = document.get(Constants.Fields.ACCESSION);
-        String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
-        String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
-        Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
-        InputStreamResource result;
-        try {
-            result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, seckey != null, storageMode);
-        } catch (IOException e) {
-            logger.error(e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .contentType(MediaType.APPLICATION_JSON).body("{\"errorMessage\":\"Study not found\"}");
-        }
+        return prepareResponse(accession, seckey, Constants.STUDY);
+    }
 
-        return new ResponseEntity(result, HttpStatus.OK);
+    @RequestMapping(value = "/arrays/{accession:.+}", produces = {JSON_UNICODE_MEDIA_TYPE}, method = RequestMethod.GET)
+    public ResponseEntity<String> getArray(@PathVariable("accession") String accession, @RequestParam(value = "key", required = false) String seckey) {
+        return prepareResponse(accession, seckey, Constants.ARRAY);
     }
 
     @RequestMapping(value = "/studies/{accession:.+}/similar", produces = {JSON_UNICODE_MEDIA_TYPE}, method = RequestMethod.GET)
@@ -102,6 +80,36 @@ public class Study {
                     .body("{\"errorMessage\":\"Study not accessible\"}");
         }
 
+    }
+
+    private ResponseEntity<String> prepareResponse(String accession, String seckey, String type){
+        if ("null".equalsIgnoreCase(seckey)) {
+            seckey = null;
+        }
+        Document document = null;
+        try {
+            document = searchService.getDocumentByAccessionAndType(accession, seckey, type);
+        } catch (SubmissionNotAccessibleException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("{\"errorMessage\":\"Study not accessible\"}");
+        }
+        if (document == null ) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON).body("{\"errorMessage\":\"Study not found\"}");
+        }
+        accession = document.get(Constants.Fields.ACCESSION);
+        String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
+        String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
+        Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
+        InputStreamResource result;
+        try {
+            result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, seckey != null, storageMode);
+        } catch (IOException e) {
+            logger.error(e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON).body("{\"errorMessage\":\"Study not found\"}");
+        }
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
 

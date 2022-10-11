@@ -17,6 +17,8 @@ public interface Constants {
     String LATEST_INDEX_SYNC_TIME_FILE = "latest-index-sync-time.txt";
     String VIEW_COUNT_CSV = "submission_stats.csv";
     String FILE_ATT_KEY_VALUE = "fileAttKeyValue";
+    String STUDY = "study";
+    String ARRAY = "array";
 
     int TOP_FACET_COUNT = 10;
 

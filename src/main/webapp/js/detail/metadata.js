@@ -16,7 +16,7 @@ var Metadata = (function (_self) {
         var slashOffset = window.location.pathname[window.location.pathname.length-1]==='/';
         var parts =  window.location.pathname.split('/');
         var accession = parts[parts.length - 1 - slashOffset];
-        var url = contextPath + '/api/v1/studies/' + accession;
+        var url = contextPath + '/api/v1/'+(accession.startsWith("A-")?'arrays/':'studies/') + accession;
         var params = getParams();
         $.getJSON(url, params, function (data) {
             if (!data.accno && data.submissions) data = data.submissions[0]; // for v0, when everything was a submission

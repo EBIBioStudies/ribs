@@ -21,6 +21,7 @@ public interface SearchService {
     InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode) throws IOException;
     ObjectNode getSimilarStudies(String accession, String secretKey) throws Throwable;
     Document getDocumentByAccession(String accession, String secretKey) throws SubmissionNotAccessibleException;
+    Document getDocumentByAccessionAndType(String accession, String secretKey, String type) throws SubmissionNotAccessibleException;
     boolean isDocumentPresent(String accession);
     String getLatestStudies() throws Exception;
     boolean isDocumentInCollection(Document submissionDoc, String collection);

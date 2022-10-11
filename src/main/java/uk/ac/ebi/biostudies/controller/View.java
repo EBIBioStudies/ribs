@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
 @RestController
 public class View {
     private final Logger logger = LogManager.getLogger(View.class.getName());
@@ -51,16 +53,24 @@ public class View {
     @RequestMapping(value = {
             "/studies/{accession}",
             "/studies/{accession}/",
+            "/arrays/{accession}",
+            "/arrays/{accession}/",
             "/{collection}/studies/{accession}",
-            "/{collection}/studies/{accession}/"
+            "/{collection}/studies/{accession}/",
+            "/{collection}/arrays/{accession}/",
+            "/{collection}/arrays/{accession}"
     }, method = RequestMethod.GET)
     public ModelAndView detail(@PathVariable(required = false) String collection,
-                               @PathVariable(value = "accession") String accession) throws Exception {
+                               @PathVariable(value = "accession") String accession, HttpServletRequest request) throws Exception {
         var mav = new ModelAndView();
+        String type = "studies";
         boolean isArrayExpressStudy = collection==null && (accession.toUpperCase().startsWith("E-") || accession.toUpperCase().startsWith("A-"));
+        type = accession.toUpperCase().startsWith("A-") ? "arrays":"studies";
+        if(type.equals("arrays")&& request.getRequestURL().toString().contains("/studies"))
+            throw new FileNotFoundException();
         mav.addObject("collection", collection);
         mav.addObject("accession", accession);
-        mav.setViewName( isArrayExpressStudy ? String.format("redirect:/arrayexpress/studies/{accession}", accession) : "detail");
+        mav.setViewName( isArrayExpressStudy ? String.format("redirect:/arrayexpress/"+type+"/{accession}", accession) : "detail");
         return mav;
     }
 

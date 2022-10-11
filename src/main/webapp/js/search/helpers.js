@@ -112,6 +112,10 @@ var Searcher = (function (_self) {
             return v.replaceAll(src, dst);
         });
 
+        Handlebars.registerHelper('adds', function(inp) {
+            return (inp=='study')?'studies':(inp+'s');
+        });
+
         Handlebars.registerHelper('printDate', function(v) {
             return getDateFromEpochTime(v);
         });

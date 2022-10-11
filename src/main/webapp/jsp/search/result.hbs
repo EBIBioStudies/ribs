@@ -25,15 +25,15 @@
         <div class="title" data-type="{{type}}" data-accession="{{accession}}">
             {{#if query}}
                 {{#if collection}}
-                <a href="${contextPath}/{{collection}}/studies/{{accession}}?query={{query}}">{{title}}</a>
+                <a href="${contextPath}/{{collection}}/{{adds type}}/{{accession}}?query={{query}}">{{title}}</a>
                 {{else}}
-                <a href="${contextPath}/studies/{{accession}}?query={{query}}">{{title}}</a>
+                <a href="${contextPath}/{{adds type}}/{{accession}}?query={{query}}">{{title}}</a>
                 {{/if}}
             {{else}}
                 {{#if collection}}
-                <a href="${contextPath}/{{collection}}/studies/{{accession}}">{{title}}</a>
+                <a href="${contextPath}/{{collection}}/{{adds type}}/{{accession}}">{{title}}</a>
                 {{else}}
-                <a href="${contextPath}/studies/{{accession}}">{{title}}</a>
+                <a href="${contextPath}/{{adds type}}/{{accession}}">{{title}}</a>
                 {{/if}}
             {{/if}}
         </div>
