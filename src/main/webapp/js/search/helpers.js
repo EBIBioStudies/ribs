@@ -112,7 +112,7 @@ var Searcher = (function (_self) {
             return v.replaceAll(src, dst);
         });
 
-        Handlebars.registerHelper('adds', function(inp) {
+        Handlebars.registerHelper('pluralise', function(inp) {
             return (inp=='study')?'studies':(inp+'s');
         });
 

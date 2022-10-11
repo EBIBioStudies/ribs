@@ -2,15 +2,12 @@ package uk.ac.ebi.biostudies.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
+
 @RestController
 public class View {
     private final Logger logger = LogManager.getLogger(View.class.getName());
@@ -61,7 +58,9 @@ public class View {
             "/{collection}/arrays/{accession}"
     }, method = RequestMethod.GET)
     public ModelAndView detail(@PathVariable(required = false) String collection,
-                               @PathVariable(value = "accession") String accession, HttpServletRequest request) throws Exception {
+                               @PathVariable(value = "accession") String accession,
+                               @RequestParam(value = "key", required = false) String key,
+                               HttpServletRequest request) throws Exception {
         var mav = new ModelAndView();
         boolean isArrayExpressStudy = collection==null && (accession.toUpperCase().startsWith("E-") || accession.toUpperCase().startsWith("A-"));
         String type = accession.toUpperCase().startsWith("A-") ? "arrays":"studies";
@@ -69,8 +68,9 @@ public class View {
             throw new FileNotFoundException();
         mav.addObject("collection", collection);
         mav.addObject("accession", accession);
-        mav.setViewName( isArrayExpressStudy ? String.format("redirect:/arrayexpress/"+type+"/{accession}", accession) : "detail");
-        return mav;
+        String viewName = isArrayExpressStudy ? String.format("redirect:/arrayexpress/studies/{accession}"
+                + (key != null ? "?key=" + key : ""), accession) : "detail";
+        mav.setViewName(viewName);        return mav;
     }
 
     @RequestMapping(value = {
