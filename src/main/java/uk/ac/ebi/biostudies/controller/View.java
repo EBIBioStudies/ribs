@@ -63,9 +63,8 @@ public class View {
     public ModelAndView detail(@PathVariable(required = false) String collection,
                                @PathVariable(value = "accession") String accession, HttpServletRequest request) throws Exception {
         var mav = new ModelAndView();
-        String type = "studies";
         boolean isArrayExpressStudy = collection==null && (accession.toUpperCase().startsWith("E-") || accession.toUpperCase().startsWith("A-"));
-        type = accession.toUpperCase().startsWith("A-") ? "arrays":"studies";
+        String type = accession.toUpperCase().startsWith("A-") ? "arrays":"studies";
         if(type.equals("arrays")&& request.getRequestURL().toString().contains("/studies"))
             throw new FileNotFoundException();
         mav.addObject("collection", collection);
