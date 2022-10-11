@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
 
 @RestController
 public class View {
@@ -48,18 +50,26 @@ public class View {
     @RequestMapping(value = {
             "/studies/{accession}",
             "/studies/{accession}/",
+            "/arrays/{accession}",
+            "/arrays/{accession}/",
             "/{collection}/studies/{accession}",
-            "/{collection}/studies/{accession}/"
+            "/{collection}/studies/{accession}/",
+            "/{collection}/arrays/{accession}/",
+            "/{collection}/arrays/{accession}"
     }, method = RequestMethod.GET)
     public ModelAndView detail(@PathVariable(required = false) String collection,
                                @PathVariable(value = "accession") String accession,
-                               @RequestParam(value = "key", required = false) String key) throws Exception {
+                               @RequestParam(value = "key", required = false) String key,
+                               HttpServletRequest request) throws Exception {
         var mav = new ModelAndView();
-        boolean isArrayExpressStudy = collection == null && (accession.toUpperCase().startsWith("E-") || accession.toUpperCase().startsWith("A-"));
+        boolean isArrayExpressStudy = collection==null && (accession.toUpperCase().startsWith("E-") || accession.toUpperCase().startsWith("A-"));
+        String type = accession.toUpperCase().startsWith("A-") ? "arrays":"studies";
+        if(type.equals("arrays")&& request.getRequestURL().toString().contains("/studies"))
+            throw new FileNotFoundException();
         mav.addObject("collection", collection);
         mav.addObject("accession", accession);
-        String viewName = isArrayExpressStudy ? String.format("redirect:/arrayexpress/studies/{accession}"
-                + (key != null ? "?key=" + key : ""), accession) : "detail";
+        String viewName = isArrayExpressStudy ? String.format("redirect:/arrayexpress/%s/%s"
+                + (key != null ? "?key=" + key : ""), type, accession) : "detail";
         mav.setViewName(viewName);
         return mav;
     }

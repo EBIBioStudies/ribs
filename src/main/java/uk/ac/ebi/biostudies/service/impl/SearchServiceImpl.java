@@ -380,6 +380,15 @@ public class SearchServiceImpl implements SearchService {
         return null;
     }
 
+    @Override
+    public Document getDocumentByAccessionAndType(String accession, String secretKey, String type) throws SubmissionNotAccessibleException{
+        Document document = getDocumentByAccession(accession, secretKey);
+        if(document==null || !document.get(Fields.TYPE).equalsIgnoreCase(type.trim()))
+            return null;
+        return document;
+    }
+
+
     private Integer getDocumentNumberByAccession(String accession, String secretKey) {
         QueryParser parser = new QueryParser(Fields.ACCESSION, new AttributeFieldAnalyzer());
         parser.setSplitOnWhitespace(true);
