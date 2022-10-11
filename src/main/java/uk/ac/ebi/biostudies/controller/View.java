@@ -68,9 +68,10 @@ public class View {
             throw new FileNotFoundException();
         mav.addObject("collection", collection);
         mav.addObject("accession", accession);
-        String viewName = isArrayExpressStudy ? String.format("redirect:/arrayexpress/studies/{accession}"
-                + (key != null ? "?key=" + key : ""), accession) : "detail";
-        mav.setViewName(viewName);        return mav;
+        String viewName = isArrayExpressStudy ? String.format("redirect:/arrayexpress/%s/%s"
+                + (key != null ? "?key=" + key : ""), type, accession) : "detail";
+        mav.setViewName(viewName);
+        return mav;
     }
 
     @RequestMapping(value = {
