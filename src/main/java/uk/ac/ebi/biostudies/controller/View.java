@@ -2,10 +2,7 @@ package uk.ac.ebi.biostudies.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -55,12 +52,15 @@ public class View {
             "/{collection}/studies/{accession}/"
     }, method = RequestMethod.GET)
     public ModelAndView detail(@PathVariable(required = false) String collection,
-                               @PathVariable(value = "accession") String accession) throws Exception {
+                               @PathVariable(value = "accession") String accession,
+                               @RequestParam(value = "key", required = false) String key) throws Exception {
         var mav = new ModelAndView();
-        boolean isArrayExpressStudy = collection==null && (accession.toUpperCase().startsWith("E-") || accession.toUpperCase().startsWith("A-"));
+        boolean isArrayExpressStudy = collection == null && (accession.toUpperCase().startsWith("E-") || accession.toUpperCase().startsWith("A-"));
         mav.addObject("collection", collection);
         mav.addObject("accession", accession);
-        mav.setViewName( isArrayExpressStudy ? String.format("redirect:/arrayexpress/studies/{accession}", accession) : "detail");
+        String viewName = isArrayExpressStudy ? String.format("redirect:/arrayexpress/studies/{accession}"
+                + (key != null ? "?key=" + key : ""), accession) : "detail";
+        mav.setViewName(viewName);
         return mav;
     }
 

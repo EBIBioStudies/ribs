@@ -117,7 +117,9 @@ var FileTable = (function (_self) {
             var template = Handlebars.compile(templateSource);
 
             $('#biostudies-secret').html(template({
-                url:window.location.protocol + "//"+ window.location.host+ window.contextPath+"/studies/"+$('#accession').text()+"?key="+key
+                url:window.location.protocol + "//"+ window.location.host+ window.contextPath
+                    + (collection? "/"+collection : "")
+                    + "/studies/"+$('#accession').text()+"?key="+key
             }));
             $('#biostudies-secret').foundation('open');
             $('#copy-secret').bind('click', function(){
