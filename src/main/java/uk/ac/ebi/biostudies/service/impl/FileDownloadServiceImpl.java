@@ -171,6 +171,14 @@ public class FileDownloadServiceImpl implements FileDownloadService {
 
         //TODO: Remove this bad^∞ hack
         //Hack start: override relative path if file is not found
+        if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS) && requestedFilePath.endsWith(".tsv")) {
+            if(requestedFilePath.endsWith(".pagetab.tsv"))
+                requestedFilePath = requestedFilePath.replaceAll(".pagetab.tsv", ".tsv");
+            else
+                requestedFilePath = requestedFilePath.replaceAll(".tsv", ".pagetab.tsv");
+
+            downloadFile = Paths.get(indexConfig.getFileRootDir(), relativePath + "/Files/" + requestedFilePath);
+        }
         if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS)) {
             logger.debug("{} not found ", downloadFile.toFile().getAbsolutePath());
             downloadFile = Paths.get(indexConfig.getFileRootDir(), relativePath + "/Files/u/" + requestedFilePath);
