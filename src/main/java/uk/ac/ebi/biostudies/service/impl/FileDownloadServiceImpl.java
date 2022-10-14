@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.config.IndexConfig;
+import uk.ac.ebi.biostudies.file.download.FilteredMageTabDownloadFile;
 import uk.ac.ebi.biostudies.file.download.IDownloadFile;
 import uk.ac.ebi.biostudies.file.download.RegularDownloadFile;
 import uk.ac.ebi.biostudies.service.FileDownloadService;
@@ -136,10 +137,11 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             }
 
             //TODO: add magetabfilter
+            FilteredMageTabDownloadFile filteredMageTabDownloadFile = new FilteredMageTabDownloadFile(downloadFile);
 
-            verifyFile(downloadFile, response);
-            sendRandomAccessFile(downloadFile, request, response);
-            logger.debug("Download of [{}] completed - {}", downloadFile.getName(), request.getMethod());
+            verifyFile(filteredMageTabDownloadFile, response);
+            sendRandomAccessFile(filteredMageTabDownloadFile, request, response);
+            logger.debug("Download of [{}] completed - {}", filteredMageTabDownloadFile.getName(), request.getMethod());
 
         } finally {
             if (null != downloadFile) {

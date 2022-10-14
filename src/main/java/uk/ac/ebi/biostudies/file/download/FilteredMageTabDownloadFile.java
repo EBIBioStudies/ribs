@@ -19,15 +19,18 @@ package uk.ac.ebi.biostudies.file.download;
 import au.com.bytecode.opencsv.CSVReader;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class FilteredMageTabDownloadFile implements IDownloadFile
 {
-    private final File file;
-    private final byte[] filteredFile;
+    private InputStream inputStream;
+    private File file = null;
+    private byte[] filteredFileContents = null;
+    private String path;
+    private String filename;
+    private IDownloadFile unfilteredFile=null;
 
     public final static String IDF_FILE_NAME_PATTERN = "^.+[.]idf[.]txt$";
     public final static String SDRF_FILE_NAME_PATTERN = "^.+[.]sdrf[.]txt$";
@@ -38,43 +41,54 @@ public class FilteredMageTabDownloadFile implements IDownloadFile
             throw new IllegalArgumentException("File cannot be null");
         }
         this.file = file;
+        this.path = file.getPath();
+        this.filename = file.getName();
+
         if (getName().matches(IDF_FILE_NAME_PATTERN)) {
-            filteredFile = new IdfFilter(file).getFilteredFile();
+            filteredFileContents = new IdfFilter(file).getFilteredFile();
         } else if (getName().matches(SDRF_FILE_NAME_PATTERN)) {
-            filteredFile = new SdrfFilter(file).getFilteredFile();
+            filteredFileContents = new SdrfFilter(file).getFilteredFile();
         } else {
-            filteredFile = null;
+            filteredFileContents = null;
         }
     }
 
-    private File getFile()
+    public FilteredMageTabDownloadFile(IDownloadFile downloadFile ) throws IOException
     {
-        return this.file;
+        unfilteredFile = downloadFile;
+        this.filename = unfilteredFile.getName();
+        this.path = unfilteredFile.getPath();
+        if (getName().matches(IDF_FILE_NAME_PATTERN) || getName().matches(SDRF_FILE_NAME_PATTERN)) {
+            FilteredMageTabDownloadStream filteredMageTabDownloadStream = new FilteredMageTabDownloadStream(filename, unfilteredFile.getInputStream());
+            filteredFileContents = filteredMageTabDownloadStream.getInputStream().readAllBytes();
+        } else {
+            this.inputStream = unfilteredFile.getInputStream();
+        }
     }
 
     public String getName()
     {
-        return getFile().getName();
+        return this.filename;
     }
 
     public String getPath()
     {
-        return getFile().getPath();
+        return this.path;
     }
 
     public long getLength()
     {
-        return null != filteredFile ? filteredFile.length : getFile().length();
+        return null != filteredFileContents ? filteredFileContents.length :  file!=null ? file.length() : unfilteredFile.getLength();
     }
 
     public long getLastModified()
     {
-        return getFile().lastModified();
+        return file!=null ? file.lastModified() : unfilteredFile.getLastModified();
     }
 
     public boolean canDownload()
     {
-        return getFile().exists() && getFile().isFile() && getFile().canRead();
+        return file!=null ? (file.exists() && file.isFile() && file.canRead()) : true;
     }
 
     @Override
@@ -84,15 +98,17 @@ public class FilteredMageTabDownloadFile implements IDownloadFile
 
     public boolean isSupported()
     {
-        return filteredFile!=null;
+        return filteredFileContents !=null;
     }
 
     public InputStream getInputStream() throws IOException
     {
-        if (null != filteredFile) {
-            return new ByteArrayInputStream(filteredFile);
+        if (null != filteredFileContents) {
+            return new ByteArrayInputStream(filteredFileContents);
+        } else if (unfilteredFile!=null) {
+            return unfilteredFile.getInputStream();
         }
-        return new FileInputStream(getFile());
+        return new FileInputStream(file);
     }
 
     public void close() throws IOException
