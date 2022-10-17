@@ -19,7 +19,7 @@ Home.CollectionLoader = (function () {
                 $("a[data-type='collection']").each( function() {
                     var $prj = $(this), accession = $(this).data('accession');
                     $(this).attr('href',contextPath+'/'+accession+'/studies');
-                    $.getJSON(contextPath+ '/api/v1/studies/'+accession, function (data) {
+                    $.getJSON(contextPath+ '/api/v1/collections/'+accession, function (data) {
                         var path = (data.section && data.section.files) ? data.section.files.path : null;
                         if (!path && data.section && data.section.files && data.section.files[0]) path =data.section.files[0].path;
                         if (!path && data.section.files && data.section.files[0] && data.section.files[0][0]) path = data.section.files[0][0].path;

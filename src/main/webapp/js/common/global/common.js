@@ -72,7 +72,7 @@ $(function() {
 
     if (collection && collection!=='collections') {
         // display collection banner
-        $.getJSON(contextPath + "/api/v1/studies/" + collection, function (data) {
+        $.getJSON(contextPath + "/api/v1/collections/" + collection, function (data) {
             if (!data || !data.section || !data.section.type ||
                 (data.section.type.toLowerCase()!='collection' && data.section.type.toLowerCase()!='project'))
                 return;

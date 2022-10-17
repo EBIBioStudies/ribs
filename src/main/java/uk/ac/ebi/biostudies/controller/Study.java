@@ -34,14 +34,19 @@ public class Study {
     FilePaginationService paginationService;
     private final Logger logger = LogManager.getLogger(Study.class.getName());
 
+    @RequestMapping(value = "/collections/{accession:.+}", produces = {JSON_UNICODE_MEDIA_TYPE}, method = RequestMethod.GET)
+    public ResponseEntity<String> getCollection(@PathVariable("accession") String accession, @RequestParam(value = "key", required = false) String seckey) {
+        return prepareResponse(accession, seckey, Constants.SubmissionTypes.COLLECTION);
+    }
+
     @RequestMapping(value = "/studies/{accession:.+}", produces = {JSON_UNICODE_MEDIA_TYPE}, method = RequestMethod.GET)
     public ResponseEntity<String> getStudy(@PathVariable("accession") String accession, @RequestParam(value = "key", required = false) String seckey) {
-        return prepareResponse(accession, seckey, Constants.STUDY);
+        return prepareResponse(accession, seckey, Constants.SubmissionTypes.STUDY);
     }
 
     @RequestMapping(value = "/arrays/{accession:.+}", produces = {JSON_UNICODE_MEDIA_TYPE}, method = RequestMethod.GET)
     public ResponseEntity<String> getArray(@PathVariable("accession") String accession, @RequestParam(value = "key", required = false) String seckey) {
-        return prepareResponse(accession, seckey, Constants.ARRAY);
+        return prepareResponse(accession, seckey, Constants.SubmissionTypes.ARRAY);
     }
 
     @RequestMapping(value = "/studies/{accession:.+}/similar", produces = {JSON_UNICODE_MEDIA_TYPE}, method = RequestMethod.GET)
