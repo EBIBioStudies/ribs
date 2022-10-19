@@ -90,7 +90,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         try {
             List<String> requestArgs = new ArrayList<>(Arrays.asList(
                     request.getRequestURI().replaceAll(request.getContextPath()
-                                    + (StringUtils.isEmpty(collection) ? "" : "/"+collection )
+                                    + (StringUtils.isEmpty(collection) ? "" : "/" + collection)
                                     + "/files/", "")
                             .split("/")));
 
@@ -136,12 +136,13 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 return;
             }
 
-            //TODO: add magetabfilter
-            FilteredMageTabDownloadFile filteredMageTabDownloadFile = new FilteredMageTabDownloadFile(downloadFile);
+            if (key != null) {
+                downloadFile = new FilteredMageTabDownloadFile(downloadFile);
+            }
 
-            verifyFile(filteredMageTabDownloadFile, response);
-            sendRandomAccessFile(filteredMageTabDownloadFile, request, response);
-            logger.debug("Download of [{}] completed - {}", filteredMageTabDownloadFile.getName(), request.getMethod());
+            verifyFile(downloadFile, response);
+            sendRandomAccessFile(downloadFile, request, response);
+            logger.debug("Download of [{}] completed - {}", downloadFile.getName(), request.getMethod());
 
         } finally {
             if (null != downloadFile) {
@@ -163,7 +164,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 || requestedFilePath.equalsIgnoreCase(accession + ".xml")
                 || requestedFilePath.equalsIgnoreCase(accession + ".pagetab.tsv")
                 || requestedFilePath.equalsIgnoreCase(accession + ".tsv")) {
-            if (requestedFilePath.equalsIgnoreCase(accession+".tsv")) { // exception for fire file
+            if (requestedFilePath.equalsIgnoreCase(accession + ".tsv")) { // exception for fire file
                 requestedFilePath = accession + ".pagetab.tsv";
             }
             return new RegularDownloadFile(Paths.get(indexConfig.getFileRootDir(), relativePath + "/" + requestedFilePath));
@@ -174,7 +175,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         //TODO: Remove this bad^∞ hack
         //Hack start: override relative path if file is not found
         if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS) && requestedFilePath.endsWith(".tsv")) {
-            if(requestedFilePath.endsWith(".pagetab.tsv"))
+            if (requestedFilePath.endsWith(".pagetab.tsv"))
                 requestedFilePath = requestedFilePath.replaceAll(".pagetab.tsv", ".tsv");
             else
                 requestedFilePath = requestedFilePath.replaceAll(".tsv", ".pagetab.tsv");
