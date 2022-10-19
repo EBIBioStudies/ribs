@@ -137,11 +137,12 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             }
 
             //TODO: add magetabfilter
-            FilteredMageTabDownloadFile filteredMageTabDownloadFile = new FilteredMageTabDownloadFile(downloadFile);
+            if(key!=null && !key.isEmpty())
+                downloadFile = new FilteredMageTabDownloadFile(downloadFile);
 
-            verifyFile(filteredMageTabDownloadFile, response);
-            sendRandomAccessFile(filteredMageTabDownloadFile, request, response);
-            logger.debug("Download of [{}] completed - {}", filteredMageTabDownloadFile.getName(), request.getMethod());
+            verifyFile(downloadFile, response);
+            sendRandomAccessFile(downloadFile, request, response);
+            logger.debug("Download of [{}] completed - {}", downloadFile.getName(), request.getMethod());
 
         } finally {
             if (null != downloadFile) {
