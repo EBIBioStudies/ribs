@@ -68,13 +68,13 @@ public class Thumbnail {
             String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
             String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
             Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
-            if(storageMode == Constants.File.StorageMode.FIRE) {
-                try {
-                    name = URLDecoder.decode(name, StandardCharsets.UTF_8.name());
+            try {
+                name = URLDecoder.decode(name, StandardCharsets.UTF_8.name());
+                if(storageMode == Constants.File.StorageMode.FIRE) {
                     name = StudyUtils.decodeForFireBug(name);
-                } catch (Exception exception) {
-                    logger.error("problem in encoding thumbnail image name {}", name, exception);
                 }
+            } catch (Exception exception) {
+                logger.error("problem in encoding thumbnail image name {}", name, exception);
             }
             thumbnails.sendThumbnail(response, accession, relativePath, name, storageMode);
         } catch (IOException e) {
