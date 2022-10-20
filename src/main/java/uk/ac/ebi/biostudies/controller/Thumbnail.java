@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
 import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.file.Thumbnails;
 import uk.ac.ebi.biostudies.service.FileDownloadService;
 import uk.ac.ebi.biostudies.service.SearchService;
@@ -17,6 +18,8 @@ import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by ehsan on 20/03/2017.
@@ -35,6 +38,7 @@ public class Thumbnail {
     SearchService searchService;
     @Autowired
     FileDownloadService fileDownloadService;
+
 
     /**
      * TODO UI should pass correct related path to the server, in the previous version It calculated from xml sax transformations but in current version ui has this data in json
@@ -64,6 +68,14 @@ public class Thumbnail {
             String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
             String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
             Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
+            try {
+                name = URLDecoder.decode(name, StandardCharsets.UTF_8.name());
+                if(storageMode == Constants.File.StorageMode.FIRE) {
+                    name = StudyUtils.decodeForFireBug(name);
+                }
+            } catch (Exception exception) {
+                logger.error("problem in encoding thumbnail image name {}", name, exception);
+            }
             thumbnails.sendThumbnail(response, accession, relativePath, name, storageMode);
         } catch (IOException e) {
             logger.error("problem in creating thumbnail ", e);

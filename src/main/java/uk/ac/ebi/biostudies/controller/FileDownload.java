@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.service.FileDownloadService;
 import uk.ac.ebi.biostudies.service.SearchService;
@@ -33,7 +34,6 @@ public class FileDownload {
     private static final Logger LOGGER = LogManager.getLogger(FileDownload.class.getName());
 
 
-    static ScriptEngine jsEngine = new ScriptEngineManager().getEngineByName("nashorn");
     @Autowired
     ZipDownloadService zipDownloadService;
 
@@ -127,14 +127,8 @@ public class FileDownload {
     }
 
     private String[] createFireCompatibleFileNames(String[] inputFileNames) {
-        String[] response = Arrays.stream(inputFileNames).map(name -> {
-            try {
-                return jsEngine.eval(String.format("unescape(encodeURIComponent('%s'))", name)).toString().replace("#", "%23").replace("+", "%2B").replace("=", "%3D").replace("@", "%40").replace("$", "%24");
-            } catch (ScriptException e) {
-                LOGGER.error(name + " problem in unescapeing", e);
-            }
-            return "";
-        }).toArray(String[]::new);
+        String[] response = Arrays.stream(inputFileNames).map(name -> StudyUtils.decodeForFireBug(name))
+                .toArray(String[]::new);
         return response;
     }
 }
