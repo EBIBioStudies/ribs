@@ -48,12 +48,6 @@ public class Thumbnail {
     @RequestMapping(value = "/{accession}/**", method = RequestMethod.GET)
     public void getThumbnail(HttpServletResponse response, HttpServletRequest request, @PathVariable String accession, @RequestParam(value="key", required=false) String key) throws ParseException {
         String name = request.getAttribute( HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE ).toString();
-        try {
-            name = URLDecoder.decode(name, StandardCharsets.UTF_8.name());
-            name = StudyUtils.decodeForFireBug(name);
-        }catch (Exception exception){
-            logger.error("problem in encoding thumbnail image name {}", name, exception);
-        }
         String prefix = "/thumbnail/"+accession+"/";
         name = name.substring(name.indexOf(prefix)+prefix.length());
         if(accession==null || accession.isEmpty() || name==null || name.isEmpty())
@@ -74,6 +68,14 @@ public class Thumbnail {
             String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
             String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
             Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
+            if(storageMode == Constants.File.StorageMode.FIRE) {
+                try {
+                    name = URLDecoder.decode(name, StandardCharsets.UTF_8.name());
+                    name = StudyUtils.decodeForFireBug(name);
+                } catch (Exception exception) {
+                    logger.error("problem in encoding thumbnail image name {}", name, exception);
+                }
+            }
             thumbnails.sendThumbnail(response, accession, relativePath, name, storageMode);
         } catch (IOException e) {
             logger.error("problem in creating thumbnail ", e);
