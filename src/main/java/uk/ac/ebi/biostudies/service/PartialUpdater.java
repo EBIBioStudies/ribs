@@ -17,8 +17,6 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.biostudies.auth.UserSecurityService;
 import uk.ac.ebi.biostudies.config.SecurityConfig;
 
-import java.io.IOException;
-
 @Component
 @Order()
 public class PartialUpdater {
@@ -30,7 +28,7 @@ public class PartialUpdater {
     SecurityConfig securityConfig;
 
     @Async
-    public void receivedMessage(JsonNode msg) throws IOException, InterruptedException {
+    public void receivedMessage(JsonNode msg) throws Exception {
         try {
             String url = msg.get("extTabUrl").asText();
             String acc = msg.get("accNo").asText();
@@ -41,17 +39,24 @@ public class PartialUpdater {
             if(securityConfig.getHttpProxyHost()!=null && !securityConfig.getHttpProxyHost().isEmpty()) {
                 clientBuilder.setProxy(new HttpHost(securityConfig.getHttpProxyHost(), securityConfig.getGetHttpProxyPort()));
             }
+            int statusCode = 0;
             try (CloseableHttpResponse response = clientBuilder.build().execute(httpGet)) {
+                statusCode = response.getStatusLine().getStatusCode();
                 submission = new ObjectMapper().readTree(EntityUtils.toString(response.getEntity()));
             } catch (Exception exception) {
                 LOGGER.error("problem in sending http req to authentication server", exception);
                 return;
             }
-            if (submission != null && submission.has("log") && submission.get("log").has("message")
-                    && submission.get("log").get("message").asText().endsWith("was not found")) {
+            if (statusCode==404) {
+                LOGGER.debug("Deleting {}", acc);
+                indexService.deleteDoc(acc);
+                return;
+            }
+            if (statusCode!=200) {
                 LOGGER.debug("Ignoring {}", acc);
                 return;
             }
+
             indexService.indexOne(submission, true);
             LOGGER.debug("{} updated", acc);
         } catch (Exception ex) {
