@@ -394,6 +394,8 @@ var Metadata = (function (_self) {
 
 
         Handlebars.registerHelper('makeAnchor', function makeAnchor(v) { return '#'+v} );
+        Handlebars.registerHelper('makeCollection', function makeCollection(accession) { return accession.startsWith('A-')?'arrays':'studies'} );
+
 
         Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
         try{

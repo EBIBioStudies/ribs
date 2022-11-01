@@ -10,7 +10,7 @@
                 <ul class="recommendations">
                     {{#each this}}
                     <li class="browse-study-title">
-                        <a href="${contextPath}/studies/{{accession}}">{{title}}</a>
+                        <a href="${contextPath}/{{makeCollection accession }}/{{accession}}">{{title}}</a>
                         <span class="browse-study-accession">
                                         {{accession}}
                                     </span>
