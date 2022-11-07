@@ -37,7 +37,7 @@
         </div>
         <div class="row">
             <p>
-                ArrayExpress, the functional genomics collection, stores data from high-throughput functional genomics
+                The functional genomics data collection (ArrayExpress), stores data from high-throughput functional genomics
                 experiments, and provides data for reuse to the research community. In line with community
                 guidelines, a study typically contains metadata such as detailed sample annotations, protocols,
                 processed data and raw data. Raw sequence reads from high-throughput sequencing studies are brokered to
