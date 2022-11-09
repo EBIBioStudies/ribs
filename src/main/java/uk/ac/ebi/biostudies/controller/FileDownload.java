@@ -18,9 +18,6 @@ import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
 import uk.ac.ebi.biostudies.service.ZipDownloadService;
 import uk.ac.ebi.biostudies.service.impl.BatchDownloadScriptBuilder;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
@@ -56,7 +53,7 @@ public class FileDownload {
         if (os == null || os.isEmpty())
             os = "unix";
         String fileExtension = "sh";
-        fileExtension = getFileExtension(os);
+        fileExtension = dlType.equalsIgnoreCase("aspera") ? getFileExtension(os): "txt";
         Document submissionDoc = getFilePaths(request, response);
         String relativeBaseDir = submissionDoc.get(Constants.Fields.RELATIVE_PATH);
         String accession = submissionDoc.get(Constants.Fields.ACCESSION);

@@ -21,7 +21,12 @@ var Help = (function (_self) {
     };
 
     function loadCommonHelp() {
-        $('#renderedContent').load(contextPath + '/help/help.html');
+        $('#renderedContent').load(contextPath + '/help/help.html',
+            function (responseText, textStatus, jqXHR) {
+                if (location.hash) {
+                    location.hash = location.hash;
+                }
+            });
     }
 
     return _self;
