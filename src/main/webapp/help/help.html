@@ -73,6 +73,9 @@
     .source-icon-ftp .fa {
         padding-right: 2px;
     }
+    h4 {
+        padding-top: 0.5em;
+    }
 
 </style>
 <h3 id="how-to-search">How to search BioStudies database</h3>
@@ -140,22 +143,26 @@
                 class="mono">S-BSST</span> for data submitted via BioStudies Submission Tool, or <span class="mono">E-MTAB</span>
         for data belonging to the ArrayExpress collection.
     </li>
-    <li><span class="mono"><strong>&lt;parent&gt;</strong></span> is the masked path for the accession ending in the
-        last 3 digits of the study accession number. E.g., all EuropePMC studies with
-        accession numbers ending on <span class="mono">001</span> will be in the folder <span
-                class="mono">S-EPMCxxx001</span>.
+    <li><span class="mono"><strong>&lt;parent&gt;</strong></span> is the last three digits in the accession, e.g. for
+        S-BIAD300 it is 300. There are some exceptions to this though.
+        <ul style="list-style: circle" ><li> For some older studies, <strong>&lt;parent&gt;</strong> is the masked path for the accession ending in the
+        last 3 digits of the study accession number, e.g., older EuropePMC studies with
+            accession numbers ending on <span class="mono">001</span> will be in the folder <span  class="mono">S-EPMCxxx001</span>. </li>
+        <li>For some older studies where the numeric part of the accession is one or two digit long, the parent folder is <span class="mono">S-BSST0-99</span>,
+            e.g., for <span class="mono">S-BSST7</span>, the directory will be <span class="mono">S-BSST/S-BSST0-99/S-BSST7</span>.</li></ul>
     </li>
+
     <li><span class="mono"><strong>&lt;accession&gt;</strong></span> is the study accession e.g. S-EPMC3521001</li>
 </ul>
 
-For example, if the study you want to access is <span class="mono"> S-EPMC3521001</span>, the path will be
-<span class="mono">S-EPMC/S-EPMCxxx001/S-EPMC521001</span>.  For some older studies where the numeric part of the
-accession is one or two digit long, the parent folder is <span class="mono">S-BSST0-99</span>,
-e.g., for <span class="mono">S-BSST7</span>, the directory will be <span class="mono">S-BSST/S-BSST0-99/S-BSST7</span>.
-Path for a study is available programatically through the REST API. e.g. For <span class="mono">S-BSST7</span>, you can
-get the path by
-<pre>curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BSST7/info -s | jq -r .relPath</pre>
 </p>
+Path for a study is available through the REST API, e.g.,
+<pre>
+    $ curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BSST7/info -s | jq -r .relPath
+S-BSST/S-BSST0-99/S-BSST7
+    $ curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-EPMC3521001/info -s | jq -r .relPath
+S-EPMC/001/S-EPMC3521001
+</pre>
 
 <h4>FTP downloads</h4>
 <p>The BioStudies FTP path is <span class="mono"><a
@@ -180,7 +187,7 @@ e.g., to download the file <span class="mono">1_TCGA_signature_A_top_10percent.t
 <span class="mono">wget ftp://ftp.ebi.ac.uk/biostudies/nfs/S-BSST/S-BSST0-99/S-BSST7/Files/1_TCGA_signature_A_top_10percent.txt</span>
 or, for interactive access:
 <pre class="pre">
-        ftp ftp.ebi.ac.uk
+        $ ftp ftp.ebi.ac.uk
         Name: anonymous
         ftp> cd biostudies/nfs/S-BSST/S-BSST0-99/S-BSST7/Files
         ftp> get 1_TCGA_signature_A_top_10percent.txt
@@ -188,7 +195,7 @@ or, for interactive access:
 
 
 You can get the FTP link for a study from the <span class="mono">/info</span> REST API endpoint, e.g.,
-<pre>curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BSST7/info -s | jq -r .ftpLink</pre>
+<pre>$ curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BSST7/info -s | jq -r .ftpLink</pre>
 
 </p>
 <p></p>
