@@ -127,7 +127,8 @@
     For less than 1000 files, you can select the files from the study detail page and click on the "Download" button
     to get the HTTP/FTP/Aspera instructions. For larger studies, you will need to know the <strong>path</strong>
     of each of these files.
-</p><p>
+</p>
+<p>
     This path
     is <span
         class="mono">/<strong>&lt;collection&gt;</strong>/<strong>&lt;parent&gt;</strong>/<strong>&lt;accession&gt;</strong></span>
@@ -167,11 +168,11 @@ get the path by
             class="mono">ftp://ftp.ebi.ac.uk/biostudies/<strong>mode</strong>/<strong>path</strong></span>,
     where,
 <ul>
-    <li><span class="mono"><strong>&lt;mode&gt;</strong></span> is the storage mode and can be either <span class="mono">fire</span> or <span
+    <li><span class="mono"><strong>&lt;mode&gt;</strong></span> is the storage mode and can be either <span
+            class="mono">fire</span> or <span
             class="mono">nfs</span></li>
     <li><span class="mono"><strong>&lt;path&gt;</strong></span> is the path of the accession as <a href="#download">described
         above</a></li>
-</ul>
 </ul>
 
 All data files for a study are in the <span class="mono">ftp://ftp.ebi.ac.uk/biostudies/<strong>mode</strong>/<strong>path</strong>/Files</span> directory,
@@ -214,14 +215,15 @@ where
     </li>
 </ul>
 <p>
-For instance, here's the command line to download the file <span
+    For instance, here's the command line to download the file <span
         class="mono">aeipf_denoised_reads.fna</span> from submission <span class="mono">S-BSST12</span> to the directory
-<span class="mono">C:\Temp</span> on Windows.
+    <span class="mono">C:\Temp</span> on Windows.
 <pre class="pre">
 "C:\cli\bin\ascp.exe" -P33001  -i "C:\cli\etc\asperaweb_id_dsa.openssh" bsaspera@fasp-beta.ebi.ac.uk:/S-BSST/012/S-BSST12/Files/aeipf_denoised_reads.fna C:\Temp\
 </pre>
 
-Aspera downloads are available only for studies where <span class="mono"><strong>mode</strong></span> is    <span class="mono">fire</span>.
+Aspera downloads are available only for studies where <span class="mono"><strong>mode</strong></span> is    <span
+        class="mono">fire</span>.
 </p>
 
 <h3 id="rest-api-docs" name="res-api-docs">REST API</h3>
