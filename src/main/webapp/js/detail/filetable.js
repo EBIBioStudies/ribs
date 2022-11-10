@@ -1,5 +1,6 @@
 var FileTable = (function (_self) {
     var selectedFiles= new Set();
+    var maxFiles=0;
     var totalFiles=0;
     var filesTable;
     var firstRender = true;
@@ -7,6 +8,7 @@ var FileTable = (function (_self) {
     var sorting=false;
     var afterTableInit=false;
     var allPaths = [];
+    const MAX_FILES_ALLOWED = 1000;
 
     _self.render = function (acc, params, isDetailPage){
         $.ajax({url: contextPath + '/api/v1/studies/' + acc + '/info',
@@ -289,8 +291,9 @@ var FileTable = (function (_self) {
                     +'<i class="fas fa-filter"></i>'
                     +'<span class="fa-layers-text" data-fa-transform="shrink-2 down-4 right-6">×</span>'
                     +'</span> show all files');
-                totalFiles = max;
-                return (total== max) ? out : out + btn.html();
+                maxFiles = max;
+                totalFiles = total;
+                return (total === max) ? out : out + btn.html();
             }
         }).on('preDraw', function (e) {
             filesTable.columns().visible(true);
@@ -311,7 +314,13 @@ var FileTable = (function (_self) {
     function handleDataTableDraw(handleThumbnails, params, filesTable) {
 
         $('.file-check-box input').on('click', function () {
+
+
             if ($(this).is(':checked')) {
+                if ( selectedFiles.size === MAX_FILES_ALLOWED) {
+                    displayMaxFileReachedDialog();
+                    return false;
+                }
                 selectedFiles.add($(this).data('name'));
                 $('#select-all-files').show();
             } else {
@@ -469,11 +478,19 @@ var FileTable = (function (_self) {
         });
     }
 
+    function displayMaxFileReachedDialog() {
+        $('#fileLimitDialog').foundation().foundation('open');
+    }
+
     function handleFileDownloadSelection(acc,key,relativePath, hasZippedFolders) {
         // add select all checkbox
         $(filesTable.columns(0).header()).html('<input id="select-all-files" title="Select all files" type="checkbox"/>' +
             '<span style="display: none">Select all files</span>');
-        $('#select-all-files').on('click', function () {
+        $('#select-all-files').on('click', function (e) {
+            if ( totalFiles + selectedFiles.size > MAX_FILES_ALLOWED ) {
+                displayMaxFileReachedDialog();
+                return false;
+            }
             $('body').css('cursor', 'progress');
             $('#select-all-files').css('cursor', 'progress');
             $('#file-list_wrapper').css('pointer-events','none');
@@ -502,6 +519,7 @@ var FileTable = (function (_self) {
         });
         $('#batchdl-popup').foundation();
         $("#download-selected-files").on('click', function () {
+            if ($("#download-selected-files").hasClass('disabled')) return;
             if (selectedFiles.size) {
                 createDownloadDialog(key, relativePath, selectedFiles);
             } else {
@@ -735,14 +753,26 @@ var FileTable = (function (_self) {
     }
 
     function updateSelectedFiles() {
-        if (selectedFiles.size>0 && selectedFiles.size!=totalFiles) {
-            $('#selected-file-count').html(selectedFiles.size + ( selectedFiles.size ==1 ? " file" : " files") );
+        $('#download-selected-files').removeClass('disabled');
+
+        if (selectedFiles.size === 0) {
+            if (maxFiles > MAX_FILES_ALLOWED){
+                $('#selected-file-count').html('Select files to download');
+                $('#download-selected-files').addClass('disabled');
+            } else {
+                $('#selected-file-count').html('Download all files');
+            }
         } else {
-            $('#selected-file-count').html('all files');
+            if (selectedFiles.size != maxFiles) {
+                $('#selected-file-count').html('Download ' + selectedFiles.size + (selectedFiles.size == 1 ? " file" : " files"));
+            } else if (selectedFiles.size == maxFiles) {
+                $('#selected-file-count').html('Download all files');
+            }
         }
+
         $('#select-all-files').prop('checked', $('.select-checkbox input:checked').length == $('.select-checkbox input').length );
         $('body').css('cursor', 'default');
-        $('#select-all-files').css('cursor', 'default');
+        $('#select-all-files').css('cursor', 'pointer');
         $('#file-list_wrapper').css('pointer-events','auto');
     }
 

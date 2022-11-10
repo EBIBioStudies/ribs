@@ -193,8 +193,8 @@ var Metadata = (function (_self) {
             var expanded = $(this).data('expanded')==true;
             $(this).data('expanded', !expanded);
             $('#right-column').css('width', expanded ? '30%' : '100%');
-            $("i",$(this)).toggleClass('fa-angle-double-left fa-angle-double-right');
-            $(this).find('[data-fa-i2svg]').toggleClass('fa-angle-double-left fa-angle-double-right');
+            $("i",$(this)).toggleClass('fa-angles-left fa-angles-right');
+            $(this).find('[data-fa-i2svg]').toggleClass('fa-angles-left fa-angles-right');
             FileTable.adjust();
         });
     }

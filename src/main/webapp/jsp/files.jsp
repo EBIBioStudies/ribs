@@ -31,8 +31,8 @@
             </table>
         </div>
         <div class="download-files-container">
-                <span class="button" id="download-selected-files"><i class="fa fa-cloud-download-alt"></i> Download
-                    <span id="selected-file-count">all files</span>
+                <span class="button" id="download-selected-files"><i class="fa fa-cloud-download-alt"></i>
+                    <span id="selected-file-count">Download</span>
                 </span>
         </div>
         <div class="reveal large" id="batchdl-popup" data-reveal></div>

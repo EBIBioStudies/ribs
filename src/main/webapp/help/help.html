@@ -53,8 +53,29 @@
         border-radius: 4pt;
     }
 
+    .source-icon {
+        font-size: 80%;
+        padding: 0px 5px 1px 5px;
+        border-radius: 3px;
+        margin-left: 4pt;
+        font-family: Consolas, monospace, 'Courier New';
+        text-align: center;
+        display: inline-block;
+    }
+
+
+    .source-icon-ftp:before, .source-icon-ftp {
+        color: #FFFFFF !important;
+        background-color: #9E5F5F;
+        border: none !important;
+    }
+
+    .source-icon-ftp .fa {
+        padding-right: 2px;
+    }
+
 </style>
-<h3>How to search BioStudies database</h3>
+<h3 id="how-to-search">How to search BioStudies database</h3>
 
 <p>Use the Search box available in the top-right corner of every page. Enter any words that
     describe studies
@@ -83,7 +104,8 @@
 <h3 id="advancedsearch" name="advancedsearch">Advanced search</h3>
 
 <p>Each word in the query is treated as a separate term (unless surrounded by double
-    quotes), and by default results can contain any of these queried terms. This behaviour can be modified by using boolean operators and
+    quotes), and by default results can contain any of these queried terms. This behaviour can be modified by using
+    boolean operators and
     brackets; e.g., Leukemia AND ( mouse OR human ), or cancer AND NOT ( human ).</p>
 
 <p>Queries containing star or question mark characters are treated separately. A star
@@ -101,38 +123,75 @@
 </p>
 
 <h3 id="download" name="download">How to download public studies</h3>
-<p> In addition to file download from the BioStudies website, we also support FTP and Aspera based downloads. In
-    both cases you will need to know the location of the files belonging to a particular study. We partition data first
-    by
-    the pipeline, such as <span class="mono">S-EPMC</span> for data imported from EuropePMC, <span
-            class="mono">S-BSST</span> for data submitted via BioStudies
-    Submission Tool, or <span class="mono">S-DIXA-</span> for data belonging to the ‘diXa’ toxicogenomics data
-    collection. The next
-    partition level is by the last 3 digits of the study accession number. E.g., all EuropePMC studies with
-    accession numbers ending on <span class="mono">001</span> will be in the folder <span class="mono">S-EPMC/S-EPMCxxx001</span>.
-    So, if the study you want to
-    access is <span class="mono">S-EPMC521001</span>, the path will be <span class="mono">S-EPMC/S-EPMCxxx001/S-EPMC521001</span>.
-    If there are less than 3 digits
-    in an accession number, e.g., <span class="mono">S-BSST12</span>, the directory will be <span class="mono">S-BSST/S-BSST0-99/S-BSST12</span>.
+<p> In addition to file download from the BioStudies website, we also support FTP and Aspera based downloads.
+    For less than 1000 files, you can select the files from the study detail page and click on the "Download" button
+    to get the HTTP/FTP/Aspera instructions. For larger studies, you will need to know the <strong>path</strong>
+    of each of these files.
+</p>
+<p>
+    This path
+    is <span
+        class="mono">/<strong>&lt;collection&gt;</strong>/<strong>&lt;parent&gt;</strong>/<strong>&lt;accession&gt;</strong></span>
+    , where:
+
+<ul>
+    <li><span class="mono"><strong>&lt;collection&gt;</strong></span> is the accession prefix e.g. <span class="mono">S-EPMC</span>
+        for data imported from EuropePMC, <span
+                class="mono">S-BSST</span> for data submitted via BioStudies Submission Tool, or <span class="mono">E-MTAB</span>
+        for data belonging to the ArrayExpress collection.
+    </li>
+    <li><span class="mono"><strong>&lt;parent&gt;</strong></span> is the masked path for the accession ending in the
+        last 3 digits of the study accession number. E.g., all EuropePMC studies with
+        accession numbers ending on <span class="mono">001</span> will be in the folder <span
+                class="mono">S-EPMCxxx001</span>.
+    </li>
+    <li><span class="mono"><strong>&lt;accession&gt;</strong></span> is the study accession e.g. S-EPMC3521001</li>
+</ul>
+
+For example, if the study you want to access is <span class="mono"> S-EPMC3521001</span>, the path will be
+<span class="mono">S-EPMC/S-EPMCxxx001/S-EPMC521001</span>.  For some older studies where the numeric part of the
+accession is one or two digit long, the parent folder is <span class="mono">S-BSST0-99</span>,
+e.g., for <span class="mono">S-BSST7</span>, the directory will be <span class="mono">S-BSST/S-BSST0-99/S-BSST7</span>.
+Path for a study is available programatically through the REST API. e.g. For <span class="mono">S-BSST7</span>, you can
+get the path by
+<pre>curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BSST7/info -s | jq -r .relPath</pre>
 </p>
 
 <h4>FTP downloads</h4>
-<p>The FTP server is <span class="mono">ftp.ebi.ac.uk</span>; anonymous downloads are enabled. You can
-    explore access through
-    FTP via your web browser, e.g., <a target="_blank"
-                                       href="ftp://ftp.ebi.ac.uk/biostudies/nfs/S-BSST/012/S-BSST12/">
-        <span class="mono">ftp://ftp.ebi.ac.uk/biostudies/nfs/S-BSST/012/S-BSST12/</span></a>. Use any FTP
-    client such as FileZilla, or issue FTP commands via a command line, e.g.,
-    <span class="mono">wget ftp://ftp.ebi.ac.uk/biostudies/nfs/S-BSST/012/S-BSST12/Files/aeipf_denoised_reads.fna</span>
-    or, for interactive access:
+<p>The BioStudies FTP path is <span class="mono"><a
+        href="ftp://ftp.ebi.ac.uk/biostudies">ftp://ftp.ebi.ac.uk/biostudies</a></span>.
+    Anonymous downloads are enabled. For each study, you can click on the <span
+            id="ftp-link" href="#" target="_blank" title="Open FTP Folder" class="source-icon source-icon-ftp"
+            data-icon="="><i
+            class="fa fa-cloud-download-alt"></i>FTP</span> button to access it. You can also use your favourite FTP
+    client such as FileZilla to download a study from <span
+            class="mono">ftp://ftp.ebi.ac.uk/biostudies/<strong>mode</strong>/<strong>path</strong></span>,
+    where,
+<ul>
+    <li><span class="mono"><strong>&lt;mode&gt;</strong></span> is the storage mode and can be either <span
+            class="mono">fire</span> or <span
+            class="mono">nfs</span></li>
+    <li><span class="mono"><strong>&lt;path&gt;</strong></span> is the path of the accession as <a href="#download">described
+        above</a></li>
+</ul>
+
+All data files for a study are in the <span class="mono">ftp://ftp.ebi.ac.uk/biostudies/<strong>mode</strong>/<strong>path</strong>/Files</span> directory,
+e.g., to download the file <span class="mono">1_TCGA_signature_A_top_10percent.txt</span> from <span class="mono">S-BSST7</span>, you can use the command line
+<span class="mono">wget ftp://ftp.ebi.ac.uk/biostudies/nfs/S-BSST/S-BSST0-99/S-BSST7/Files/1_TCGA_signature_A_top_10percent.txt</span>
+or, for interactive access:
 <pre class="pre">
         ftp ftp.ebi.ac.uk
         Name: anonymous
-        Password: enter your e-mail address
-        ftp> cd biostudies/nfs/S-BSST/012/S-BSST12/Files
-        ftp> get aeipf_denoised_reads.fna
+        ftp> cd biostudies/nfs/S-BSST/S-BSST0-99/S-BSST7/Files
+        ftp> get 1_TCGA_signature_A_top_10percent.txt
         </pre>
+
+
+You can get the FTP link for a study from the <span class="mono">/info</span> REST API endpoint, e.g.,
+<pre>curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BSST7/info -s | jq -r .ftpLink</pre>
+
 </p>
+<p></p>
 
 <h4>Aspera downloads</h4>
 <p>You will need to <a target="_blank"
@@ -140,6 +199,7 @@
     download the Aspera <span class="mono">ascp</span> command line interface</a>. Please select the correct operating
     system. The <span class="mono">ascp</span> command line client is present in the <span class="mono">bin</span>
     folder in the installation directory. Your command for download should be like this:
+</p>
 <pre>ascp -P33001 -i &lt;key&gt; bsaspera@fasp-beta.ebi.ac.uk:&lt;files to download&gt; &lt;download location on your machine&gt;</pre>
 where
 <ul>
@@ -147,20 +207,23 @@ where
         port, user and server for the Aspera connection
     </li>
     <li><span class="mono">&lt;key&gt;</span> is the public key for the Aspera connection which has the value
-        <span class="mono">&lt;aspera cli installation directory&gt;/etc/asperaweb_id_dsa.openssh</span> for Linux/MacOS and
+        <span class="mono">&lt;aspera cli installation directory&gt;/etc/asperaweb_id_dsa.openssh</span> for Linux/MacOS
+        and
         <span class="mono">&lt;aspera cli installation directory&gt;\etc\asperaweb_id_dsa.openssh</span> for Windows.
     </li>
     <li><span class="mono">&lt;files to download&gt;</span> might be all files for a certain study, as explained above.
-        Please note that Aspera paths do not need to have <span class="mono">pub</span> as the root folder.
     </li>
 </ul>
-
-For instance, here's the command line to download the file <span
+<p>
+    For instance, here's the command line to download the file <span
         class="mono">aeipf_denoised_reads.fna</span> from submission <span class="mono">S-BSST12</span> to the directory
-<span class="mono">C:\Temp</span> on Windows.
+    <span class="mono">C:\Temp</span> on Windows.
 <pre class="pre">
-            "C:\cli\bin\ascp.exe" -P33001  -i "C:\cli\etc\asperaweb_id_dsa.openssh" bsaspera@fasp-beta.ebi.ac.uk:/S-BSST/012/S-BSST12/Files/aeipf_denoised_reads.fna C:\Temp\
-        </pre>
+"C:\cli\bin\ascp.exe" -P33001  -i "C:\cli\etc\asperaweb_id_dsa.openssh" bsaspera@fasp-beta.ebi.ac.uk:/S-BSST/012/S-BSST12/Files/aeipf_denoised_reads.fna C:\Temp\
+</pre>
+
+Aspera downloads are available only for studies where <span class="mono"><strong>mode</strong></span> is    <span
+        class="mono">fire</span>.
 </p>
 
 <h3 id="rest-api-docs" name="res-api-docs">REST API</h3>
@@ -180,6 +243,11 @@ For instance, here's the command line to download the file <span
         </tr>
         </thead>
         <tbody>
+        <tr>
+            <td>query</td>
+            <td>Searches for the provided text in all submissions as <a href="#how-to-search">described above</a>
+            </td>
+        </tr>
         <tr>
             <td>accession</td>
             <td>Searches for a specific BioStudies accession. Wildcards are allowed after the first character e.g.
@@ -390,13 +458,15 @@ For instance, here's the command line to download the file <span
         </tr>
         <tr id="page_doc">
             <td>page</td>
-            <td>Returns the specified result page, where each page contains <a href="#page_size_doc"><code>pageSize</code></a>
+            <td>Returns the specified result page, where each page contains <a
+                    href="#page_size_doc"><code>pageSize</code></a>
                 results. Default = 1
             </td>
         </tr>
         <tr id="page_size_doc">
             <td>pageSize</td>
-            <td>Determines the number of results returned in each <a href="#page_doc"><code>page</code></a> in the results. Default = 20,
+            <td>Determines the number of results returned in each <a href="#page_doc"><code>page</code></a> in the
+                results. Default = 20,
                 Max = 100
             </td>
         </tr>
@@ -413,7 +483,8 @@ For instance, here's the command line to download the file <span
     </table>
 </details>
 <details>
-    <summary><code class="endpoint">/api/v1/{collection}/search</code> Returns a list of studies in the specified collection
+    <summary><code class="endpoint">/api/v1/{collection}/search</code> Returns a list of studies in the specified
+        collection
         according to the search criteria
     </summary>
     <p>
@@ -429,6 +500,15 @@ For instance, here's the command line to download the file <span
     </summary>
     <p>
         This end-point returns the details of the study in the PageTab JSON format if accessible.
+    </p>
+</details>
+<details>
+    <summary><code class="endpoint">/api/v1/studies/{accession}/info</code> Returns additional information for a
+        particular
+        accession as JSON
+    </summary>
+    <p>
+        This end-point returns some additional for the study such as the FTP link and relative path.
     </p>
 </details>
 
