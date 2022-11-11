@@ -130,9 +130,6 @@ function handleBioImagesUI() {
         '                            </ul>\n' +
         '                        </li>');
     helpmenu.replaceWith(newhelpmenu);
-
-// Comment out REMBI menu item until template is implemented in submission tool
-/*
     const rembimenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="REMBI Help" data-is-click="false">\n' +
         '                            <a href="#" role="menuitem">REMBI Help</a>\n' +
         '                            <ul class="menu submenu is-dropdown-submenu first-sub vertical" data-submenu="" role="menubar" style="">\n' +
@@ -144,7 +141,6 @@ function handleBioImagesUI() {
         '                            </ul>\n' +
         '                        </li>');
     newhelpmenu.after(rembimenu);
-*/
     const about = $('.menu.float-left li:contains("About")')
     const newaboutmenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="About us" data-is-click="false">\n' +
         '                            <a href="#" role="menuitem">About us</a>\n' +
