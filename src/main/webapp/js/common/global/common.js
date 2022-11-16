@@ -130,21 +130,16 @@ function handleBioImagesUI() {
         '                            </ul>\n' +
         '                        </li>');
     helpmenu.replaceWith(newhelpmenu);
-
-// Comment out REMBI menu item until template is implemented in submission tool
-/*
     const rembimenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="REMBI Help" data-is-click="false">\n' +
         '                            <a href="#" role="menuitem">REMBI Help</a>\n' +
         '                            <ul class="menu submenu is-dropdown-submenu first-sub vertical" data-submenu="" role="menubar" style="">\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-help-overview" role="menuitem">REMBI Overview</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-help-lab/" role="menuitem">REMBI Lab Guidance</a></li>\n' +
-        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-help-examples/" role="menuitem">REMBI Study Examples</a></li>\n' +
-        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-help-spreadsheets/" role="menuitem">REMBI Spreadsheets</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-help-examples/" role="menuitem">Study Component Guidance</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-model-reference/" role="menuitem">REMBI Model Reference</a></li>\n' +
         '                            </ul>\n' +
         '                        </li>');
     newhelpmenu.after(rembimenu);
-*/
     const about = $('.menu.float-left li:contains("About")')
     const newaboutmenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="About us" data-is-click="false">\n' +
         '                            <a href="#" role="menuitem">About us</a>\n' +

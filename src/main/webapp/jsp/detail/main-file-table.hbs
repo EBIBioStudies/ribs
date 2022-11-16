@@ -10,11 +10,21 @@
                 </table>
             </div>
             <div class="download-files-container">
-                <span class="button" id="download-selected-files"><i class="fa fa-cloud-download-alt"></i> Download
-                    <span id="selected-file-count">all files</span>
+                <span class="button" id="download-selected-files"><i class="fa fa-cloud-download-alt"></i>
+                    <span id="selected-file-count">Download</span>
                 </span>
             </div>
             <div class="reveal large" id="batchdl-popup" data-reveal></div>
+        </div>
+        <div class="reveal" id="fileLimitDialog" data-reveal>
+            <h4>Too many files!</h4>
+            <p>You can download upto 1000 files at a time. For downloading a higher number of files, please use our
+             <a href="/biostudies/help#download" target="_blank">alternative</a> downloading methods.</p>
+            <div class="text-center">
+                <button class="button" data-close aria-label="Close modal" type="button">
+                    <span aria-hidden="true">Close</span>
+                </button>
+            </div>
         </div>
     </section>
 </script>
@@ -124,7 +134,7 @@
     <li>Click the button below to download the script and save it to the folder where you want to download your files e.g. <code>{{fname.dldir}}</code></li>
     <li>Press Windows key+R, type <code>cmd</code> and press <b>Enter</b> </li>
     <li>Change your console directory to the place that you put downloaded script e.g. <code>cd {{fname.dldir}}</code> .</li>
-    <li>Run downloaded script file in cmd with this command: <code> ftp -i -s:./{{fname.acc}}-{{fname.os}}-ftp{{fname.ps}} </code></li>
+    <li>Run downloaded script file in cmd with this command: <code> ftp -i -s:./{{fname.acc}}-{{fname.os}}-ftp.txt </code></li>
   </ol>
 </script>
 
