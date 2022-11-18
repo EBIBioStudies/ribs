@@ -476,7 +476,7 @@ var Metadata = (function (_self) {
         $(linksTable.column(':contains(Section)').nodes()).each(function () {
             var divId = $(this).data('search');
             if (divId != '') {
-                var bar = $('#' + divId + '> .bs-name > .section-title-bar');
+                var bar = $('#' + divId + ' .section-title-bar');
                 if (!$('a[data-links-id="' + divId + '"]', bar).length) {
                     bar.append('<a class="section-button" data-links-id="' + divId + '"><i class="fa fa-filter"></i> ' +
                         sectionLinkCount[divId] +

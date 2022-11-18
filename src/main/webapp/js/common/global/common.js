@@ -125,8 +125,10 @@ function handleBioImagesUI() {
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-faq" role="menuitem">FAQs</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-search/" role="menuitem">Searching the archive</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-download/" role="menuitem">Downloading data</a></li>\n' +
-        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-submission-form/" role="menuitem">Submission form reference</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-file-list/" role="menuitem">Submission File List guide</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-images-at-ebi/" role="menuitem">Depositing image data to EBI resources</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-policies/" role="menuitem">Archive policies</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-tools/" role="menuitem">Supporting Tools</a></li>\n' +
         '                            </ul>\n' +
         '                        </li>');
     helpmenu.replaceWith(newhelpmenu);

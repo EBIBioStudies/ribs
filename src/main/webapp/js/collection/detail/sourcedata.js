@@ -1,7 +1,7 @@
 
 $('a[data-links-id]').off('click')
-    .html('<img src="'+ contextPath + '/images/collections/sourcedata/logo.png" ' +
-        'style="margin-bottom:3px;"/>' +' SmartFigure')
+    .html('<img src="'+ contextPath + '/images/collections/sourcedata/link.png" ' +
+        'style="margin-bottom:3px;width:10pt;background: white;border-radius: 50%"/>' +' SmartFigure')
     .on('click', function(e) {
         var linkid=$(this).data('links-id');
         Metadata.getLinksTable().column(':contains(Section)')
