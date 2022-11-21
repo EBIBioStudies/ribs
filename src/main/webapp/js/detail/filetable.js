@@ -424,7 +424,7 @@ var FileTable = (function (_self) {
                     var filelist = response.data.map( function (v) {
                        return v.path + (hasZippedFolders && v.type==='directory' ? '.zip' : '');
                     });
-                    createDownloadDialog(key, relPath, new Set(filelist));
+                    createDownloadDialog(key, relPath, new Set(filelist), hasZippedFolders);
                 })
             });
         bar.append(button);
@@ -432,7 +432,7 @@ var FileTable = (function (_self) {
 
     var dlIndex = -1;
 
-    function createDownloadDialog(key, relativePath, filelist) {
+    function createDownloadDialog(key, relativePath, filelist, hasZippedFolders) {
         var fileName = {os: "unix", ps: ".sh", acc: $('#accession').text(), dldir: "/home/user/"};
         var popUpTemplateSource = $('script#batchdl-accordion-template').html();
         var compiledPopUpTemplate = Handlebars.compile(popUpTemplateSource);
@@ -441,7 +441,7 @@ var FileTable = (function (_self) {
         var asperaDlInstructionTemplate = $('script#aspera-dl-instruction').html();
         var asperaCompiledInstructionTemplate = Handlebars.compile(asperaDlInstructionTemplate);
         // initAsperaConnect();
-        $('#batchdl-popup').html(compiledPopUpTemplate({fname: fileName, fileCount: filelist.size}));
+        $('#batchdl-popup').html(compiledPopUpTemplate({fname: fileName, fileCount: filelist.size, showAsperaItems: hasZippedFolders}));
         $('#batchdl-popup').foundation('open');
         var dltype = "/zip";
         fileName = getOsData('');
@@ -521,7 +521,7 @@ var FileTable = (function (_self) {
         $("#download-selected-files").on('click', function () {
             if ($("#download-selected-files").hasClass('disabled')) return;
             if (selectedFiles.size) {
-                createDownloadDialog(key, relativePath, selectedFiles);
+                createDownloadDialog(key, relativePath, selectedFiles, hasZippedFolders);
             } else {
                 $.post(contextPath+ '/api/v1/files/'+ acc, {
                         length: -1,
@@ -532,7 +532,7 @@ var FileTable = (function (_self) {
                     var filelist = response.data.map( function (v) {
                         return v.path + (hasZippedFolders && v.type==='directory' ? '.zip' : '')
                     });
-                    createDownloadDialog(key, relativePath, new Set(filelist));
+                    createDownloadDialog(key, relativePath, new Set(filelist), hasZippedFolders);
                 });
             }
         });
