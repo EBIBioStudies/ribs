@@ -84,10 +84,12 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
         String canonicalPath = relativePath + "/Files/";
         InputStream zipInputStream = null;
         for (String fileEntry : files) {
-            final String fileName = StringUtils.replace(fileEntry, "..", ".");
-            IDownloadFile fireFile = fireService.getFireFile(accession, relativePath, fileName);
-            zipInputStream = fireFile.getInputStream();
+            IDownloadFile fireFile = null;
             try {
+                final String fileName = StringUtils.replace(fileEntry, "..", ".");
+                fireFile = fireService.getFireFile(accession, relativePath, fileName);
+                zipInputStream = fireFile.getInputStream();
+
                 String curFileName = fileName.replaceAll(canonicalPath, "");
                 ZipEntry entry = new ZipEntry(curFileName + (fireFile.isDirectory() ? ".zip" : ""));
                 zos.putNextEntry(entry);
@@ -104,6 +106,8 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
                 }
             } finally {
                 zos.closeEntry();
+                if (fireFile != null)
+                    fireFile.close();
             }
         }
     }

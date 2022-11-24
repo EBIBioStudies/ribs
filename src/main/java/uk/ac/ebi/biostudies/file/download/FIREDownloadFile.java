@@ -17,6 +17,7 @@
 
 package uk.ac.ebi.biostudies.file.download;
 
+import com.amazonaws.services.s3.model.S3Object;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -24,12 +25,12 @@ import java.io.InputStream;
 
 public final class FIREDownloadFile implements IDownloadFile {
     private final String path;
-    private final InputStream inputStream;
+    private final S3Object s3Object;
     private final long size;
     private final boolean isDirectory;
 
-    public FIREDownloadFile(String path, InputStream inputStream, long size, boolean isDirectory) {
-        this.inputStream = inputStream;
+    public FIREDownloadFile(String path, S3Object s3Object, long size, boolean isDirectory) {
+        this.s3Object = s3Object;
         if (null == path) {
             throw new IllegalArgumentException("File cannot be null");
         }
@@ -64,9 +65,11 @@ public final class FIREDownloadFile implements IDownloadFile {
 
 
     public InputStream getInputStream() throws IOException {
-        return inputStream;
+        return s3Object.getObjectContent();
     }
 
     public void close() throws IOException {
+        if(s3Object!=null)
+            s3Object.close();
     }
 }
