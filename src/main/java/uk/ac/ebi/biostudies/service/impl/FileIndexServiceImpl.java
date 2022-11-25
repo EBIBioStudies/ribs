@@ -197,9 +197,10 @@ public class FileIndexServiceImpl implements FileIndexService {
 
         parents.forEach((filename, jsonNode) -> {
             if (jsonNode == null) return;
+            IDownloadFile fileList = null;
             try {
                 Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(json.get(Constants.Fields.STORAGE_MODE).asText());
-                IDownloadFile fileList = fileDownloadService.getDownloadFile(accession, relativePath, filename + (filename.toLowerCase().endsWith(".json") ? "" : ".json"), storageMode);
+                fileList = fileDownloadService.getDownloadFile(accession, relativePath, filename + (filename.toLowerCase().endsWith(".json") ? "" : ".json"), storageMode);
                 if (fileList.getInputStream() == null) {
                     fileList = fileDownloadService.getDownloadFile(accession, relativePath, "Files/" + filename + (filename.toLowerCase().endsWith(".json") ? "" : ".json"), storageMode);
                 }
@@ -207,7 +208,14 @@ public class FileIndexServiceImpl implements FileIndexService {
 
             } catch (Exception e) {
                 LOGGER.error("problem in parsing attached files", e);
-
+            }
+            finally {
+                try {
+                    if (fileList != null)
+                        fileList.close();
+                }catch (Exception exception){
+                    LOGGER.debug("problem in closing file", exception);
+                }
             }
         });
 

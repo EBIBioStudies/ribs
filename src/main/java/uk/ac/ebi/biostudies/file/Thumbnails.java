@@ -86,49 +86,59 @@ public class Thumbnails implements InitializingBean, DisposableBean {
     public void sendThumbnail(HttpServletResponse response, String accession, String relativePath, String name, Constants.File.StorageMode storageMode) throws IOException {
         String fileType = FilenameUtils.getExtension(name).toLowerCase();
         InputStream thumbnailInputStream = null;
+        IDownloadFile existingThumbnail = null;
         try {
-            // check in the Thumbnails folder in storage
-            IDownloadFile existingThumbnail = fileDownloadService.getDownloadFile(accession, relativePath + "/Thumbnails", name + ".thumbnail.png", storageMode);
-            thumbnailInputStream = existingThumbnail.getInputStream();
-        } catch (Exception ex1) {
-            File cachedThumbnail = new File(getThumbnailsFolder() + "/" + relativePath + "/", name + ".thumbnail.png");
-            if (!cachedThumbnail.exists()) {
-                // create thumbnail in cache
+            try {
+                // check in the Thumbnails folder in storage
+                existingThumbnail = fileDownloadService.getDownloadFile(accession, relativePath + "/Thumbnails", name + ".thumbnail.png", storageMode);
+                thumbnailInputStream = existingThumbnail.getInputStream();
+            } catch (Exception ex1) {
+                File cachedThumbnail = new File(getThumbnailsFolder() + "/" + relativePath + "/", name + ".thumbnail.png");
+                if (!cachedThumbnail.exists()) {
+                    // create thumbnail in cache
 
-                if (hasThumbnailsFolder(accession, relativePath, storageMode)) {
-                    // send a transparent gif to cache if there's no pre-generated thumbnail
-                    byte[] transparentPNG = {(byte) 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-                            0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x04, 0x00,
-                            0x00, 0x00, (byte) 0xb5, 0x1c, 0x0c, 0x02, 0x00, 0x00, 0x00, 0x0b, 0x49, 0x44, 0x41, 0x54,
-                            0x78, (byte) 0xda, 0x63, 0x64, 0x60, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x30, (byte) 0x81,
-                            (byte) 0xd0, 0x2f, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, (byte) 0xae, 0x42, 0x60,
-                            (byte) 0x82};
-                    cachedThumbnail.getParentFile().mkdirs();
-                    logger.debug("Creating empty thumbnail " + cachedThumbnail.getAbsolutePath());
-                    try (var outputStream = new FileOutputStream(cachedThumbnail.getAbsolutePath())) {
-                        IOUtils.write(transparentPNG, outputStream);
-                    }
+                    if (hasThumbnailsFolder(accession, relativePath, storageMode)) {
+                        // send a transparent gif to cache if there's no pre-generated thumbnail
+                        byte[] transparentPNG = {(byte) 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
+                                0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x04, 0x00,
+                                0x00, 0x00, (byte) 0xb5, 0x1c, 0x0c, 0x02, 0x00, 0x00, 0x00, 0x0b, 0x49, 0x44, 0x41, 0x54,
+                                0x78, (byte) 0xda, 0x63, 0x64, 0x60, 0x00, 0x00, 0x00, 0x06, 0x00, 0x02, 0x30, (byte) 0x81,
+                                (byte) 0xd0, 0x2f, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, (byte) 0xae, 0x42, 0x60,
+                                (byte) 0x82};
+                        cachedThumbnail.getParentFile().mkdirs();
+                        logger.debug("Creating empty thumbnail " + cachedThumbnail.getAbsolutePath());
+                        try (var outputStream = new FileOutputStream(cachedThumbnail.getAbsolutePath())) {
+                            IOUtils.write(transparentPNG, outputStream);
+                        }
 
-                } else {
-                    // create thumbnail from file
-                    try {
-                        IDownloadFile downloadFile = fileDownloadService.getDownloadFile(accession, relativePath, name, storageMode);
-                        createThumbnail(downloadFile.getInputStream(), fileType, cachedThumbnail);
-                    } catch (Exception ex3) {
-                        logger.debug("Will try to create placeholder now");
-                        createPlaceholderThumbnail(fileType, cachedThumbnail);
+                    } else {
+                        // create thumbnail from file
+                        IDownloadFile downloadFile = null;
+                        try {
+                            downloadFile = fileDownloadService.getDownloadFile(accession, relativePath, name, storageMode);
+                            createThumbnail(downloadFile.getInputStream(), fileType, cachedThumbnail);
+                        } catch (Exception ex3) {
+                            logger.debug("Will try to create placeholder now");
+                            createPlaceholderThumbnail(fileType, cachedThumbnail);
+                        }
+                        finally {
+                            if(downloadFile!=null)
+                                downloadFile.close();
+                        }
                     }
                 }
+                thumbnailInputStream = new FileInputStream(cachedThumbnail);
             }
-            thumbnailInputStream = new FileInputStream(cachedThumbnail);
-        }
 
-        try {
+
             response.setContentType("image/png");
             IOUtils.copy(thumbnailInputStream, response.getOutputStream());
         } finally {
             if (thumbnailInputStream != null) {
                 thumbnailInputStream.close();
+            if(existingThumbnail!=null)
+                existingThumbnail.close();
+
             }
         }
         response.getOutputStream().flush();

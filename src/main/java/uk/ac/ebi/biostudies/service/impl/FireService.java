@@ -15,8 +15,7 @@ import uk.ac.ebi.biostudies.config.FireConfig;
 import uk.ac.ebi.biostudies.file.download.FIREDownloadFile;
 import uk.ac.ebi.biostudies.file.download.IDownloadFile;
 
-import java.io.FileNotFoundException;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Stack;
@@ -35,7 +34,7 @@ public class FireService {
         String path = relativePath + "/Files/" + requestedFilePath;
 
         // For study json/xml/tsv pagetab files
-        if (requestedFilePath.equals(accession+".json") || requestedFilePath.equals(accession+".xml")|| requestedFilePath.equals(accession + ".tsv")  ) {
+        if (requestedFilePath.equals(accession + ".json") || requestedFilePath.equals(accession + ".xml") || requestedFilePath.equals(accession + ".tsv")) {
             path = relativePath + "/" + requestedFilePath;
         }
 
@@ -45,7 +44,7 @@ public class FireService {
             fireObject = getFireObjectByPath(path);
         } catch (Exception ex1) {
             try {
-                if (requestedFilePath.equals(accession + ".tsv")  ) {
+                if (requestedFilePath.equals(accession + ".tsv")) {
                     logger.debug("{} not found. Trying old .pagetab.tsv file.", path);
                     path = relativePath + "/" + accession + ".pagetab.tsv";
                 } else {
@@ -59,12 +58,36 @@ public class FireService {
                 throw new FileNotFoundException(ex4.getMessage());
             }
         }
-        return new FIREDownloadFile(path,
-                fireObject.getObjectContent(),
-                fireObject.getObjectMetadata().getContentLength(),
-                isDirectory);
+        return new FIREDownloadFile(path, fireObject.getObjectContent(), fireObject.getObjectMetadata().getContentLength(), isDirectory);
     }
 
+    /**
+     * This method load file from Fire to Ram and is just suitable for small files
+     * Do not use this method for downloading submission attached files from fire
+     *
+     * @return
+     */
+    public InputStream cloneFireS3ObjectStream(String path) throws IOException {
+        S3Object s3Object = null;
+        ByteArrayInputStream fireCloneInputStream = null;
+        try {
+            s3Object = getFireObjectByPath(path);
+            fireCloneInputStream = new ByteArrayInputStream(s3Object.getObjectContent().readAllBytes());
+        } catch (Exception exception) {
+            logger.error(exception);
+            if (exception.getMessage() != null && exception.getMessage().contains("Not Found"))
+                throw new FileNotFoundException(exception.getMessage());
+            return null;
+        } finally {
+            if (s3Object != null) try {
+                s3Object.close();
+            } catch (Exception exception) {
+                logger.debug("Problem in closing fire object", exception);
+            }
+
+        }
+        return fireCloneInputStream;
+    }
 
     public StringWriter getFireObjectStringContentByPath(String bucketName, String path) {
         if (bucketName == null)
@@ -86,19 +109,6 @@ public class FireService {
         return s3.getObject(getObjectRequest);
     }
 
-    public S3ObjectInputStream getFireObjectInputStreamByPath(String path) throws FileNotFoundException {
-        String bucketName = fireConfig.getBucketName();
-        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, path);
-        try {
-            S3ObjectInputStream inputStream = s3.getObject(getObjectRequest).getObjectContent();
-            return inputStream;
-        } catch (Exception exception) {
-            logger.error(exception);
-            if (exception.getMessage() != null && exception.getMessage().contains("Not Found"))
-                throw new FileNotFoundException(exception.getMessage());
-            return null;
-        }
-    }
 
     public Stack<String> getAllDirectoryContent(List<String> pathNameList) throws Exception {
         Stack<String> allFileResult = new Stack<>();

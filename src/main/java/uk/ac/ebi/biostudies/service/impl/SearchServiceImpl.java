@@ -275,7 +275,7 @@ public class SearchServiceImpl implements SearchService {
         InputStream inputStream = null;
         switch (storageMode) {
             case FIRE:
-                inputStream = fireService.getFireObjectInputStreamByPath(relativePath + "/" + accession + ".json");
+                inputStream = fireService.cloneFireS3ObjectStream(relativePath + "/" + accession + ".json");
                 break;
             default:
                 inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(), relativePath, accession + ".json").toFile());

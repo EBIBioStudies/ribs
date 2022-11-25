@@ -68,5 +68,7 @@ public final class FIREDownloadFile implements IDownloadFile {
     }
 
     public void close() throws IOException {
+        if(inputStream!=null)
+            inputStream.close();
     }
 }
