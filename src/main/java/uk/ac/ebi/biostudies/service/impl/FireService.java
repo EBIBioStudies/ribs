@@ -58,7 +58,7 @@ public class FireService {
                 throw new FileNotFoundException(ex4.getMessage());
             }
         }
-        return new FIREDownloadFile(path, fireObject, fireObject.getObjectMetadata().getContentLength(), isDirectory);
+        return new FIREDownloadFile(path, fireObject.getObjectContent(), fireObject.getObjectMetadata().getContentLength(), isDirectory);
     }
 
     /**
@@ -90,7 +90,8 @@ public class FireService {
     }
 
     public StringWriter getFireObjectStringContentByPath(String bucketName, String path) {
-        if (bucketName == null) bucketName = fireConfig.getBucketName();
+        if (bucketName == null)
+            bucketName = fireConfig.getBucketName();
         GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, path);
         try (S3ObjectInputStream inputStream = s3.getObject(getObjectRequest).getObjectContent()) {
             StringWriter stringWriter = new StringWriter();
