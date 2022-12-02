@@ -154,7 +154,11 @@ public class Index {
         indexManagementService.stopAcceptingSubmissionMessagesAndCloseIndices();
         if (indexManager.copyBackupToLocal()) {
             indexManagementService.openIndicesWritersAndSearchersStartStomp();
-            indexManagementService.openEfoIndexAndLoadOntology();
+            try {
+                indexManager.openEfoIndex();
+            }catch (Throwable throwable){
+                logger.error(throwable);
+            }
             return "Backup loaded successfully!";
         } else {
             return "problem in loading backup!!!";
