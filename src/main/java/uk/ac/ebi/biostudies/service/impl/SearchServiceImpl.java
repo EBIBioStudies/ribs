@@ -25,7 +25,6 @@ import uk.ac.ebi.biostudies.auth.Session;
 import uk.ac.ebi.biostudies.auth.User;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.config.IndexManager;
-import uk.ac.ebi.biostudies.efo.Autocompletion;
 import uk.ac.ebi.biostudies.efo.EFOExpandedHighlighter;
 import uk.ac.ebi.biostudies.efo.EFOExpansionTerms;
 import uk.ac.ebi.biostudies.efo.EFOQueryExpander;
@@ -74,8 +73,6 @@ public class SearchServiceImpl implements SearchService {
     @Autowired
     EFOExpandedHighlighter efoExpandedHighlighter;
     @Autowired
-    Autocompletion autocompletion;
-    @Autowired
     FacetService facetService;
     @Autowired
     AnalyzerManager analyzerManager;
@@ -104,16 +101,6 @@ public class SearchServiceImpl implements SearchService {
         } catch (Exception e) {
             logger.error(e);
         }
-    }
-
-    @Override
-    public String getKeywords(String query, String field, Integer limit) {
-        return autocompletion.getKeywords(query, field, limit);
-    }
-
-    @Override
-    public String getEfoTree(String query) {
-        return autocompletion.getEfoChildren(query);
     }
 
     private ObjectNode applySearchOnQuery(Query query, int page, int pageSize, String sortBy, String sortOrder, boolean doHighlight, String queryString) {
