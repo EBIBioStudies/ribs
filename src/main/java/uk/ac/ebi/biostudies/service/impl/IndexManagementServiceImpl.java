@@ -2,11 +2,9 @@ package uk.ac.ebi.biostudies.service.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.lucene.index.DirectoryReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.biostudies.api.util.analyzer.AnalyzerManager;
@@ -15,11 +13,10 @@ import uk.ac.ebi.biostudies.config.EFOConfig;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.config.IndexManager;
 import uk.ac.ebi.biostudies.config.TaxonomyManager;
+import uk.ac.ebi.biostudies.efo.index.EFOManager;
 import uk.ac.ebi.biostudies.service.IndexManagementService;
 import uk.ac.ebi.biostudies.service.RabbitMQStompService;
-import uk.ac.ebi.biostudies.service.impl.efo.Ontology;
 
-import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
@@ -45,7 +42,7 @@ public class IndexManagementServiceImpl implements IndexManagementService {
     @Autowired
     EFOConfig eFOConfig;
     @Autowired
-    Ontology ontology;
+    EFOManager efoManager;
 
     @Autowired
     private Environment env;
@@ -86,30 +83,13 @@ public class IndexManagementServiceImpl implements IndexManagementService {
         indexManager.closeIndices();
     }
 
-    @Override
-    public void openEfoIndexAndLoadOntology() {
-        try {
-            indexManager.openEfoIndex();
-            if (!DirectoryReader.indexExists(indexManager.getEfoIndexDirectory())) {
-                try (InputStream resourceInputStream = (new ClassPathResource(eFOConfig.getLocalOwlFilename())).getInputStream()) {
-                    ontology.update(resourceInputStream);
-                    LOGGER.info("EFO loading completed");
-                } catch (Exception ex) {
-                    LOGGER.error("EFO file not found", ex);
-                }
-            }
-        } catch (Throwable exception) {
-            LOGGER.error("EFO loading problem", exception);
-        }
-    }
-
 
     @Override
     public void openIndicesWritersAndSearchersStartStomp() {
         try {
             indexManager.openIndicesWritersAndSearchers();
             openWebsocket();
-            openEfoIndexAndLoadOntology();
+            indexManager.openEfoIndex();
         } catch (Throwable error) {
             LOGGER.error(error);
         }

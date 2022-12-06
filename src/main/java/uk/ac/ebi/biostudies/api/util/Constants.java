@@ -26,6 +26,22 @@ public interface Constants {
         String COLLECTION = "collection";
     }
 
+    interface OWL{
+        String ID = "id";
+        String EFOID = "efoid";
+        String TERM = "term";
+        String ALTERNATIVE_TERMS = "altterm";
+        String CONTENT = "content";
+        String CHILDRERN = "child";
+        String FATHER = "father";
+        String ALL = "all";
+    }
+    interface QEXPAND{
+        String TERM = "qe.term";
+        String ALL = "qe.term";
+        String EFO = "qe.efo";
+    }
+
     interface SortOrder {
         String ASCENDING = "ascending";
         String DESCENDING = "descending";

@@ -27,7 +27,7 @@ import uk.ac.ebi.biostudies.api.util.EmailSender;
 import uk.ac.ebi.biostudies.config.EFOConfig;
 import uk.ac.ebi.biostudies.config.MailConfig;
 import uk.ac.ebi.biostudies.efo.StringTools;
-import uk.ac.ebi.biostudies.service.impl.efo.Ontology;
+import uk.ac.ebi.biostudies.efo.index.EFOManager;
 
 import java.io.File;
 import java.io.InputStream;
@@ -40,11 +40,9 @@ public class UpdateOntologyJob {
     private final static Logger LOGGER = LoggerFactory.getLogger(UpdateOntologyJob.class);
 
     @Autowired
-    Ontology ontology;
+    EFOManager efoManager;
     @Autowired
     EFOConfig efoConfig;
-    @Autowired
-    ReloadOntologyJob reloadOntologyJob;
     @Autowired
     EmailSender emailSender;
     @Autowired
@@ -59,8 +57,8 @@ public class UpdateOntologyJob {
         LOGGER.info("Checking EFO ontology version from [{}]", efoURI.toString());
         String version = EFOLoader.getOWLVersion(efoURI);
         String loadedVersion = null;
-        if (ontology.getEfo() != null)
-            loadedVersion = ontology.getEfo().getVersionInfo();
+        if (efoManager.getEfo() != null)
+            loadedVersion = efoManager.getEfo().getVersionInfo();
         if (loadedVersion == null || (null != version
                 && !version.equals(loadedVersion)
                 && isVersionNewer(version, loadedVersion))
@@ -85,7 +83,12 @@ public class UpdateOntologyJob {
                 } catch (Throwable e) {
                     LOGGER.debug("Problem in sending email for EFO update", e);
                 }
-                reloadOntologyJob.doExecute();
+                try {
+                    efoManager.loadEfo();
+                    efoManager.buildIndex(true);
+                }catch (Throwable throwable){
+                    LOGGER.error("Unable to load EFO ontology file and create EFO Index", throwable);
+                }
                 LOGGER.info("EFO has updated");
             }
         }

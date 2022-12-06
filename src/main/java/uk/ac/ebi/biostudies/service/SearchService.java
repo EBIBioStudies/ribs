@@ -14,8 +14,6 @@ import java.io.IOException;
  */
 public interface SearchService {
     String search(String query, JsonNode selectedFacets, String prjName, int page, int pageSize, String sortBy, String sortOrder);
-    String getKeywords(String query, String field, Integer limit);
-    String getEfoTree(String query);
     String getFieldStats() throws Exception;
     void clearStatsCache();
     InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode) throws IOException;

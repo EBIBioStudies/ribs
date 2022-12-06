@@ -241,7 +241,7 @@ public class IndexServiceImpl implements IndexService {
                 if (indexManager.getIndexWriter() == null || !indexManager.getIndexWriter().isOpen()) {
                     logger.log(Level.INFO, "IndexWriter was closed trying to construct a new IndexWriter");
                     indexManager.refreshIndexWriterAndWholeOtherIndices();
-                    indexManagementService.openEfoIndexAndLoadOntology();
+                    indexManager.openEfoIndex();
                     Thread.sleep(30000);
                     indexFileQueue.put(filename);
                     continue;
@@ -259,7 +259,7 @@ public class IndexServiceImpl implements IndexService {
                 indexAll(new FileInputStream(inputStudiesFilePath), removeFileDocuments);
                 logger.info("freeing view count map memory!");
                 ViewCountLoader.unloadViewCountMap();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
                 logger.log(Level.ERROR, e);
             } finally {
