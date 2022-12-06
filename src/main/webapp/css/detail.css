@@ -447,12 +447,22 @@ a.thumbnail-icon {
     background-color: #EAF5FB;
 }
 
-.ontology-icon {
-    border: 0px !important;
-    color: #267799 !important;
-    padding: 2px;
-    vertical-align: text-top;
-    font-size: 11pt;
+a.ontology-icon {
+    font-size: 8pt;
+    background: #f1f1f1;
+    padding: 2px 3px;
+    border-radius: 3px;
+    color: #58585a;
+    border: #efefef 1px solid;
+    vertical-align: middle;
+    border:none;
+    text-transform: uppercase;
+    margin:0px 2px;
+}
+
+a.ontology-icon:hover {
+    border: none;
+    cursor: pointer;
 }
 
 .attributes-icon {
