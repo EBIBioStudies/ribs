@@ -6,37 +6,39 @@ var Metadata = (function (_self) {
     _self.registerHelpers = function() {
 
         Handlebars.registerHelper('find', function(key, keyval, val, obj) {
-            var e = obj.filter( function(o) { return o[key]==keyval})[0];
-            if (e!=undefined) return new Handlebars.SafeString(e[val]);
+            var e = obj.filter( function(o) { return o[key]===keyval})[0];
+            if (e!==undefined) return new Handlebars.SafeString(e[val]);
         });
 
         Handlebars.registerHelper('valueWithName', function(val, obj) {
             if (obj==null) return;
             if (!Array.isArray(obj)) obj = [obj];
-            var e = obj.filter( function(o) { return o['name'].trim().toLowerCase()==val.trim().toLowerCase()})[0];
-            if (e==undefined) return '';
+            let e = obj.filter(function (o) {
+                return o['name'].trim().toLowerCase() === val.trim().toLowerCase()
+            })[0];
+            if (e===undefined) return '';
             $.each(e.valqual, function(i,v){
                 if (v.name.toLowerCase()==='url') {
                     e.url = v.value;
                 }
             });
-            var urls = [];
+            let urls = [];
             if (e.url) urls = e.url.indexOf(' | ')>=0 ? e.url.split(' | ') : [e.url];
             if (!e.value) return "";
-            var isHtml = isHtmlAttribute(e.valqual);
-            var html = e.value.split(' | ').map( function(v, i) {
-                    v = isHtml ? v : Handlebars.escapeExpression(v);
-                    return ( urls[i] ? '<a '
-                            + addValQualAttributes(e.valqual)
-                            + ' href="'
-                            + urls[i]
-                            + (urls[i][0]!='#' ? '" target="_blank':'')
-                            +'">'+v+renderOntologyLinks(e.valqual)+'</a>'
+            let isHtml = isHtmlAttribute(e.valqual);
+            let html = e.value.split(' | ').map(function (v, i) {
+                v = isHtml ? v : Handlebars.escapeExpression(v);
+                return (urls[i] ? '<a '
+                        + addValQualAttributes(e.valqual)
+                        + ' href="'
+                        + urls[i]
+                        + (urls[i][0] !== '#' ? '" target="_blank' : '')
+                        + '">' + v + '</a>'
                         :
-                            '<span ' + addEscapedValQualAttributes(e.valqual) +'>' + v+renderOntologyLinks(e.valqual) + '</span>'
-                        );
-                    })
-                .join(', ')
+                        '<span ' + addValQualAttributes(e.valqual, true) + '>' + v + '</span>'
+                );
+            })
+                .join(', ');
             return new Handlebars.SafeString(html);
         });
 
@@ -170,16 +172,6 @@ var Metadata = (function (_self) {
         Handlebars.registerHelper('main-orcid-claimer', function(o,k) {
             var template = Handlebars.compile($('script#main-orcid-claimer').html());
             return template({accession:o.data.root.accno});
-        });
-
-        Handlebars.registerHelper('valquals', function(o) {
-            var template = Handlebars.compile($('script#valqual-template').html());
-            return template($(o).filter(function(i,q){ return q.name.toLowerCase()!='url' }).toArray());
-        });
-
-
-        Handlebars.registerHelper('renderOntologySubAttribute', function(arr) {
-            return renderOntologyLinks(arr);
         });
 
         Handlebars.registerHelper('eachSubAttribute', function(arr, options) {
@@ -490,34 +482,6 @@ var Metadata = (function (_self) {
         return  ret;
     }
 
-    function renderOntologyLinks(arr) {
-        var ret = '';
-        if (!arr || !arr.length) return ret;
-        arr = arr.filter( function (o) {
-            return $.inArray(o.name.toLowerCase(), ['ontology', 'termname', 'termid'])>=0
-        });
-        $.each(arr, function (i,o) {
-            if (o.name.toLowerCase()=='ontology') {
-                var termname = $.grep(arr, function (o,j) { return j>i && o.name.toLowerCase()=='termname' })[0];
-                var termid = $.grep(arr, function (o,j) { return j>i && o.name.toLowerCase()=='termid' })[0];
-                ret += '<span data-ontology="'+ o.value+'" ' +
-                    (termid ? 'data-term-id="'+ termid.value+'" ' : '') +
-                    (termname ? 'data-term-name="'+ termname.value : '') +
-                    '"></span>';
-            }
-        });
-        return ret;
-    }
-
-    function addValQualAttributes(attrs) {
-        var ret = '';
-        if (!attrs || !attrs.length) return ret;
-        $.each(attrs, function (i,o) {
-            ret += 'data-'+ o.name.toLowerCase() +'="' + o.value + '"';
-        });
-        return ret;
-    }
-
     function isHtmlAttribute(valquals) {
         if (!valquals ||  valquals.filter( function ( valqual) {
             return valqual.name.toLowerCase()=='display' && valqual.value.toLowerCase()=='html'
@@ -528,12 +492,23 @@ var Metadata = (function (_self) {
         }
     }
 
-    function addEscapedValQualAttributes(attrs) {
-        var ret = '';
+    function addValQualAttributes(attrs, isEscaped ) {
+        let ret = '';
         if (!attrs || !attrs.length) return ret;
+        let hasOntology = false;
+        let hasTerm = false;
+
         $.each(attrs, function (i,o) {
-            ret += ' data-'+ o.name.toLowerCase() +'="' + escape(o.value) + '"';
+            hasOntology ||= o.name.toLowerCase()==='ontology';
+            hasTerm ||= $.inArray(o.name.toLowerCase(), ['termname', 'termid'])>=0;
+            ret += ' data-'+ o.name.toLowerCase() +'="'
+                +  (isEscaped ? escape(o.value) : o.value)
+                + '" ';
         });
+
+        if (hasTerm && !hasOntology) {
+            ret += 'data-ontology="EFO" ';
+        }
         return ret;
     }
 

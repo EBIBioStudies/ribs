@@ -38,7 +38,6 @@
         <%@include file="detail/section-table.hbs" %>
         <%@include file="detail/similar-studies.hbs" %>
         <%@include file="detail/study.hbs" %>
-        <%@include file="detail/valqual.hbs" %>
         <%@include file="detail/secret.hbs" %>
         <%@include file="detail/file-list-buttons.hbs" %>
         <%@include file="detail/citation.hbs" %>

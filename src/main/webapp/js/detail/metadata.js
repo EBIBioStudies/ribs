@@ -558,10 +558,11 @@ var Metadata = (function (_self) {
 
     function handleOntologyLinks() {
         // handle ontology links
-        $("span[data-term-id][data-ontology]").each(function () {
+        $("span[data-termid][" +
+            "data-ontology]").each(function () {
             var ont = $(this).data('ontology').toLowerCase();
-            var termId = $(this).data('term-id');
-            var name = $(this).data('term-name');
+            var termId = $(this).data('termid');
+            var name = $(this).data('termname');
             $.ajax({
                 async: true,
                 context: this,
@@ -570,10 +571,15 @@ var Metadata = (function (_self) {
                 success: function (data) {
                     if (data && data._embedded && data._embedded.terms && data._embedded.terms.length > 0) {
                         var n = name ? name : data._embedded.terms[0].description ? data._embedded.terms[0].description : null;
-                        $(this).append('<a title="' + data._embedded.terms[0].obo_id +
+                        const efoBadge= $('<a title="' + data._embedded.terms[0].obo_id +
                             ( n ? ' - ' + n : '') + '" ' +
-                            'class="ontology-icon"  target="_blank" href="' + data._embedded.terms[0].iri
-                            + '"><span class="icon icon-conceptual" data-icon="o"></span></a>');
+                            'class="ontology-icon" data-tooltip target="_blank" href="https://www.ebi.ac.uk/ols/ontologies/'
+                            + ont + '/terms?iri=' + data._embedded.terms[0].iri
+                            + '"><i class="fa fa-external-link-alt" aria-hidden="true"></i> '
+                            + ont
+                            +'</a>')
+                        $(this).append(efoBadge);
+                        efoBadge.foundation();
                     }
                 }
             });
