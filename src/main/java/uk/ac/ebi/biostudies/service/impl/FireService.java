@@ -44,6 +44,8 @@ public class FireService {
             fireObject = getFireObjectByPath(path);
         } catch (Exception ex1) {
             try {
+                if(fireObject!=null)
+                    fireObject.close();
                 if (requestedFilePath.equals(accession + ".tsv")) {
                     logger.debug("{} not found. Trying old .pagetab.tsv file.", path);
                     path = relativePath + "/" + accession + ".pagetab.tsv";
@@ -55,6 +57,12 @@ public class FireService {
                 // For folders
                 fireObject = getFireObjectByPath(path);
             } catch (Exception ex4) {
+                try {
+                    if(fireObject!=null)
+                        fireObject.close();
+                }catch (Exception exception){
+                    logger.debug("can not close fire pool http connection");
+                }
                 throw new FileNotFoundException(ex4.getMessage());
             }
         }

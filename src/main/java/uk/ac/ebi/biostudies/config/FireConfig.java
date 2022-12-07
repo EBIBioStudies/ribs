@@ -1,5 +1,6 @@
 package uk.ac.ebi.biostudies.config;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
@@ -23,12 +24,15 @@ public class FireConfig {
     private String endpoint;
     @Value("${fire.s3.bucket}")
     private String bucketName;
+    @Value("${fire.s3.connection.pool}")
+    private Integer conPoolSize;
     @Bean
     public AmazonS3 amazonS3Client() {
         BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKey, secretKey);
         AwsClientBuilder.EndpointConfiguration endpointConfiguration = new AwsClientBuilder.EndpointConfiguration(
                 endpoint, region); // The region is not important
         return AmazonS3Client.builder()
+                .withClientConfiguration(new ClientConfiguration().withMaxConnections(conPoolSize))
                 .withEndpointConfiguration(endpointConfiguration)
                 .withPathStyleAccessEnabled(true)
                 .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))

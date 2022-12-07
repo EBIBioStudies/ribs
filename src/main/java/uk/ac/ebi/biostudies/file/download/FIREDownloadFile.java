@@ -18,17 +18,23 @@
 package uk.ac.ebi.biostudies.file.download;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public final class FIREDownloadFile implements IDownloadFile {
+
+    private final Logger LOGGER = LogManager.getLogger(FIREDownloadFile.class);
+
     private final String path;
     private final InputStream inputStream;
     private final long size;
     private final boolean isDirectory;
 
     public FIREDownloadFile(String path, InputStream inputStream, long size, boolean isDirectory) {
+        LOGGER.debug("s3 connection opened: {}", inputStream.toString());
         this.inputStream = inputStream;
         if (null == path) {
             throw new IllegalArgumentException("File cannot be null");
@@ -68,7 +74,9 @@ public final class FIREDownloadFile implements IDownloadFile {
     }
 
     public void close() throws IOException {
-        if(inputStream!=null)
+        if(inputStream!=null) {
+            LOGGER.debug("s3 connection closed: {}", inputStream.toString());
             inputStream.close();
+        }
     }
 }
