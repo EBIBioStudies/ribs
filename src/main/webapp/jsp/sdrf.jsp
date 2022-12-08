@@ -29,5 +29,6 @@
         </div>
         <table id="file-list" class="display stripe compact hover font-60" width="100%">
         </table>
+        <a id="toggleColumns" title="Some columns were omitted; please click here to get a full view of samples and data" href="?full=true" class="icon icon-functional" data-icon="4"> Display full sample-data table</a>
     </jsp:body>
 </t:generic>

@@ -8,7 +8,7 @@ $(function() {
         .parent().parent().append('<li>Samples and Data</li>');
     updateTitleFromBreadCrumbs();
     $.get(contextPath + '/files/'+accession+  '/' + accession + '.sdrf.txt' ).done(function(data) {
-        var html = '<table id="sdrf" width="100%"><thead>';
+        var html = '<table id="sdrf"  class="display" width="100%"><thead>';
         var rows = data.split('\n');
         var colsToMove = [];
         var columnDefs = rows[0]
@@ -45,6 +45,8 @@ $(function() {
                     col.render = function (data, type, row) {
                         return '<a href="'+ contextPath + '/files/'+accession+  '/' + data + '" target="_blank"><i class="icon icon-functional" data-icon="="></i></a>';
                     }
+                } else if (params.full) {
+                    col.className = ''
                 }
                 if (col.hasOwnProperty('className')) {
                     var matches = /.*\[(.*)\]/g.exec(header);
@@ -82,12 +84,17 @@ $(function() {
         var newOrder = order.filter(function (v) {
            return $.inArray(v, colsToMove)<0;
         });
+        if (params.full) {
+            $('div.dataTables_scrollBody th, div.dataTables_scrollBody td').css('white-space', 'nowrap');
+            $('#toggleColumns').text(' Display summary');
+            $('#toggleColumns').attr('Please click here to get a summary view of samples and data');
+            $('#toggleColumns').attr('href', location.href.substr(0,location.href.indexOf('?')) );
+        }
         sdrfTable.colReorder.order($.merge(newOrder, colsToMove)).draw();
 
         if(('.sdrf-assay-column').length>1) {
             $('#assay-column-legend').show();
         }
-
     }).fail(function (error) {
         showError(error);
     });
