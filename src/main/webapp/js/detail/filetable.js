@@ -238,7 +238,7 @@ var FileTable = (function (_self) {
                 {
                     targets: 2,
                     render: function (data, type, row) {
-                        return  row.type==='directory' ? '<i class="fa fa-folder"></i>':getByteString(data) ;
+                        return row.type==='directory' ? getByteString(data)+'&nbsp;<i class="fa fa-folder"></i>':getByteString(data) ;
                     }
                 },
                 {
