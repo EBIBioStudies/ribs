@@ -1,10 +1,12 @@
 #!/bin/bash
-# Run this file in bash with this command:  ftp -i -s:./<filename>
-open ftp.ebi.ac.uk
-anonymous
-youremail@domain.com
+# Run this file in bash with this command:  ./filename
+HOST=ftp.ebi.ac.uk
+USER=anonymous
+ftp -inv $HOST <<EOF
+user $USER
 cd biostudies/%s/Files
 binary
 %s
 disconnect
-quit
+bye
+EOF
