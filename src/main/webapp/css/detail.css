@@ -43,7 +43,6 @@ body.is-reveal-open { /*avoid jumping of body to the left*/
 .bs-attribute {
     display: block;
     padding-top: 2pt;
-    white-space: pre-line;
 }
 
 .bs-attribute::after {
