@@ -23,11 +23,11 @@ var Searcher = (function (_self) {
             var html = template(data);
             $('#renderedContent').html(html);
             if (params && params.query && params.query.indexOf(" ")<0) {
-                $.getJSON(contextPath + "/api/v1/search?query=type:collection AND accession:"+params.query, function (data) {
-                    if (data && data.totalHits && data.totalHits==1 && data.hits[0].accession.toLowerCase()==params.query.toLowerCase()) {
-                       $('#facets').next().prepend ( $('<div class="callout warning">' +
-                           '<a href="'+contextPath + '/' + data.hits[0].accession + '/studies' + '">' +
-                        'Click here to browse the ' + data.hits[0].accession + ' collection</a></div>'));
+                $.getJSON(contextPath + "/api/v1/collections/"+params.query, function (data) {
+                    if (data && data.accno.toLowerCase()==params.query.toLowerCase()) {
+                       $('#facets').next().prepend ( $('<div class="collection-hit"><div>' +
+                           '<a href="'+contextPath + '/' + data.accno + '/studies' + '">' +
+                           'Click here to browse the <b>' + data.accno + '</b> collection</a></div></div>'));
                     }
                 });
             }

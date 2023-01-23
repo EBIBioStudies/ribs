@@ -389,3 +389,15 @@ select {
 ul#facet_facet\2e method_name li label span {
     word-break: break-all;
 }
+
+.collection-hit {
+    text-align: center;
+}
+
+.collection-hit div {
+        text-align: center;
+        margin-bottom: 1em;
+        padding: 1em;
+        background-color: var(--B5);
+        display: inline-block;
+}
