@@ -238,7 +238,7 @@ var FileTable = (function (_self) {
                 {
                     targets: 2,
                     render: function (data, type, row) {
-                        return row.type==='directory' ? getByteString(data)+'&nbsp;<i class="fa fa-folder"></i>':getByteString(data) ;
+                        return getByteString(data)
                     }
                 },
                 {
@@ -252,7 +252,8 @@ var FileTable = (function (_self) {
                                 .replaceAll("[", "%5B").replaceAll("]", "%5D")
                             + (params.key ? '?key='+params.key : '')
                             + '" target="_blank" style="max-width: 500px;">'
-                            + data +'</a>';
+                            + data +'</a>'
+                            + (row.type==='directory' ? '&nbsp;<i class="fa fa-folder"></i>':'')
                     }
                 },
                 {

@@ -45,7 +45,7 @@ public final class FIREDownloadFile implements IDownloadFile {
     }
 
     public String getName() {
-        return  path.substring(path.lastIndexOf("/")+1) + (isDirectory ? ".zip" : "");
+        return  path.substring(path.lastIndexOf("/")+1) + (isDirectory&&!path.endsWith(".zip") ? ".zip" : "");
     }
 
     public String getPath() {
