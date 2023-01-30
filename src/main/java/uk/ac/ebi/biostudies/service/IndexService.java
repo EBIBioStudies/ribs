@@ -27,5 +27,6 @@ public interface IndexService extends DisposableBean {
 
     void processFileForIndexing();
 
+    void scheduleFixedDelayTask();
 
 }
