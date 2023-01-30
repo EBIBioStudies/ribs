@@ -184,6 +184,10 @@ public class EFOManager {
         String termStr;
         try {
             IndexReader reader = indexManager.getIndexReader();
+            if(reader==null){
+                indexManager.openMainIndex();
+                reader = indexManager.getIndexReader();
+            }
             Terms terms = MultiTerms.getTerms(reader, Constants.Fields.CONTENT);
             if (null != terms) {
                 TermsEnum iterator = terms.iterator();
@@ -202,7 +206,7 @@ public class EFOManager {
                     }
                 }
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             LOGGER.error("getTerms problem", ex);
         }
     }
@@ -222,14 +226,7 @@ public class EFOManager {
             document.add(new StoredField(OWL.TERM, curTerm));
         }
         if(node.getAlternativeTerms()!=null)
-            node.getAlternativeTerms().forEach(term->
-            {
-                if(term!=null) {
-                    document.add(new StringField(OWL.ALTERNATIVE_TERMS, term.toLowerCase(), Field.Store.NO));
-                    document.add(new SortedDocValuesField(OWL.ALTERNATIVE_TERMS, new BytesRef(term)));
-                    document.add(new StoredField(OWL.ALTERNATIVE_TERMS, term));
-                }
-            });
+            createDocPerAlternativeTerm(indexWriter, node.getAlternativeTerms());
         if(node.getParents()!=null)
             node.getParents().forEach(term-> {
                 if(term.getId()!=null)
@@ -280,6 +277,25 @@ public class EFOManager {
         // step 3: remove node from efo map
         efo.getMap().remove(nodeId);
         LOGGER.debug("Removed [{}] -> [{}]", node.getId(), node.getTerm());
+    }
+
+    private  void createDocPerAlternativeTerm(IndexWriter indexWriter, Set<String> altTerms){
+
+        altTerms.forEach(term ->
+        {
+            if (term != null) {
+                try {
+                    Document document = new Document();
+                    document.add(new StringField(OWL.ALTERNATIVE_TERMS, term.toLowerCase(), Field.Store.NO));
+                    document.add(new SortedDocValuesField(OWL.ALTERNATIVE_TERMS, new BytesRef(term)));
+                    document.add(new StoredField(OWL.ALTERNATIVE_TERMS, term));
+                    indexWriter.addDocument(document);
+                }catch (Exception exception){
+                    LOGGER.debug("problem in adding alternative term", exception);
+                }
+            }
+        });
+
     }
 
     public IEFO getEfo() {
