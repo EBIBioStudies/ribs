@@ -151,11 +151,16 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         }
     }
 
-    public IDownloadFile getDownloadFile(String accession, String relativePath, String requestedFilePath, Constants.File.StorageMode storageMode) throws FileNotFoundException {
+    public IDownloadFile getDownloadFile(String accession, String relativePath, String requestedFilePath,
+                                         Constants.File.StorageMode storageMode) throws FileNotFoundException {
+        return getDownloadFile(accession, relativePath, requestedFilePath, storageMode, false);
+    }
+    public IDownloadFile getDownloadFile(String accession, String relativePath, String requestedFilePath,
+                                         Constants.File.StorageMode storageMode, boolean isThumbnail) throws FileNotFoundException {
         return storageMode == Constants.File.StorageMode.FIRE
-                ? fireService.getFireFile(accession, relativePath, requestedFilePath)
-                : getNFSFile(accession, relativePath, requestedFilePath)
-                ;
+                ? fireService.getFireFile(accession, relativePath, requestedFilePath, isThumbnail)
+                : getNFSFile(accession, relativePath, requestedFilePath);
+
     }
 
     private IDownloadFile getNFSFile(String accession, String relativePath, String requestedFilePath) throws FileNotFoundException {
