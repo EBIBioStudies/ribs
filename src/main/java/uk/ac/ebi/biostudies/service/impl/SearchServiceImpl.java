@@ -295,7 +295,7 @@ public class SearchServiceImpl implements SearchService {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode response = mapper.createObjectNode();
             IndexSearcher searcher = indexManager.getIndexSearcher();
-
+            if (searcher==null) return "{}";
             DocValuesStats.SortedLongDocValuesStats fileStats = new DocValuesStats.SortedLongDocValuesStats("files");
             searcher.search(new MatchAllDocsQuery(), new DocValuesStatsCollector(fileStats));
             response.put("files", fileStats.sum());
