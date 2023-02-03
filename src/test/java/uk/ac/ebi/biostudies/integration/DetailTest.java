@@ -159,7 +159,7 @@ public class DetailTest extends WebDriverTest {
     }
 
     @Test
-    public void testMultipleAffiliations() throws IOException {
+    public void testMultipleAffiliations() throws Exception {
         String accession = "S-EPMC6160819";
         String file = accession + ".json";
         doReturn(new InputStreamResource(getClass().getClassLoader().getResource(file).openStream()))
@@ -167,6 +167,7 @@ public class DetailTest extends WebDriverTest {
         String baseUrl = integrationTestProperties.getBaseUrl(randomPort);
         webDriver.get(baseUrl + "studies/" + accession);
         WebDriverWait wait = new WebDriverWait(webDriver, 50);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#bs-authors > li:nth-child(1) > span:nth-child(1)")));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#bs-authors > li:nth-child(1) > span:nth-child(1)")));
         WebElement element = webDriver.findElement(By.cssSelector("#bs-authors > li:nth-child(1) > span:nth-child(1)"));
         String expected = "SanfilippoP12";
