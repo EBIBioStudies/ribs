@@ -238,7 +238,7 @@ var FileTable = (function (_self) {
                 {
                     targets: 2,
                     render: function (data, type, row) {
-                        return row.type==='directory' ? getByteString(data)+'&nbsp;<i class="fa fa-folder"></i>':getByteString(data) ;
+                        return getByteString(data)
                     }
                 },
                 {
@@ -252,7 +252,8 @@ var FileTable = (function (_self) {
                                 .replaceAll("[", "%5B").replaceAll("]", "%5D")
                             + (params.key ? '?key='+params.key : '')
                             + '" target="_blank" style="max-width: 500px;">'
-                            + data +'</a>';
+                            + data +'</a>'
+                            + (row.type==='directory' ? '&nbsp;<i class="fa fa-folder"></i>':'')
                     }
                 },
                 {
@@ -827,7 +828,7 @@ var FileTable = (function (_self) {
         if (text===undefined) { return '';}
         text = text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
         // re modified from https://blog.mattheworiordan.com/post/13174566389/url-regular-expression-for-links-with-or-without
-        var reURL = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-]*)?\??(?:[\-\+=&;%@\.\w]*)#?(?:[:\.\!\/\\\w]*))?)/g;
+        var reURL = /((((http|https|ftp|ftps|mailto|s3):(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-]*)?\??(?:[\-\+=&;%@\.\w]*)#?(?:[:\.\!\/\\\w]*))?)/g;
         return text.replace(reURL, "<a target='_blank' href='$1'>$1</a>")
     }
 

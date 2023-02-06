@@ -22,6 +22,7 @@ import org.apache.lucene.util.BytesRef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.api.util.analyzer.AttributeFieldAnalyzer;
@@ -39,6 +40,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -57,6 +59,7 @@ public class IndexServiceImpl implements IndexService {
     public static final FieldType TYPE_NOT_ANALYZED = new FieldType();
     private static final BlockingQueue<String> indexFileQueue = new LinkedBlockingQueue<>();
     public static AtomicInteger ActiveExecutorService = new AtomicInteger(0);
+    private static AtomicBoolean INDEX_SEARCHER_NEED_REFRESH = new AtomicBoolean(false);
 
     static {
         TYPE_NOT_ANALYZED.setIndexOptions(IndexOptions.DOCS);
@@ -149,7 +152,17 @@ public class IndexServiceImpl implements IndexService {
         }
     }
 
-
+    @Scheduled(fixedDelayString = "${index.searcher.refresh.interval:60000}")
+    public void scheduleFixedDelayTask() {
+        if(!INDEX_SEARCHER_NEED_REFRESH.get()) {
+            return;
+        }
+        indexManager.refreshIndexSearcherAndReader();
+        indexManager.refreshTaxonomyReader();
+        searchService.clearStatsCache();
+        INDEX_SEARCHER_NEED_REFRESH.set(false);
+        logger.debug("index searchers are refreshed for searching on new received messages!");
+    }
     @Override
     public void indexOne(JsonNode submission, boolean removeFileDocuments) throws IOException {
         //TODO: Remove executor service if not needed
@@ -168,13 +181,11 @@ public class IndexServiceImpl implements IndexService {
             indexManager.commitTaxonomy();
             indexManager.getIndexWriter().commit();
             indexManager.getFileIndexWriter().commit();
-            indexManager.refreshIndexSearcherAndReader();
-            indexManager.refreshTaxonomyReader();
+            INDEX_SEARCHER_NEED_REFRESH.set(true);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         ActiveExecutorService.decrementAndGet();
-        searchService.clearStatsCache();
     }
 
     @Override

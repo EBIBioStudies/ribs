@@ -85,7 +85,7 @@ public class UpdateOntologyJob {
                 }
                 try {
                     efoManager.loadEfo();
-                    efoManager.buildIndex(true);
+                    efoManager.buildIndex();
                 }catch (Throwable throwable){
                     LOGGER.error("Unable to load EFO ontology file and create EFO Index", throwable);
                 }

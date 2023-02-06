@@ -44,19 +44,19 @@
                 {{else}}
                     {{#if query}}
                         <section>
-                            <h3 class="alert"><i class="icon icon-generic padding-right-medium" data-icon="l"></i>
-                                Your search for {{query}} returned no results.</h3>
+                            <h5 class="alert"><i class="icon icon-generic padding-right-medium" data-icon="l"></i>
+                                Your search <b>{{query}}</b> did not match any studies.</h5>
                             <p></p>
                         </section>
                     {{else}}
                         <section>
-                            <h3 class="alert"><i class="icon icon-generic padding-right-medium" data-icon="l"></i>
-                                Your search returned no results.</h3>
+                            <h5 class="alert"><i class="icon icon-generic padding-right-medium" data-icon="l"></i>
+                                Your search did not match any studies.</h5>
                             <p></p>
                         </section>
                     {{/if}}
                     {{#if suggestion}}
-                    <h3>Did you mean...</h3>
+                    <h5>Did you mean...</h5>
                     <ul id="spell-suggestions">
                         {{#each suggestion}}
                         <li> {{dynamicLink this}} </li>

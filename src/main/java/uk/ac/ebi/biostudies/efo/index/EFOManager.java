@@ -9,7 +9,10 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.util.BytesRef;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.config.EFOConfig;
@@ -19,7 +22,6 @@ import uk.ac.ebi.biostudies.efo.EFONode;
 import uk.ac.ebi.biostudies.efo.IEFO;
 import uk.ac.ebi.biostudies.efo.StringTools;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,66 +36,62 @@ import static uk.ac.ebi.biostudies.service.impl.IndexServiceImpl.TYPE_NOT_ANALYZ
 
 @Service
 public class EFOManager {
+    final static int MAX_LIMIT = 200;
+    private static final Logger LOGGER = LogManager.getLogger(EFOManager.class.getName());
     @Autowired
     IndexManager indexManager;
     @Autowired
     EFOConfig efoConfig;
     @Autowired
     EFOExpanderIndex efoExpanderIndex;
-
     private IEFO efo;
 
-
-    private static final Logger LOGGER = LogManager.getLogger(EFOManager.class.getName());
-
-    final static int MAX_LIMIT = 200;
-
-
-    @PostConstruct
-    public void createEfoIndex(){
-        try{
-            if(indexManager.getEfoIndexDirectory()==null)
+    @Async
+    @EventListener(ApplicationStartedEvent.class)
+    public void createEfoIndex() {
+        try {
+            if (indexManager.getEfoIndexDirectory() == null)
                 indexManager.openEfoIndex();
             if (!DirectoryReader.indexExists(indexManager.getEfoIndexDirectory())) {
                 loadEfo();
-                buildIndex(true);
+                buildIndex();
             }
-        }catch (Throwable exception){
+        } catch (Throwable exception) {
             LOGGER.error("Problem in creating EFO init index", exception);
         }
     }
 
-    public String getKeywordsPlus(String query, String field, int limit){
-        if(limit>MAX_LIMIT)
-            limit=MAX_LIMIT;
+    public String getKeywordsPlus(String query, String field, int limit) {
+        if (limit > MAX_LIMIT)
+            limit = MAX_LIMIT;
         int totalHit = 0;
         StringBuilder resultStr = new StringBuilder();
         TopDocs topResult = null;
         try {
-            if(field==null || field.isEmpty())
-                field=OWL.ALL;
-            if(field.equalsIgnoreCase(OWL.ALL) || field.equalsIgnoreCase(OWL.TERM)) {
+            if (field == null || field.isEmpty())
+                field = OWL.ALL;
+            if (field.equalsIgnoreCase(OWL.ALL) || field.equalsIgnoreCase(OWL.TERM)) {
                 QueryParser parser = new QueryParser(OWL.TERM, new KeywordAnalyzer());
                 query = modifyQuery(query);
                 Query myQuery = parser.parse(query);
                 topResult = indexManager.getEfoIndexSearcher().search(myQuery, limit, new Sort(new SortField(OWL.TERM, SortField.Type.STRING, false)));
                 totalHit = (int) topResult.totalHits.value;
-                serialaizeSearchResult(topResult, resultStr);
+                serializeSearchResult(topResult, resultStr);
             }
-            if(field.equalsIgnoreCase(OWL.ALTERNATIVE_TERMS) || field.equalsIgnoreCase(OWL.CONTENT) || (topResult!=null && topResult.totalHits.value<limit && field.equalsIgnoreCase(OWL.ALL)))
-                addAlternativeTerms(query, resultStr, limit-totalHit);
-        }catch (Exception exception){
+            if (field.equalsIgnoreCase(OWL.ALTERNATIVE_TERMS) || field.equalsIgnoreCase(OWL.CONTENT) || (topResult != null && topResult.totalHits.value < limit && field.equalsIgnoreCase(OWL.ALL)))
+                addAlternativeTerms(query, resultStr, limit - totalHit);
+        } catch (Exception exception) {
             LOGGER.error(exception);
         }
         return resultStr.toString();
     }
 
-    private String modifyQuery(String query){
-        if(query.contains("\"") || query.indexOf("AND")>=0 || query.indexOf("OR")>=0 || query.contains("*"))
+    private String modifyQuery(String query) {
+        if (query.contains("\"") || query.indexOf("AND") >= 0 || query.indexOf("OR") >= 0 || query.contains("*"))
             return query;
 
         query = query + "*";
-        return  query;
+        return query;
     }
 
     private void addAlternativeTerms(String strQuery, StringBuilder resultStr, int limit) throws Exception {
@@ -106,36 +104,35 @@ public class EFOManager {
         }
     }
 
-    public String getEfoTree(String query){
+    public String getEfoTree(String query) {
         StringBuilder resultStr = new StringBuilder();
         try {
             TopDocs topResult = indexManager.getEfoIndexSearcher().search(new TermQuery(new Term(OWL.FATHER, query.toLowerCase())), Integer.MAX_VALUE);
-            serialaizeSearchResult(topResult, resultStr);
-        }catch (Exception exception){
+            serializeSearchResult(topResult, resultStr);
+        } catch (Exception exception) {
             LOGGER.debug("efotree exception: ", exception);
         }
         return resultStr.toString();
     }
 
-    private void serialaizeSearchResult(TopDocs topResults, StringBuilder resultStr) throws Exception{
-        for (ScoreDoc scoreDoc : topResults.scoreDocs)
-        {
+    private void serializeSearchResult(TopDocs topResults, StringBuilder resultStr) throws Exception {
+        for (ScoreDoc scoreDoc : topResults.scoreDocs) {
             Document response = indexManager.getEfoIndexReader().document(scoreDoc.doc);
             resultStr.append(response.get(OWL.TERM)).append("|o|");
-            if(response.get(OWL.CHILDRERN)!=null)
+            if (response.get(OWL.CHILDRERN) != null)
                 resultStr.append(response.get(OWL.ID));
             resultStr.append("\n");
         }
     }
 
-    public void loadEfo(){
+    public void loadEfo() {
         Long time = System.currentTimeMillis();
         try {
             File efoFile = new File(efoConfig.getOwlFilename());
             if (!efoFile.exists()) {
                 String efoBuiltinSource = efoConfig.getLocalOwlFilename();
                 try (InputStream is = new ClassPathResource(efoBuiltinSource).getInputStream()) {
-                    Files.copy( is, efoFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(is, efoFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
             }
 
@@ -145,20 +142,17 @@ public class EFOManager {
                 this.efo = removeIgnoredClasses(new EFOLoader().load(ontologyStream), efoConfig.getIgnoreListFilename());
                 LOGGER.info("EFO loading completed");
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             LOGGER.error("Problem in loading EFO! ", ex);
         }
-        LOGGER.debug((System.currentTimeMillis()-time)+" milliseconds last to load RDF file");
+        LOGGER.debug((System.currentTimeMillis() - time) + " milliseconds last to load RDF file");
     }
 
-    public void buildIndex(boolean byForce) throws Throwable{
-        if(!byForce && DirectoryReader.indexExists(indexManager.getEfoIndexDirectory()))
-            return;
-        if(efo==null)
-            return;
+    public void buildIndex() throws Throwable {
+        if (efo == null) return;
         IndexWriter indexWriter = indexManager.getEfoIndexWriter();
         indexWriter.deleteAll();
-        Set<String>allTermSet = new HashSet<>();
+        Set<String> allTermSet = new HashSet<>();
         addNodeAndChildren(this.efo.getMap().get(IEFO.ROOT_ID), indexWriter, allTermSet);
         addMainIndexTerms(indexWriter, allTermSet);
         allTermSet.clear();
@@ -169,7 +163,7 @@ public class EFOManager {
         LOGGER.info("EFO indexing finished!");
     }
 
-    private void addNodeAndChildren(EFONode node, IndexWriter indexWriter, Set<String>allTermSet) {
+    private void addNodeAndChildren(EFONode node, IndexWriter indexWriter, Set<String> allTermSet) {
 
         if (null != node) {
             addNodeToIndex(node, indexWriter, allTermSet);
@@ -179,18 +173,22 @@ public class EFOManager {
         }
     }
 
-    private void addMainIndexTerms(IndexWriter indexWriter, Set<String> allTermSet){
+    private void addMainIndexTerms(IndexWriter indexWriter, Set<String> allTermSet) {
         final int minFreq = 10;
         String termStr;
         try {
             IndexReader reader = indexManager.getIndexReader();
+            if (reader == null) {
+                indexManager.openMainIndex();
+                reader = indexManager.getIndexReader();
+            }
             Terms terms = MultiTerms.getTerms(reader, Constants.Fields.CONTENT);
             if (null != terms) {
                 TermsEnum iterator = terms.iterator();
                 BytesRef byteRef;
                 while ((byteRef = iterator.next()) != null) {
                     termStr = byteRef.utf8ToString();
-                    if(termStr.length()<4 || allTermSet.contains(termStr.toLowerCase()))
+                    if (termStr.length() < 4 || allTermSet.contains(termStr.toLowerCase()))
                         continue;
                     if (iterator.docFreq() >= minFreq) {
                         allTermSet.add(termStr.toLowerCase());
@@ -202,47 +200,40 @@ public class EFOManager {
                     }
                 }
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             LOGGER.error("getTerms problem", ex);
         }
     }
 
-    private void addNodeToIndex(EFONode node, IndexWriter indexWriter, Set<String>allTermSet){
-        if(allTermSet.contains(node.getTerm()))
+    private void addNodeToIndex(EFONode node, IndexWriter indexWriter, Set<String> allTermSet) {
+        if (allTermSet.contains(node.getTerm()))
             return;
         allTermSet.add(node.getTerm());
         Document document = new Document();
         document.add(new Field(OWL.ID, node.getId().toLowerCase(), TYPE_NOT_ANALYZED));
-        if(node.getEfoUri()!=null)
+        if (node.getEfoUri() != null)
             document.add(new Field(OWL.EFOID, node.getEfoUri().toLowerCase(), TYPE_NOT_ANALYZED));
-        if(node.getTerm()!=null) {
+        if (node.getTerm() != null) {
             String curTerm = node.getTerm().toLowerCase();
             document.add(new StringField(OWL.TERM, curTerm, Field.Store.NO));
             document.add(new SortedDocValuesField(OWL.TERM, new BytesRef(curTerm)));
             document.add(new StoredField(OWL.TERM, curTerm));
         }
-        if(node.getAlternativeTerms()!=null)
-            node.getAlternativeTerms().forEach(term->
-            {
-                if(term!=null) {
-                    document.add(new StringField(OWL.ALTERNATIVE_TERMS, term.toLowerCase(), Field.Store.NO));
-                    document.add(new SortedDocValuesField(OWL.ALTERNATIVE_TERMS, new BytesRef(term)));
-                    document.add(new StoredField(OWL.ALTERNATIVE_TERMS, term));
-                }
-            });
-        if(node.getParents()!=null)
-            node.getParents().forEach(term-> {
-                if(term.getId()!=null)
+        if (node.getAlternativeTerms() != null)
+            createDocPerAlternativeTerm(indexWriter, node.getAlternativeTerms());
+        if (node.getParents() != null)
+            node.getParents().forEach(term -> {
+                if (term.getId() != null)
                     document.add(new Field(OWL.FATHER, term.getId().toLowerCase(), TYPE_NOT_ANALYZED));
             });
-        if(node.getChildren()!=null)
+        if (node.getChildren() != null)
             node.getChildren().forEach(term -> {
-                if(term.getId()!=null)
+                if (term.getId() != null)
                     document.add(new Field(OWL.CHILDRERN, term.getId().toLowerCase(), TYPE_NOT_ANALYZED));
             });
         try {
             indexWriter.addDocument(document);
-        }catch (Exception exception){
+        } catch (Exception exception) {
             LOGGER.error("Problem in indexing EFONode: {}", node.getId(), exception);
         }
     }
@@ -280,6 +271,25 @@ public class EFOManager {
         // step 3: remove node from efo map
         efo.getMap().remove(nodeId);
         LOGGER.debug("Removed [{}] -> [{}]", node.getId(), node.getTerm());
+    }
+
+    private void createDocPerAlternativeTerm(IndexWriter indexWriter, Set<String> altTerms) {
+
+        altTerms.forEach(term ->
+        {
+            if (term != null) {
+                try {
+                    Document document = new Document();
+                    document.add(new StringField(OWL.ALTERNATIVE_TERMS, term.toLowerCase(), Field.Store.NO));
+                    document.add(new SortedDocValuesField(OWL.ALTERNATIVE_TERMS, new BytesRef(term)));
+                    document.add(new StoredField(OWL.ALTERNATIVE_TERMS, term));
+                    indexWriter.addDocument(document);
+                } catch (Exception exception) {
+                    LOGGER.debug("problem in adding alternative term", exception);
+                }
+            }
+        });
+
     }
 
     public IEFO getEfo() {

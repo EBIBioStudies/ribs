@@ -29,9 +29,14 @@ public class FireService {
     @Autowired
     AmazonS3 s3;
 
-    public IDownloadFile getFireFile(String accession, String relativePath, String requestedFilePath) throws FileNotFoundException {
+    public IDownloadFile getFireFile(String accession, String relativePath, String requestedFilePath) throws  FileNotFoundException {
+        return getFireFile(accession, relativePath, requestedFilePath, false);
+    }
 
-        String path = relativePath + "/Files/" + requestedFilePath;
+    public IDownloadFile getFireFile(String accession, String relativePath, String requestedFilePath, boolean isThumbnail) throws FileNotFoundException {
+
+        String path = relativePath + (isThumbnail ? "/Thumbnail/" : "/Files/")
+                + requestedFilePath + (isThumbnail ? ".thumbnail.png" : "");
 
         // For study json/xml/tsv pagetab files
         if (requestedFilePath.equals(accession + ".json") || requestedFilePath.equals(accession + ".xml") || requestedFilePath.equals(accession + ".tsv")) {

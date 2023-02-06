@@ -213,7 +213,7 @@ public class IndexManager implements DisposableBean {
         }
     }
 
-    private void openMainIndex() throws Throwable {
+    public void openMainIndex() throws Throwable {
         String indexDir = indexConfig.getIndexDirectory();
         indexDirectory = FSDirectory.open(Paths.get(indexDir));
         fileIndexDirectory = FSDirectory.open(Paths.get(indexConfig.getFileIndexDirectory()));

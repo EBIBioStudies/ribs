@@ -22,11 +22,20 @@ var Searcher = (function (_self) {
             responseData = data;
             var html = template(data);
             $('#renderedContent').html(html);
-
+            if (params && params.query && params.query.indexOf(" ")<0) {
+                $.getJSON(contextPath + "/api/v1/collections/"+params.query, function (data) {
+                    if (data && data.accno.toLowerCase()==params.query.toLowerCase()) {
+                       $('#facets').next().prepend ( $('<div class="collection-hit"><div>' +
+                           '<a href="'+contextPath + '/' + data.accno + '/studies' + '">' +
+                           'Click here to browse the <b>' + data.accno + '</b> collection</a></div></div>'));
+                    }
+                });
+            }
             postRender(data, params);
         }).done( function () {
             FacetRenderer.render(params);
         });
+
     };
 
     _self.getResponseData = function() { return responseData; };
