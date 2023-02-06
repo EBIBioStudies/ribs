@@ -152,7 +152,7 @@ public class IndexServiceImpl implements IndexService {
         }
     }
 
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelayString = "${index.searcher.refresh.interval:60000}")
     public void scheduleFixedDelayTask() {
         if(!INDEX_SEARCHER_NEED_REFRESH.get()) {
             return;
