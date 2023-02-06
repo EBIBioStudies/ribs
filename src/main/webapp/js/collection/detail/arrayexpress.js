@@ -16,17 +16,16 @@ $('a[data-file-data-search]').click( function () {
 })
 
 // add icon for sdrf
-var sdrfIcon = $('<div class="bs-attribute"><span class="bs-name">Detailed sample information and links to data </span>' +
-    ' <span class="bs-value"><a class="show-more" href="#" title="Click to open SDRF Viewer">' +
-    ' view table <i class="fas fa-external-link-square-alt"></i></a></span>' +
-    '</div>').click(function() {
-    var acc = $('#accession').text();
-    window.open( contextPath + (collection? '/'+collection:'')+'/studies/'+ acc + '/sdrf');
-});
-sdrfIcon.insertBefore($('.bs-attribute:contains("Samples")').first());
+let accession = $('#orcid-accession').text().trim();
+let params = getParams();
 
-// add AE link
-var accession = $('#orcid-accession').text().trim();
+let sdrfIcon = $('<div class="bs-attribute"><span class="bs-name">Detailed sample information and links to data </span>' +
+    ' <span class="bs-value"><a class="show-more" href="'+
+    (contextPath + (collection? '/'+collection:'')+'/studies/'+ accession + '/sdrf' + (params.key ? '?key='+params.key : '')) +
+    '" title="Click to open SDRF Viewer" target="_blank">' +
+    ' view table <i class="fas fa-external-link-square-alt"></i></a></span>' +
+    '</div>');
+sdrfIcon.insertBefore($('.bs-attribute:contains("Samples")').first());
 
 // format MIAME/MinSeq scores -- has to be after the column conversion
 var $miameTitleDiv = $('.bs-attribute:contains("MIAME Score")');
