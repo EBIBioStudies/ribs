@@ -25,10 +25,10 @@ var FileTable = (function (_self) {
                     return;
                 }
                 handleFileTableColumns(response.columns, acc, params, isDetailPage, hasZippedFolders);
-                handleFileDownloadSelection(acc,params.key, response.relPath, hasZippedFolders);
+                handleFileDownloadSelection(acc,params.key, response.relPath, hasZippedFolders, response.isPublic);
                 handleAdvancedSearch(columnDefinitions);
                 if (isDetailPage) {
-                    handleSectionButtons(acc, params, response.sections, response.relPath, hasZippedFolders);
+                    handleSectionButtons(acc, params, response.sections, response.relPath, hasZippedFolders, isPublic);
                     handleFileListButtons(acc, params.key, hasZippedFolders);
                 }
                 FileTable.getFilesTable().columns.adjust();
@@ -372,7 +372,7 @@ var FileTable = (function (_self) {
         handleThumbnails(params.key);
     }
 
-    function handleSectionButtons(acc,params, sections, relPath, hasZippedFolders) {
+    function handleSectionButtons(acc,params, sections, relPath, hasZippedFolders, isPublic) {
         // add file filter button for section
         $(sections).each(function (i,divId) {
             var column = 'columns['+filesTable.column(':contains(Section)').index()+']';
@@ -384,7 +384,7 @@ var FileTable = (function (_self) {
                 var bar = $('#' + $.escapeSelector(divId) + ' > .bs-attribute > .section-title-bar');
                 bar.append($('<span/>').addClass('bs-section-files-text').html(data.recordsFiltered + (data.recordsFiltered > 1 ? ' files' : ' file')))
                 addFileFilterButton(divId, bar);
-                addFileDownloadButton(acc,divId, bar, params.key, relPath, hasZippedFolders);
+                addFileDownloadButton(acc,divId, bar, params.key, relPath, hasZippedFolders, isPublic);
             });
 
         });
@@ -405,7 +405,7 @@ var FileTable = (function (_self) {
         bar.append(button);
     }
 
-    function addFileDownloadButton(acc, divId, bar, key, relPath, hasZippedFolders) {
+    function addFileDownloadButton(acc, divId, bar, key, relPath, hasZippedFolders, isPublic) {
         var button = $('<a class="section-button" data-files-id="' + divId + '">' +
             '<i class="fa fa-cloud-download-alt"></i> Download </a>');
         // handle clicks on file download in section
@@ -425,7 +425,7 @@ var FileTable = (function (_self) {
                     var filelist = response.data.map( function (v) {
                        return v.path + (hasZippedFolders && v.type==='directory' ? '.zip' : '');
                     });
-                    createDownloadDialog(key, relPath, new Set(filelist), hasZippedFolders);
+                    createDownloadDialog(key, relPath, new Set(filelist), hasZippedFolders, isPublic);
                 })
             });
         bar.append(button);
@@ -433,7 +433,7 @@ var FileTable = (function (_self) {
 
     var dlIndex = -1;
 
-    function createDownloadDialog(key, relativePath, filelist, hasZippedFolders) {
+    function createDownloadDialog(key, relativePath, filelist, hasZippedFolders, isPublic) {
         var fileName = {os: "unix", ps: ".sh", acc: $('#accession').text(), dldir: "/home/user/"};
         var popUpTemplateSource = $('script#batchdl-accordion-template').html();
         var compiledPopUpTemplate = Handlebars.compile(popUpTemplateSource);
@@ -442,7 +442,7 @@ var FileTable = (function (_self) {
         var asperaDlInstructionTemplate = $('script#aspera-dl-instruction').html();
         var asperaCompiledInstructionTemplate = Handlebars.compile(asperaDlInstructionTemplate);
         // initAsperaConnect();
-        $('#batchdl-popup').html(compiledPopUpTemplate({fname: fileName, fileCount: filelist.size}));
+        $('#batchdl-popup').html(compiledPopUpTemplate({fname: fileName, fileCount: filelist.size, isPublic: isPublic}));
         $('#batchdl-popup').foundation('open');
         var dltype = "/zip";
         fileName = getOsData('');
@@ -473,7 +473,8 @@ var FileTable = (function (_self) {
         $("#aspera-plugin-dl-button").on('click', function (e) {
             initAsperaConnect();
             dlIndex = -1;
-            asperaPluginWarmUp(filelist, relativePath)
+            debugger
+            asperaPluginWarmUp(filelist, (hasZippedFolders ? 'fire/' : 'nfs/') + relativePath)
             fileControls.selectFolder();
             e.preventDefault();
         });
@@ -483,7 +484,7 @@ var FileTable = (function (_self) {
         $('#fileLimitDialog').foundation().foundation('open');
     }
 
-    function handleFileDownloadSelection(acc,key,relativePath, hasZippedFolders) {
+    function handleFileDownloadSelection(acc,key,relativePath, hasZippedFolders, isPublic) {
         // add select all checkbox
         $(filesTable.columns(0).header()).html('<input id="select-all-files" title="Select all files" type="checkbox"/>' +
             '<span style="display: none">Select all files</span>');
@@ -522,7 +523,7 @@ var FileTable = (function (_self) {
         $("#download-selected-files").on('click', function () {
             if ($("#download-selected-files").hasClass('disabled')) return;
             if (selectedFiles.size) {
-                createDownloadDialog(key, relativePath, selectedFiles, hasZippedFolders);
+                createDownloadDialog(key, relativePath, selectedFiles, hasZippedFolders, isPublic);
             } else {
                 $.post(contextPath+ '/api/v1/files/'+ acc, {
                         length: -1,
@@ -533,7 +534,7 @@ var FileTable = (function (_self) {
                     var filelist = response.data.map( function (v) {
                         return v.path + (hasZippedFolders && v.type==='directory' ? '.zip' : '')
                     });
-                    createDownloadDialog(key, relativePath, new Set(filelist), hasZippedFolders);
+                    createDownloadDialog(key, relativePath, new Set(filelist), hasZippedFolders, isPublic);
                 });
             }
         });

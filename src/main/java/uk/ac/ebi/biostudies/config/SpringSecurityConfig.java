@@ -41,13 +41,17 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         for(String ipAdmin:adminIPAllowList){
             ipAllowList.append(String.format(" or hasIpAddress('%s')", ipAdmin));
         }
-        http.addFilterAfter(cookieFilter, AnonymousAuthenticationFilter.class).csrf().disable().anonymous().principal("guest").authorities("GUEST").and()
+        http.addFilterAfter(cookieFilter, AnonymousAuthenticationFilter.class)
+                .csrf().disable()
+                .headers().frameOptions().sameOrigin().and()
+                .anonymous().principal("guest").authorities("GUEST").and()
                 .authorizeRequests().antMatchers("/api/v1/index/**").access("hasAuthority('SUPER_USER')"+ipAllowList.toString())
                 .antMatchers("/**").permitAll()
                 .and().formLogin().successHandler(new RefererAuthenticationSuccessHandler())
                 .loginPage("/").usernameParameter("u").passwordParameter("p").permitAll()
                 .and().logout().logoutUrl("/logout").addLogoutHandler(bioStudiesLogoutHandler).deleteCookies("JSESSIONID")
-                .and().rememberMe().rememberMeServices(customRememberMeCookieService);
+                .and().rememberMe().rememberMeServices(customRememberMeCookieService)
+                ;
     }
 
 
