@@ -54,7 +54,7 @@ public class EFOManager {
                 indexManager.openEfoIndex();
             if (!DirectoryReader.indexExists(indexManager.getEfoIndexDirectory())) {
                 loadEfo();
-                buildIndex(true);
+                buildIndex();
             }
         } catch (Throwable exception) {
             LOGGER.error("Problem in creating EFO init index", exception);
@@ -148,7 +148,7 @@ public class EFOManager {
         LOGGER.debug((System.currentTimeMillis() - time) + " milliseconds last to load RDF file");
     }
 
-    public void buildIndex(boolean byForce) throws Throwable {
+    public void buildIndex() throws Throwable {
         if (efo == null) return;
         IndexWriter indexWriter = indexManager.getEfoIndexWriter();
         indexWriter.deleteAll();
