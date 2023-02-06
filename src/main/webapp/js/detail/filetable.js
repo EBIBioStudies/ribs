@@ -442,7 +442,7 @@ var FileTable = (function (_self) {
         var asperaDlInstructionTemplate = $('script#aspera-dl-instruction').html();
         var asperaCompiledInstructionTemplate = Handlebars.compile(asperaDlInstructionTemplate);
         // initAsperaConnect();
-        $('#batchdl-popup').html(compiledPopUpTemplate({fname: fileName, fileCount: filelist.size, showAsperaItems: hasZippedFolders}));
+        $('#batchdl-popup').html(compiledPopUpTemplate({fname: fileName, fileCount: filelist.size}));
         $('#batchdl-popup').foundation('open');
         var dltype = "/zip";
         fileName = getOsData('');
