@@ -18,7 +18,9 @@ var FileTable = (function (_self) {
                 if (isDetailPage) {
                     handleSecretKey(response.seckey, params.key);
                     handleDateMetadata(response.released, response.modified);
-                    if (response.isPublic) handleFTPLink(response.ftpLink);
+                    if (response.isPublic) {
+                        handleSubmissionFolderLinks(response.ftpLink, response.globusLink);
+                    }
                 }
                 if (!response.files || response.files===0) {
                     $('#file-list-container').parent().remove();
@@ -28,7 +30,7 @@ var FileTable = (function (_self) {
                 handleFileDownloadSelection(acc,params.key, response.relPath, hasZippedFolders, response.isPublic);
                 handleAdvancedSearch(columnDefinitions);
                 if (isDetailPage) {
-                    handleSectionButtons(acc, params, response.sections, response.relPath, hasZippedFolders, isPublic);
+                    handleSectionButtons(acc, params, response.sections, response.relPath, hasZippedFolders, response.isPublic);
                     handleFileListButtons(acc, params.key, hasZippedFolders);
                 }
                 FileTable.getFilesTable().columns.adjust();
@@ -97,9 +99,11 @@ var FileTable = (function (_self) {
         });
     }
 
-    function handleFTPLink(ftpLink) {
+    function handleSubmissionFolderLinks(ftpLink, globusLink) {
         $('#ftp-link').attr('href',ftpLink);
         $('#ftp-link').show();
+        $('#globus-link').attr('href',globusLink);
+        $('#globus-link').show();
     }
 
     function handleDateMetadata(released, modified) {

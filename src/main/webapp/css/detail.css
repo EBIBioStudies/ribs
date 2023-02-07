@@ -326,6 +326,13 @@ ul#bs-orgs {
     background-color: #9E5F5F;
     border: none !important;
 }
+
+.source-icon-globus:before, .source-icon-globus {
+    color: #FFFFFF !important;
+    background-color: #335a95;
+    border: none !important;
+}
+
 .source-icon-ftp .fa {
     padding-right:2px;
 }

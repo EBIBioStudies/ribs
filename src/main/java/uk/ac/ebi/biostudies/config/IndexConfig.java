@@ -44,6 +44,8 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     private String thumbnailDir;
     @Value("${files.ftpUrl}")
     private String ftpDir;
+    @Value("${files.globusUrl}")
+    private String globusUrl;
     @Value("${indexer.stopwords}")
     private String stopwords;
     @Value("${index.spellcheckerDirectory}")
@@ -111,6 +113,10 @@ public class IndexConfig implements InitializingBean, DisposableBean {
 
     public String getFtpDir() {
         return ftpDir;
+    }
+
+    public String getGlobusUrl() {
+        return globusUrl;
     }
 
     public int getQueueSize() {
