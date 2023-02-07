@@ -473,7 +473,6 @@ var FileTable = (function (_self) {
         $("#aspera-plugin-dl-button").on('click', function (e) {
             initAsperaConnect();
             dlIndex = -1;
-            debugger
             asperaPluginWarmUp(filelist, (hasZippedFolders ? 'fire/' : 'nfs/') + relativePath)
             fileControls.selectFolder();
             e.preventDefault();
