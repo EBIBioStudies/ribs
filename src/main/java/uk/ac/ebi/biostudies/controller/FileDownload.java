@@ -52,8 +52,6 @@ public class FileDownload {
         String os = request.getParameter("os");
         if (os == null || os.isEmpty())
             os = "unix";
-        String fileExtension = "sh";
-        fileExtension = dlType.equalsIgnoreCase("aspera") ? getFileExtension(os): "txt";
         Document submissionDoc = getFilePaths(request, response);
         String relativeBaseDir = submissionDoc.get(Constants.Fields.RELATIVE_PATH);
         String accession = submissionDoc.get(Constants.Fields.ACCESSION);
@@ -61,11 +59,11 @@ public class FileDownload {
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
 
         if (!searchService.isDocumentInCollection(submissionDoc, collection)) {
-            throw new SubmissionNotAccessibleException();
-        }
+            throw new SubmissionNotAccessibleException();        }
 
 
         dlType = dlType.replaceFirst("/", "");
+        String fileExtension = dlType.equalsIgnoreCase("aspera") ? getFileExtension(os): "txt";
         String[] files = request.getParameterMap().get("files");
         if (storageMode == Constants.File.StorageMode.FIRE) {
             files = createFireCompatibleFileNames(files);
