@@ -136,7 +136,7 @@ public class FileIndexServiceImpl implements FileIndexService {
                     doc.add(new StoredField(name, value));
                     doc.add(new SortedDocValuesField(name, new BytesRef(value)));
                     attributeColumns.add(name);
-
+                    pureTextFileAttKeyValues.add(name);
                     pureTextFileAttKeyValues.add(value);
                 }
             }
@@ -273,8 +273,8 @@ public class FileIndexServiceImpl implements FileIndexService {
                     break;
                 }
                 JsonNode singleFile = mapper.readTree(parser);
-                SingleFileParser paralelParser = new SingleFileParser(accession, writer, counter, columns, sectionsWithFiles, parent, singleFile, fileKeyValuePureTextForSearch);
-                submittedTasks.add(FileListThreadPool.submit(paralelParser));
+                SingleFileParser parallelParser = new SingleFileParser(accession, writer, counter, columns, sectionsWithFiles, parent, singleFile, fileKeyValuePureTextForSearch);
+                submittedTasks.add(FileListThreadPool.submit(parallelParser));
             }
 
             submittedTasks.stream().forEach(task -> {
