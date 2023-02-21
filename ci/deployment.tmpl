@@ -25,8 +25,8 @@ spec:
          httpGet:
            path: $CONTEXT_PATH
            port: 8080
-         initialDelaySeconds: 60
-         periodSeconds: 2
+         initialDelaySeconds: 120
+         periodSeconds: 60
         env:
         - name: proxy_host
           value: "$PROXY_HOST"

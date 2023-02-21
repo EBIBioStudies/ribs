@@ -33,9 +33,9 @@ var Metadata = (function (_self) {
                         + ' href="'
                         + urls[i]
                         + (urls[i][0] !== '#' ? '" target="_blank' : '')
-                        + '">' + v + '</a>'
+                        + '">' + v.replaceAll('\n','<br/>')  + '</a>'
                         :
-                        '<span ' + addValQualAttributes(e.valqual, true) + '>' + v + '</span>'
+                        '<span ' + addValQualAttributes(e.valqual, true) + '>' + v.replaceAll('\n','<br/>') + '</span>'
                 );
             })
                 .join(', ');
