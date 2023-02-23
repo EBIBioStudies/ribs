@@ -401,3 +401,7 @@ ul#facet_facet\2e method_name li label span {
         background-color: var(--B5);
         display: inline-block;
 }
+
+section {
+    clear:both;
+}
