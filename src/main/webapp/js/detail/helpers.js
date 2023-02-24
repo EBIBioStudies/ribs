@@ -27,7 +27,7 @@ var Metadata = (function (_self) {
             if (!e.value) return "";
             let isHtml = isHtmlAttribute(e.valqual);
             let html = e.value.split(' | ').map(function (v, i) {
-                v = isHtml ? v : Handlebars.escapeExpression(v);
+                v = isHtml ? v : linkifyHtml(Handlebars.escapeExpression(v));
                 return (urls[i] ? '<a '
                         + addValQualAttributes(e.valqual)
                         + ' href="'

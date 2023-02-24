@@ -263,7 +263,7 @@ var FileTable = (function (_self) {
                 {
                     targets: '_all',
                     render:  function (data, type, row, meta) {
-                        return data ? linkify(data) : '';
+                        return data ? linkifyHtml(Handlebars.escapeExpression(data)) : '';
                     }
                 }
             ],
@@ -827,15 +827,6 @@ var FileTable = (function (_self) {
         var i = Math.floor(Math.log(b) / Math.log(1000))
         return parseFloat(b / Math.pow(1000, i)).toFixed(prec[keys[i]]) + ' ' + keys[i];
     }
-
-    function linkify(text) {
-        if (text===undefined) { return '';}
-        text = text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-        // re modified from https://blog.mattheworiordan.com/post/13174566389/url-regular-expression-for-links-with-or-without
-        var reURL = /((((http|https|ftp|ftps|mailto|s3):(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-]*)?\??(?:[\-\+=&;%@\.\w]*)#?(?:[:\.\!\/\\\w]*))?)/g;
-        return text.replace(reURL, "<a target='_blank' href='$1'>$1</a>")
-    }
-
     return _self;
 
 })(FileTable || {});
