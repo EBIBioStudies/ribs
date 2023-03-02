@@ -366,7 +366,7 @@ var FileTable = (function (_self) {
                 });
             }
         });
-        if(!sorting) {
+        if(!sorting && !collection.toLowerCase()==='bioimages') {
             FileTable.hideEmptyColumns();
         } else {
             sorting=false;
