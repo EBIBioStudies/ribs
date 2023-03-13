@@ -438,7 +438,8 @@ var FileTable = (function (_self) {
     var dlIndex = -1;
 
     function createDownloadDialog(key, relativePath, filelist, hasZippedFolders, isPublic) {
-        var fileName = {os: "unix", ps: ".sh", acc: $('#accession').text(), dldir: "/home/user/"};
+        const acc = $('#accession').text().trim();
+        var fileName = {os: "unix", ps: ".sh", acc: acc, dldir: "/home/user/"};
         var popUpTemplateSource = $('script#batchdl-accordion-template').html();
         var compiledPopUpTemplate = Handlebars.compile(popUpTemplateSource);
         var ftpDlInstructionTemplate = $('script#ftp-dl-instruction').html();
@@ -449,12 +450,12 @@ var FileTable = (function (_self) {
         $('#batchdl-popup').html(compiledPopUpTemplate({fname: fileName, fileCount: filelist.size, isPublic: isPublic}));
         $('#batchdl-popup').foundation('open');
         var dltype = "/zip";
-        fileName = getOsData('');
+        fileName = getOsData('',acc);
         $('#ftp-instruct').html(ftpCompiledInstructionTemplate({fname: fileName}));
         $('#aspera-instruct').html(asperaCompiledInstructionTemplate({fname: fileName}));
         $("#ftp-script-os-select").on('change', function () {
             var os = $("#ftp-script-os-select :selected").val();
-            fileName = getOsData(os);
+            fileName = getOsData(os,acc);
             $('#ftp-instruct').html(ftpCompiledInstructionTemplate({fname: fileName}));
         });
         $("#zip-dl-button").on('click', function () {
@@ -467,7 +468,7 @@ var FileTable = (function (_self) {
 
         $("#aspera-script-os-select").on('change', function () {
             var os = $("#aspera-script-os-select :selected").val();
-            fileName = getOsData(os);
+            fileName = getOsData(os,acc);
             $('#aspera-instruct').html(asperaCompiledInstructionTemplate({fname: fileName}));
         });
         $("#aspera-dl-button").on('click', function () {
@@ -719,18 +720,21 @@ var FileTable = (function (_self) {
             fileName.ps = ".bat";
             fileName.dldir="C:\\data";
             fileName.asperaDir = "C:/aspera";
+            fileName.command =  "ftp -i -s:./"+acc+"-"+os+"-ftp.txt";
         }
         if(os==='unix'){
-            fileName.os ="linux";
+            fileName.os ="unix";
             fileName.ps = ".sh";
             fileName.dldir="/home/user/";
             fileName.asperaDir = "/home/usr/bin/aspera";
+            fileName.command =  "cat ./"+acc+"-"+os+"-ftp.txt | sh";
         }
         if(os==='mac'){
             fileName.os ="mac";
             fileName.ps = ".sh";
             fileName.dldir="/home/user/";
             fileName.asperaDir = "/home/usr/bin/aspera";
+            fileName.command =  "ftp -i -s:./"+acc+"-"+os+"-ftp.txt";
         }
         return fileName;
     }

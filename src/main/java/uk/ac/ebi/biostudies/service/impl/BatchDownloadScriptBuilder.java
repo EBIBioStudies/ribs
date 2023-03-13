@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import uk.ac.ebi.biostudies.api.util.Constants;
 
 import java.io.InputStream;
@@ -44,7 +45,7 @@ public class BatchDownloadScriptBuilder {
             String fileTemplate = DownloadTemplates.get(getTemplate(downloadType, os));
             content = fillFileTemplate(fileTemplate, fileNames, baseDirectory, downloadType, storageMode);
             if (!os.equalsIgnoreCase(Constants.OS.WINDOWS))
-                content = "#!/bin/bash\r\n" + content;
+                content = StringUtils.replace(content,"\r\n","\n");
         } catch (Exception ex) {
             LOGGER.error("Cant open download template file {}", getTemplate(downloadType, os), ex);
         }
