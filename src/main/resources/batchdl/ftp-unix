@@ -2,7 +2,7 @@
 # Run this file in bash with this command:  ./filename
 HOST=ftp.ebi.ac.uk
 USER=anonymous
-ftp -inv $HOST <<EOF
+ftp -pinv $HOST <<EOF
 user $USER
 cd biostudies/%s/Files
 binary
