@@ -720,7 +720,7 @@ var FileTable = (function (_self) {
             fileName.ps = ".bat";
             fileName.dldir="C:\\data";
             fileName.asperaDir = "C:/aspera";
-            fileName.command =  "ftp -i -s:./"+acc+"-"+os+"-ftp.txt";
+            fileName.command =  "ftp -i -s:.\\"+acc+"-"+os+"-ftp.txt";
         }
         if(os==='unix'){
             fileName.os ="unix";
