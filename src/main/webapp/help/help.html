@@ -73,449 +73,599 @@
     .source-icon-ftp .fa {
         padding-right: 2px;
     }
+
     h4 {
         padding-top: 0.5em;
     }
 
+    h3 {
+        margin-bottom: 0;
+    }
+
+    .accordion-title {
+        padding: 1rem;
+    }
+
+
 </style>
-<h3 id="how-to-search">How to search BioStudies database</h3>
 
-<p>Use the Search box available in the top-right corner of every page. Enter any words that
-    describe studies
-    you are interested in. As you start typing, a drop-down list will appear suggesting terms that match.
-    For terms that are in <a href="http://www.ebi.ac.uk/efo" target="_blank">EFO</a>
-    (<a href="http://www.ebi.ac.uk/efo" target="_blank">Experimental Factor Ontology</a> - an EMBL-EBI
-    resource providing systematic
-    descriptions of biological samples and experimental variables), a button will be provided enabling
-    expansion of more specific terms. Search terms are retained in the search box, where they can be refined
-    (see the <a href="#advancedsearch">Advanced search</a> section below).</p>
+<ul class="accordion" data-accordion data-allow-all-closed="true">
 
-<p>The search results page is a list of matching biostudies sorted according to relevance.
-    You can also change the sorting by using the <i>Sort by</i> selector. If there are many results,
-    they will be split over multiple pages. Links at the top of the results allow you to change the number
-    of studies displayed per page as well as the current result page. Clicking on the title of a study
-    takes you to a more detailed page about that study.</p>
+    <li class="accordion-item is-active" data-accordion-item>
+        <a href="#" class="accordion-title" id="how-to-search"><h3><i class="fa-solid fa-magnifying-glass"></i> Search
+        </h3></a>
+        <div class="accordion-content" data-tab-content>
+            <p>Use the Search box available in the top-right corner of every page. Enter any words that
+                describe studies
+                you are interested in. As you start typing, a drop-down list will appear suggesting terms that match.
+                For terms that are in <a href="http://www.ebi.ac.uk/efo" target="_blank">EFO</a>
+                (<a href="http://www.ebi.ac.uk/efo" target="_blank">Experimental Factor Ontology</a> - an EMBL-EBI
+                resource providing systematic
+                descriptions of biological samples and experimental variables), a button will be provided enabling
+                expansion of more specific terms. Search terms are retained in the search box, where they can be refined
+                (see the <a href="#advancedsearch">Advanced search</a> section below).</p>
 
-<p>Within the results any matching terms are highlighted.
-    <span class="highlight">Yellow</span> highlighting indicates
-    exact matches, <span class="synonym">green</span> highlighting indicates synonyms,
-    and <span class="efo">peach</span> highlighting indicates more specific
-    matches (e.g. "pancreatic ductal adenocarcinoma" as a more specific term for "adenocarcinoma").
-    These more specific terms are from EFO. If a term has more than 1000 child terms, it is not expanded.
-</p>
+            <p>The search results page is a list of matching biostudies sorted according to relevance.
+                You can also change the sorting by using the <i>Sort by</i> selector. If there are many results,
+                they will be split over multiple pages. Links at the top of the results allow you to change the number
+                of studies displayed per page as well as the current result page. Clicking on the title of a study
+                takes you to a more detailed page about that study.</p>
 
-<h3 id="advancedsearch" name="advancedsearch">Advanced search</h3>
+            <p>Within the results any matching terms are highlighted.
+                <span class="highlight">Yellow</span> highlighting indicates
+                exact matches, <span class="synonym">green</span> highlighting indicates synonyms,
+                and <span class="efo">peach</span> highlighting indicates more specific
+                matches (e.g. "pancreatic ductal adenocarcinoma" as a more specific term for "adenocarcinoma").
+                These more specific terms are from EFO. If a term has more than 1000 child terms, it is not expanded.
+            </p>
 
-<p>Each word in the query is treated as a separate term (unless surrounded by double
-    quotes), and by default results can contain any of these queried terms. This behaviour can be modified by using
-    boolean operators and
-    brackets; e.g., Leukemia AND ( mouse OR human ), or cancer AND NOT ( human ).</p>
+            <h4 href="#" id="advancedsearch" name="advancedsearch">Advanced search</h4>
+            <p>Each word in the query is treated as a separate term (unless surrounded by double
+                quotes), and by default results can contain any of these queried terms. This behaviour can be
+                modified
+                by using
+                boolean operators and
+                brackets; e.g., Leukemia AND ( mouse OR human ), or cancer AND NOT ( human ).</p>
 
-<p>Queries containing star or question mark characters are treated separately. A star
-    character will match
-    any combination of zero or more characters, e.g., leuk*mia will match to leukemia and leukaemia, as well
-    as leukqwertymia. A question mark character will match any single characters, e.g., m?n will match both
-    man and men. Queries that include wildcards are not expanded.</p>
+            <p>Queries containing star or question mark characters are treated separately. A star
+                character will match
+                any combination of zero or more characters, e.g., leuk*mia will match to leukemia and leukaemia, as
+                well
+                as leukqwertymia. A question mark character will match any single characters, e.g., m?n will match
+                both
+                man and men. Queries that include wildcards are not expanded.</p>
 
-<p>BioStudies search supports regular expression searched, e.g., searching for /[dl]ouse/ gives results for both
-    louse and douse). As a results, the some characters (more specifically <span class="mono">+ - && || ! ( )
-                { } [ ] ^ " ~ * ? : \ /</span> ) are part of the query syntax and need to be either
-    escaped or quoted if entered as a part of your query, e.g., query for eeg/fmri should be entered as either
-    eeg\/fmri or "eeg/fmri". Similarly, queries for a DOI should be entered in double quotes as well, e.g.,
-    "10.1371/journal.pone.0127346".
-</p>
-
-<h3 id="download" name="download">How to download public studies</h3>
-<p> In addition to file download from the BioStudies website, we also support FTP and Aspera based downloads.
-    For less than 1000 files, you can select the files from the study detail page and click on the "Download" button
-    to get the HTTP/FTP/Aspera instructions. For larger studies, you will need to know the <strong>path</strong>
-    of each of these files.
-</p>
-<p>
-    This path
-    is <span
-        class="mono">/<strong>&lt;collection&gt;</strong>/<strong>&lt;parent&gt;</strong>/<strong>&lt;accession&gt;</strong></span>
-    , where:
-
-<ul>
-    <li><span class="mono"><strong>&lt;collection&gt;</strong></span> is the accession prefix e.g. <span class="mono">S-EPMC</span>
-        for data imported from EuropePMC, <span
-                class="mono">S-BSST</span> for data submitted via BioStudies Submission Tool, or <span class="mono">E-MTAB</span>
-        for data belonging to the ArrayExpress collection.
-    </li>
-    <li><span class="mono"><strong>&lt;parent&gt;</strong></span> is the last three digits in the accession, e.g. for
-        S-BIAD300 it is 300. There are some exceptions to this though.
-        <ul style="list-style: circle" ><li> For some older studies, <strong>&lt;parent&gt;</strong> is the masked path for the accession ending in the
-        last 3 digits of the study accession number, e.g., older EuropePMC studies with
-            accession numbers ending on <span class="mono">001</span> will be in the folder <span  class="mono">S-EPMCxxx001</span>. </li>
-        <li>For some older studies where the numeric part of the accession is one or two digit long, the parent folder is <span class="mono">S-BSST0-99</span>,
-            e.g., for <span class="mono">S-BSST7</span>, the directory will be <span class="mono">S-BSST/S-BSST0-99/S-BSST7</span>.</li></ul>
+            <p>BioStudies search supports regular expression searched, e.g., searching for /[dl]ouse/ gives results
+                for
+                both
+                louse and douse). As a results, the some characters (more specifically <span class="mono">+ - && || ! ( )
+                    { } [ ] ^ " ~ * ? : \ /</span> ) are part of the query syntax and need to be either
+                escaped or quoted if entered as a part of your query, e.g., query for eeg/fmri should be entered as
+                either
+                eeg\/fmri or "eeg/fmri". Similarly, queries for a DOI should be entered in double quotes as well,
+                e.g.,
+                "10.1371/journal.pone.0127346".
+            </p></div>
     </li>
 
-    <li><span class="mono"><strong>&lt;accession&gt;</strong></span> is the study accession e.g. S-EPMC3521001</li>
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title" id="download" name="download"><h3><i class="fa-solid fa-download"></i>
+            Download</h3></a>
+        <div class="accordion-content" data-tab-content>
+            <p> In addition to file download from the BioStudies website, we also support FTP and Aspera based
+                downloads.
+                For less than 1000 files, you can select the files from the study detail page and click on the
+                "Download" button
+                to get the HTTP/FTP/Aspera instructions. For larger studies, you will need to know the
+                <strong>path</strong>
+                of each of these files.
+            </p>
+            <p>
+                This path
+                is <span
+                    class="mono">/<strong>&lt;collection&gt;</strong>/<strong>&lt;parent&gt;</strong>/<strong>&lt;accession&gt;</strong></span>
+                , where:
+
+            <ul>
+                <li><span class="mono"><strong>&lt;collection&gt;</strong></span> is the accession prefix e.g. <span
+                        class="mono">S-EPMC</span>
+                    for data imported from EuropePMC, <span
+                            class="mono">S-BSST</span> for data submitted via BioStudies Submission Tool, or <span
+                            class="mono">E-MTAB</span>
+                    for data belonging to the ArrayExpress collection.
+                </li>
+                <li><span class="mono"><strong>&lt;parent&gt;</strong></span> is the last three digits in the accession,
+                    e.g. for
+                    S-BIAD300 it is 300. There are some exceptions to this though.
+                    <ul style="list-style: circle">
+                        <li> For some older studies, <strong>&lt;parent&gt;</strong> is the masked path for the
+                            accession ending in the
+                            last 3 digits of the study accession number, e.g., older EuropePMC studies with
+                            accession numbers ending on <span class="mono">001</span> will be in the folder <span
+                                    class="mono">S-EPMCxxx001</span>.
+                        </li>
+                        <li>For some older studies where the numeric part of the accession is one or two digit long, the
+                            parent folder is <span class="mono">S-BSST0-99</span>,
+                            e.g., for <span class="mono">S-BSST7</span>, the directory will be <span class="mono">S-BSST/S-BSST0-99/S-BSST7</span>.
+                        </li>
+                    </ul>
+                </li>
+
+                <li><span class="mono"><strong>&lt;accession&gt;</strong></span> is the study accession e.g.
+                    S-EPMC3521001
+                </li>
+            </ul>
+
+            </p>
+            Path for a study is available through the REST API, e.g.,
+            <pre>
+        $ curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BSST7/info -s | jq -r .relPath
+    S-BSST/S-BSST0-99/S-BSST7
+        $ curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-EPMC3521001/info -s | jq -r .relPath
+    S-EPMC/001/S-EPMC3521001
+    </pre>
+
+            <h4>FTP downloads</h4>
+            <p>The BioStudies FTP path is <span class="mono"><a
+                    href="ftp://ftp.ebi.ac.uk/biostudies">ftp://ftp.ebi.ac.uk/biostudies</a></span>.
+                Anonymous downloads are enabled. For each study, you can click on the <span
+                        id="ftp-link" href="#" target="_blank" title="Open FTP Folder"
+                        class="source-icon source-icon-ftp"
+                        data-icon="="><i
+                        class="fa fa-cloud-download-alt"></i>FTP</span> button to access it. You can also use your
+                favourite FTP
+                client such as FileZilla to download a study from <span
+                        class="mono">ftp://ftp.ebi.ac.uk/biostudies/<strong>mode</strong>/<strong>path</strong></span>,
+                where,
+            <ul>
+                <li><span class="mono"><strong>&lt;mode&gt;</strong></span> is the storage mode and can be either <span
+                        class="mono">fire</span> or <span
+                        class="mono">nfs</span></li>
+                <li><span class="mono"><strong>&lt;path&gt;</strong></span> is the path of the accession as <a
+                        href="#download">described
+                    above</a></li>
+            </ul>
+
+            All data files for a study are in the <span
+                class="mono">ftp://ftp.ebi.ac.uk/biostudies/<strong>mode</strong>/<strong>path</strong>/Files</span>
+            directory,
+            e.g., to download the file <span class="mono">1_TCGA_signature_A_top_10percent.txt</span> from <span
+                class="mono">S-BSST7</span>, you can use the command line
+            <span class="mono">wget ftp://ftp.ebi.ac.uk/biostudies/nfs/S-BSST/S-BSST0-99/S-BSST7/Files/1_TCGA_signature_A_top_10percent.txt</span>
+            or, for interactive access:
+            <pre class="pre">
+            $ ftp ftp.ebi.ac.uk
+            Name: anonymous
+            ftp> cd biostudies/nfs/S-BSST/S-BSST0-99/S-BSST7/Files
+            ftp> get 1_TCGA_signature_A_top_10percent.txt
+            </pre>
+
+
+            You can get the FTP link for a study from the <span class="mono">/info</span> REST API endpoint, e.g.,
+            <pre>$ curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BSST7/info -s | jq -r .ftpLink</pre>
+
+            </p>
+            <p></p>
+
+            <h4>Aspera downloads</h4>
+            <p>You will need to <a target="_blank"
+                                   href="https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%20software&product=ibm/Other%20software/IBM%20Aspera%20CLI&release=All&platform=All&function=all">
+                download the Aspera <span class="mono">ascp</span> command line interface</a>. Please select the correct
+                operating
+                system. The <span class="mono">ascp</span> command line client is present in the <span
+                        class="mono">bin</span>
+                folder in the installation directory. Your command for download should be like this:
+            </p>
+            <pre>ascp -P33001 -i &lt;key&gt; bsaspera@fasp-beta.ebi.ac.uk:&lt;files to download&gt; &lt;download location on your machine&gt;</pre>
+            where
+            <ul>
+                <li><span class="mono"> -P33001</span> and <span class="mono">bsaspera@fasp.ebi.ac.uk</span> defines the
+                    port, user and server for the Aspera connection
+                </li>
+                <li><span class="mono">&lt;key&gt;</span> is the public key for the Aspera connection which has the
+                    value
+                    <span class="mono">&lt;aspera cli installation directory&gt;/etc/asperaweb_id_dsa.openssh</span> for
+                    Linux/MacOS
+                    and
+                    <span class="mono">&lt;aspera cli installation directory&gt;\etc\asperaweb_id_dsa.openssh</span> for
+                    Windows.
+                </li>
+                <li><span class="mono">&lt;files to download&gt;</span> might be all files for a certain study, as
+                    explained above.
+                </li>
+            </ul>
+            <p>
+                For instance, here's the command line to download the file <span
+                    class="mono">aeipf_denoised_reads.fna</span> from submission <span class="mono">S-BSST12</span> to
+                the directory
+                <span class="mono">C:\Temp</span> on Windows.
+            <pre class="pre">
+    "C:\cli\bin\ascp.exe" -P33001  -i "C:\cli\etc\asperaweb_id_dsa.openssh" bsaspera@fasp-beta.ebi.ac.uk:/S-BSST/012/S-BSST12/Files/aeipf_denoised_reads.fna C:\Temp\
+    </pre>
+
+            Aspera downloads are available only for studies where <span class="mono"><strong>mode</strong></span> is
+            <span
+                    class="mono">fire</span>.
+            </p>
+        </div>
+    </li>
+
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title" id="rest-api-docs" name="res-api-docs"><h3><i class="fa-solid fa-gear"></i>
+            API</h3></a>
+        <div class="accordion-content" data-tab-content>
+            <details>
+                <summary id="api-search"><code class="endpoint">/api/v1/search</code> Returns a list of studies
+                    according to the
+                    search criteria
+                </summary>
+                <p>
+                    This end-point takes the following parameters and returns a list of studies according to the search
+                    criteria.
+                    Minimal meta data is returned for each study &ndash; You need to download the study detail file
+                    separately for
+                    a complete representation of each result.</p>
+                <table class="apidoc">
+                    <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>query</td>
+                        <td>Searches for the provided text in all submissions as <a href="#how-to-search">described
+                            above</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>accession</td>
+                        <td>Searches for a specific BioStudies accession. Wildcards are allowed after the first
+                            character e.g.
+                            S-EPMC*
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>title</td>
+                        <td>Searches for presence of the parament in the title of the study</td>
+                    </tr>
+                    <tr>
+                        <td>author</td>
+                        <td>Searches for presence of the parameter in the name of the author(s)/submitter(s) of the
+                            study
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>release_date</td>
+                        <td>Searches for a specific date when the study was released to public in BioStudies. Date
+                            format is
+                            yyyy-mm-dd.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>content</td>
+                        <td>Free-text search in any part of the study content (including file names and links)</td>
+                    </tr>
+                    <tr>
+                        <td>links</td>
+                        <td>Number of links in the study</td>
+                    </tr>
+                    <tr>
+                        <td>files</td>
+                        <td>Number of files in the study</td>
+                    </tr>
+                    <tr>
+                        <td>orcid</td>
+                        <td>Searched for the <a href="https://orcid.org/" target="_blank">ORCID</a> of any authors of
+                            the study (if
+                            available)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>type</td>
+                        <td>The types currently supported are <code>study, array</code> and <code>collection</code></td>
+                    </tr>
+                    <tr id="link_type_doc">
+                        <td>link_type</td>
+                        <td>Searches for a specific type of link to external databases in the study. (cf. <a
+                                href="#link_value_doc">link_value</a>).
+                            <details>
+                                <summary>Click here to view the types of supported link types and their corresponding
+                                    websites.
+                                </summary>
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>Link Type</th>
+                                        <th>Website</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>pmc</td>
+                                        <td>https://europepmc.org/articles/<span class="api">&lt;link_value&gt;</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>pmid</td>
+                                        <td>https://europepmc.org/abstract/MED/<span
+                                                class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>doi</td>
+                                        <td>https://dx.doi.org/<span class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>chembl</td>
+                                        <td>https://www.ebi.ac.uk/chembldb/compound/inspect/<span
+                                                class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>ega</td>
+                                        <td>https://www.ebi.ac.uk/ega/studies/<span
+                                                class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>uniprot</td>
+                                        <td>http://www.uniprot.org/uniprot/<span class="api">&lt;link_value&gt;</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>ena</td>
+                                        <td>https://www.ebi.ac.uk/ena/browser/view/<span
+                                                class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>arrayexpress files</td>
+                                        <td>https://www.ebi.ac.uk/arrayexpress/experiments/<span
+                                                class="api">&lt;link_value&gt;</span>/files/
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>arrayexpress</td>
+                                        <td>https://www.ebi.ac.uk/arrayexpress/experiments/<span
+                                                class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>dbsnp</td>
+                                        <td>http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=<span
+                                                class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>pdbe</td>
+                                        <td>https://www.ebi.ac.uk/pdbe-srv/view/entry/<span class="api">&lt;link_value&gt;</span>/summary
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>pfam</td>
+                                        <td>http://pfam.xfam.org/family/<span class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>omim</td>
+                                        <td>http://omim.org/entry/<span class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>interpro</td>
+                                        <td>https://www.ebi.ac.uk/interpro/entry/<span
+                                                class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>nucleotide</td>
+                                        <td>http://www.ncbi.nlm.nih.gov/nuccore/<span
+                                                class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>geo</td>
+                                        <td>http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=<span
+                                                class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>intact</td>
+                                        <td>https://www.ebi.ac.uk/intact/interaction/<span class="api">&lt;link_value&gt;</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>biostudies</td>
+                                        <td>/studies/<span class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>biostudies title</td>
+                                        <td>/studies?first&query=title%3A%22<span class="api">&lt;link_value&gt;</span>%22
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>biostudies search</td>
+                                        <td>/studies?query=<span class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>go</td>
+                                        <td>http://amigo.geneontology.org/amigo/term/<span class="api">&lt;link_value&gt;</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>chebi</td>
+                                        <td>https://www.ebi.ac.uk/chebi/searchId.do?chebiId=<span
+                                                class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>bioproject</td>
+                                        <td>https://www.ncbi.nlm.nih.gov/bioproject/<span
+                                                class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>biosamples</td>
+                                        <td>https://www.ebi.ac.uk/biosamples/samples/<span class="api">&lt;link_value&gt;</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>chemagora</td>
+                                        <td>http://chemagora.jrc.ec.europa.eu/chemagora/inchikey/<span class="api">&lt;link_value&gt;</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>compound</td>
+                                        <td>https://www.ebi.ac.uk/biostudies/studies/<span class="api">&lt;link_value&gt;</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>rfam</td>
+                                        <td>http://rfam.org/family/<span class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>rnacentral</td>
+                                        <td>http://rnacentral.org/rna/<span class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>nct</td>
+                                        <td>https://clinicaltrials.gov/ct2/show/<span
+                                                class="api">&lt;link_value&gt;</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>gxa</td>
+                                        <td>https://www.ebi.ac.uk/gxa/experiments/<span
+                                                class="api">&lt;link_value&gt;</span>?ref=biostudies
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>gxa-sc</td>
+                                        <td>https://www.ebi.ac.uk/gxa/sc/experiments/<span class="api">&lt;link_value&gt;</span>?ref=biostudies
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </details>
+                        </td>
+                    </tr>
+                    <tr id="link_value_doc">
+                        <td>link_value</td>
+                        <td>Searches in the value of the <a href="#link_type_doc">link type</a> field. Most link values
+                            are
+                            accessions of the corresponding databases, e.g., you can combine link_value with link_type
+                            and use
+                            <code>/search?link_type=pmid&link_value=15307895</code>
+                            to search search for a study with PMID 15307895.
+                        </td>
+                    </tr>
+                    <tr id="page_doc">
+                        <td>page</td>
+                        <td>Returns the specified result page, where each page contains <a
+                                href="#page_size_doc"><code>pageSize</code></a>
+                            results. Default = 1
+                        </td>
+                    </tr>
+                    <tr id="page_size_doc">
+                        <td>pageSize</td>
+                        <td>Determines the number of results returned in each <a href="#page_doc"><code>page</code></a>
+                            in the
+                            results. Default = 20,
+                            Max = 100
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>sortBy</td>
+                        <td>Determines the sorting key in the results. Works only for numeric fields.</td>
+                    </tr>
+                    <tr>
+                        <td>sortOrder</td>
+                        <td>Determines the sorting order i.e. <code>ascending</code> or <code>descending</code>. Default
+                            = <code>descending</code>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </details>
+            <details>
+                <summary><code class="endpoint">/api/v1/{collection}/search</code> Returns a list of studies in the
+                    specified
+                    collection
+                    according to the search criteria
+                </summary>
+                <p>
+                    This end-point is similar to <a href="#api-search"><code>/api/v1/search</code></a> but limits the
+                    study list to
+                    the specified collection.
+                    You can use the API to get a list of <a href="api/v1/search?type=collection" target="_blank">all
+                    available
+                    collections</a> to search in.
+                </p>
+            </details>
+            <details>
+                <summary><code class="endpoint">/api/v1/studies/{accession}</code> Returns the detailed JSON for a
+                    particular
+                    accession
+                </summary>
+                <p>
+                    This end-point returns the details of the study in the PageTab JSON format if accessible.
+                </p>
+            </details>
+            <details>
+                <summary><code class="endpoint">/api/v1/studies/{accession}/info</code> Returns additional information
+                    for a
+                    particular
+                    accession as JSON
+                </summary>
+                <p>
+                    This end-point returns some additional for the study such as the FTP link and relative path.
+                </p>
+            </details>
+        </div>
+    </li>
+
+    <li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title" id="policies"><h3><i class="fa-solid fa-file-circle-check"></i> Policies
+        </h3></a>
+        <div class="accordion-content" data-tab-content>
+            <h4 href="#" id="policy-submission">Dataset submission, updates and persistence</h4>
+            <div>
+                <p>All datasets made public will remain <strong>permanently accessible as part of the scientific
+                    record</strong>. Corrections of errors and update of the datasets by authors are welcome, and
+                    erroneous submissions may be made not searchable via keywords, but all will remain permanently
+                    accessible by accession number.</p>
+                <p>Submitters are advised that the information displayed on the BioStudies website as part of publicly
+                    released datasets is fully disclosed to the public. It is the <strong>responsibility of the
+                        submitters</strong> to ascertain that they have the right to submit the data.</p>
+                <p>Beyond limited editorial control and some internal integrity checks, the <strong>quality and
+                    accuracy</strong> of the submission are the responsibility of the submitting author, not of the
+                    database. BioStudies will work with submitters and users of the database to achieve the best quality
+                    resource possible.</p>
+                <p>When a submission is made, a <strong>release date</strong> is set. This date may be up to two years
+                    from the time of submission, and can be changed after the submission is completed, for example to
+                    ensure data release at the same time as the associated publication.</p>
+                <p><strong>Updates to publicly available datasets</strong> are limited. New datafiles can be added to a
+                    dataset, but already published datafiles may not be modified or deleted. Updates to metadata fields
+                    are possible. Changing the status of a public dataset back to private is possible only by exception;
+                    please contact
+                    biostudies@ebi.ac.uk for help with that.</p>
+                <p><strong>Deletion of a public dataset</strong> is not possible. Exceptions may arise when the
+                    integrity, correctness, ownership or provenance of data is called into question. In such unusual
+                    circumstances, BioStudies may make an entry, in whole or in part, obsolete (moved out of the active
+                    archive, but still publicly accessible), or to remove it entirely from the public record. This may
+                    happen, e.g., if the publication describing a dataset is retracted by (some of) the author(s), their
+                    home institute, or the journal in which it was published, and the retractor(s) request that the
+                    corresponding data/entries in BioStudies are removed from the scientific record as well.</p>
+                <p>Any updates, including dataset deletion, are enabled while a <strong>dataset remains private</strong>.
+                </p>
+                <p>All new data directly submitted to BioStudies will be made available under a <a
+                        href="https://creativecommons.org/share-your-work/public-domain/cc0/" target="_blank"><strong>CC0
+                    license</strong></a>. Datasets brokered/imported from other resources may have other licenses, e.g.,
+                    <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC-BY-4.0</a>.</p>
+            </div>
+            <h4 href="#" id="policy-upload">Use of data upload areas</h4>
+            <div>
+                <p>The BioStudies database is a permanent repository for life sciences data. While a submission is
+                    being prepared, data uploads are held in a private upload area, individual for every user. When the
+                    user includes them as part of a submission, data files associated with the submission are moved from
+                    this data upload area into BioStudies.</p>
+                <p>The data upload areas are provided as a temporary place in which data is held while a submission is
+                    in preparation. As such, they are neither intended nor suitable for any longer-term storage of data.
+                    Once a dataset has been loaded into BioStudies, data can be released immediately following
+                    submission, or can be held confidential until, e.g., the associated manuscript is published.</p>
+                <p>We expect any given data file to remain in a data upload area for no longer than <strong>3
+                    months</strong> before it forms part of a submission. We reserve the right to routinely delete any
+                    data files that persist in that area for more than 3 months.</p>
+            </div>
+        </div>
+    </li>
+
 </ul>
-
-</p>
-Path for a study is available through the REST API, e.g.,
-<pre>
-    $ curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BSST7/info -s | jq -r .relPath
-S-BSST/S-BSST0-99/S-BSST7
-    $ curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-EPMC3521001/info -s | jq -r .relPath
-S-EPMC/001/S-EPMC3521001
-</pre>
-
-<h4>FTP downloads</h4>
-<p>The BioStudies FTP path is <span class="mono"><a
-        href="ftp://ftp.ebi.ac.uk/biostudies">ftp://ftp.ebi.ac.uk/biostudies</a></span>.
-    Anonymous downloads are enabled. For each study, you can click on the <span
-            id="ftp-link" href="#" target="_blank" title="Open FTP Folder" class="source-icon source-icon-ftp"
-            data-icon="="><i
-            class="fa fa-cloud-download-alt"></i>FTP</span> button to access it. You can also use your favourite FTP
-    client such as FileZilla to download a study from <span
-            class="mono">ftp://ftp.ebi.ac.uk/biostudies/<strong>mode</strong>/<strong>path</strong></span>,
-    where,
-<ul>
-    <li><span class="mono"><strong>&lt;mode&gt;</strong></span> is the storage mode and can be either <span
-            class="mono">fire</span> or <span
-            class="mono">nfs</span></li>
-    <li><span class="mono"><strong>&lt;path&gt;</strong></span> is the path of the accession as <a href="#download">described
-        above</a></li>
-</ul>
-
-All data files for a study are in the <span class="mono">ftp://ftp.ebi.ac.uk/biostudies/<strong>mode</strong>/<strong>path</strong>/Files</span> directory,
-e.g., to download the file <span class="mono">1_TCGA_signature_A_top_10percent.txt</span> from <span class="mono">S-BSST7</span>, you can use the command line
-<span class="mono">wget ftp://ftp.ebi.ac.uk/biostudies/nfs/S-BSST/S-BSST0-99/S-BSST7/Files/1_TCGA_signature_A_top_10percent.txt</span>
-or, for interactive access:
-<pre class="pre">
-        $ ftp ftp.ebi.ac.uk
-        Name: anonymous
-        ftp> cd biostudies/nfs/S-BSST/S-BSST0-99/S-BSST7/Files
-        ftp> get 1_TCGA_signature_A_top_10percent.txt
-        </pre>
-
-
-You can get the FTP link for a study from the <span class="mono">/info</span> REST API endpoint, e.g.,
-<pre>$ curl https://www.ebi.ac.uk/biostudies/api/v1/studies/S-BSST7/info -s | jq -r .ftpLink</pre>
-
-</p>
-<p></p>
-
-<h4>Aspera downloads</h4>
-<p>You will need to <a target="_blank"
-                       href="https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%20software&product=ibm/Other%20software/IBM%20Aspera%20CLI&release=All&platform=All&function=all">
-    download the Aspera <span class="mono">ascp</span> command line interface</a>. Please select the correct operating
-    system. The <span class="mono">ascp</span> command line client is present in the <span class="mono">bin</span>
-    folder in the installation directory. Your command for download should be like this:
-</p>
-<pre>ascp -P33001 -i &lt;key&gt; bsaspera@fasp-beta.ebi.ac.uk:&lt;files to download&gt; &lt;download location on your machine&gt;</pre>
-where
-<ul>
-    <li><span class="mono"> -P33001</span> and <span class="mono">bsaspera@fasp.ebi.ac.uk</span> defines the
-        port, user and server for the Aspera connection
-    </li>
-    <li><span class="mono">&lt;key&gt;</span> is the public key for the Aspera connection which has the value
-        <span class="mono">&lt;aspera cli installation directory&gt;/etc/asperaweb_id_dsa.openssh</span> for Linux/MacOS
-        and
-        <span class="mono">&lt;aspera cli installation directory&gt;\etc\asperaweb_id_dsa.openssh</span> for Windows.
-    </li>
-    <li><span class="mono">&lt;files to download&gt;</span> might be all files for a certain study, as explained above.
-    </li>
-</ul>
-<p>
-    For instance, here's the command line to download the file <span
-        class="mono">aeipf_denoised_reads.fna</span> from submission <span class="mono">S-BSST12</span> to the directory
-    <span class="mono">C:\Temp</span> on Windows.
-<pre class="pre">
-"C:\cli\bin\ascp.exe" -P33001  -i "C:\cli\etc\asperaweb_id_dsa.openssh" bsaspera@fasp-beta.ebi.ac.uk:/S-BSST/012/S-BSST12/Files/aeipf_denoised_reads.fna C:\Temp\
-</pre>
-
-Aspera downloads are available only for studies where <span class="mono"><strong>mode</strong></span> is    <span
-        class="mono">fire</span>.
-</p>
-
-<h3 id="rest-api-docs" name="res-api-docs">REST API</h3>
-<details>
-    <summary id="api-search"><code class="endpoint">/api/v1/search</code> Returns a list of studies according to the
-        search criteria
-    </summary>
-    <p>
-        This end-point takes the following parameters and returns a list of studies according to the search criteria.
-        Minimal meta data is returned for each study &ndash; You need to download the study detail file separately for
-        a complete representation of each result.</p>
-    <table class="apidoc">
-        <thead>
-        <tr>
-            <th>Parameter</th>
-            <th>Description</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>query</td>
-            <td>Searches for the provided text in all submissions as <a href="#how-to-search">described above</a>
-            </td>
-        </tr>
-        <tr>
-            <td>accession</td>
-            <td>Searches for a specific BioStudies accession. Wildcards are allowed after the first character e.g.
-                S-EPMC*
-            </td>
-        </tr>
-        <tr>
-            <td>title</td>
-            <td>Searches for presence of the parament in the title of the study</td>
-        </tr>
-        <tr>
-            <td>author</td>
-            <td>Searches for presence of the parameter in the name of the author(s)/submitter(s) of the study</td>
-        </tr>
-        <tr>
-            <td>release_date</td>
-            <td>Searches for a specific date when the study was released to public in BioStudies. Date format is
-                yyyy-mm-dd.
-            </td>
-        </tr>
-        <tr>
-            <td>content</td>
-            <td>Free-text search in any part of the study content (including file names and links)</td>
-        </tr>
-        <tr>
-            <td>links</td>
-            <td>Number of links in the study</td>
-        </tr>
-        <tr>
-            <td>files</td>
-            <td>Number of files in the study</td>
-        </tr>
-        <tr>
-            <td>orcid</td>
-            <td>Searched for the <a href="https://orcid.org/" target="_blank">ORCID</a> of any authors of the study (if
-                available)
-            </td>
-        </tr>
-        <tr>
-            <td>type</td>
-            <td>The types currently supported are <code>study, array</code> and <code>collection</code></td>
-        </tr>
-        <tr id="link_type_doc">
-            <td>link_type</td>
-            <td>Searches for a specific type of link to external databases in the study. (cf. <a href="#link_value_doc">link_value</a>).
-                <details>
-                    <summary>Click here to view the types of supported link types and their corresponding websites.
-                    </summary>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Link Type</th>
-                            <th>Website</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>pmc</td>
-                            <td>https://europepmc.org/articles/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>pmid</td>
-                            <td>https://europepmc.org/abstract/MED/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>doi</td>
-                            <td>https://dx.doi.org/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>chembl</td>
-                            <td>https://www.ebi.ac.uk/chembldb/compound/inspect/<span
-                                    class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>ega</td>
-                            <td>https://www.ebi.ac.uk/ega/studies/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>uniprot</td>
-                            <td>http://www.uniprot.org/uniprot/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>ena</td>
-                            <td>https://www.ebi.ac.uk/ena/browser/view/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>arrayexpress files</td>
-                            <td>https://www.ebi.ac.uk/arrayexpress/experiments/<span
-                                    class="api">&lt;link_value&gt;</span>/files/
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>arrayexpress</td>
-                            <td>https://www.ebi.ac.uk/arrayexpress/experiments/<span
-                                    class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>dbsnp</td>
-                            <td>http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs=<span
-                                    class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>pdbe</td>
-                            <td>https://www.ebi.ac.uk/pdbe-srv/view/entry/<span class="api">&lt;link_value&gt;</span>/summary
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>pfam</td>
-                            <td>http://pfam.xfam.org/family/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>omim</td>
-                            <td>http://omim.org/entry/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>interpro</td>
-                            <td>https://www.ebi.ac.uk/interpro/entry/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>nucleotide</td>
-                            <td>http://www.ncbi.nlm.nih.gov/nuccore/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>geo</td>
-                            <td>http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=<span
-                                    class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>intact</td>
-                            <td>https://www.ebi.ac.uk/intact/interaction/<span class="api">&lt;link_value&gt;</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>biostudies</td>
-                            <td>/studies/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>biostudies title</td>
-                            <td>/studies?first&query=title%3A%22<span class="api">&lt;link_value&gt;</span>%22</td>
-                        </tr>
-                        <tr>
-                            <td>biostudies search</td>
-                            <td>/studies?query=<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>go</td>
-                            <td>http://amigo.geneontology.org/amigo/term/<span class="api">&lt;link_value&gt;</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>chebi</td>
-                            <td>https://www.ebi.ac.uk/chebi/searchId.do?chebiId=<span
-                                    class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>bioproject</td>
-                            <td>https://www.ncbi.nlm.nih.gov/bioproject/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>biosamples</td>
-                            <td>https://www.ebi.ac.uk/biosamples/samples/<span class="api">&lt;link_value&gt;</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>chemagora</td>
-                            <td>http://chemagora.jrc.ec.europa.eu/chemagora/inchikey/<span class="api">&lt;link_value&gt;</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>compound</td>
-                            <td>https://www.ebi.ac.uk/biostudies/studies/<span class="api">&lt;link_value&gt;</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>rfam</td>
-                            <td>http://rfam.org/family/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>rnacentral</td>
-                            <td>http://rnacentral.org/rna/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>nct</td>
-                            <td>https://clinicaltrials.gov/ct2/show/<span class="api">&lt;link_value&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td>gxa</td>
-                            <td>https://www.ebi.ac.uk/gxa/experiments/<span class="api">&lt;link_value&gt;</span>?ref=biostudies
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>gxa-sc</td>
-                            <td>https://www.ebi.ac.uk/gxa/sc/experiments/<span class="api">&lt;link_value&gt;</span>?ref=biostudies
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </details>
-            </td>
-        </tr>
-        <tr id="link_value_doc">
-            <td>link_value</td>
-            <td>Searches in the value of the <a href="#link_type_doc">link type</a> field. Most link values are
-                accessions of the corresponding databases, e.g., you can combine link_value with link_type and use
-                <code>/search?link_type=pmid&link_value=15307895</code>
-                to search search for a study with PMID 15307895.
-            </td>
-        </tr>
-        <tr id="page_doc">
-            <td>page</td>
-            <td>Returns the specified result page, where each page contains <a
-                    href="#page_size_doc"><code>pageSize</code></a>
-                results. Default = 1
-            </td>
-        </tr>
-        <tr id="page_size_doc">
-            <td>pageSize</td>
-            <td>Determines the number of results returned in each <a href="#page_doc"><code>page</code></a> in the
-                results. Default = 20,
-                Max = 100
-            </td>
-        </tr>
-        <tr>
-            <td>sortBy</td>
-            <td>Determines the sorting key in the results. Works only for numeric fields.</td>
-        </tr>
-        <tr>
-            <td>sortOrder</td>
-            <td>Determines the sorting order i.e. <code>ascending</code> or <code>descending</code>. Default = <code>descending</code>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</details>
-<details>
-    <summary><code class="endpoint">/api/v1/{collection}/search</code> Returns a list of studies in the specified
-        collection
-        according to the search criteria
-    </summary>
-    <p>
-        This end-point is similar to <a href="#api-search"><code>/api/v1/search</code></a> but limits the study list to
-        the specified collection.
-        You can use the API to get a list of <a href="api/v1/search?type=collection" target="_blank">all available
-        collections</a> to search in.
-    </p>
-</details>
-<details>
-    <summary><code class="endpoint">/api/v1/studies/{accession}</code> Returns the detailed JSON for a particular
-        accession
-    </summary>
-    <p>
-        This end-point returns the details of the study in the PageTab JSON format if accessible.
-    </p>
-</details>
-<details>
-    <summary><code class="endpoint">/api/v1/studies/{accession}/info</code> Returns additional information for a
-        particular
-        accession as JSON
-    </summary>
-    <p>
-        This end-point returns some additional for the study such as the FTP link and relative path.
-    </p>
-</details>
-
