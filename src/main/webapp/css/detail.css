@@ -24,16 +24,16 @@ body.is-reveal-open { /*avoid jumping of body to the left*/
     display: none;
 }
 
-.section-name {
-    display: inline;
-}
-
 .bs-name {
     color: #267799;
     margin:0;
     display: inline-block;
     line-height: 1em;
     min-width: 6em;
+}
+
+.section-name {
+    display: inline;
 }
 
 .bs-value {
