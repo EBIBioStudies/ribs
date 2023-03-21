@@ -23,10 +23,11 @@ var Help = (function (_self) {
     function loadCommonHelp() {
         $('#renderedContent').load(contextPath + '/help/help.html',
             function (responseText, textStatus, jqXHR) {
-                if (location.hash) {
-                    location.hash = location.hash;
-                }
                 $('#renderedContent').foundation();
+                if (location.hash) {
+                    location.hash = location.hash; //scrolls to the anchor
+                    $('a[name="'+location.hash.substr(1)+'"]').click();
+                }
             });
 
     }
