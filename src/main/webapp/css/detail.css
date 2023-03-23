@@ -36,6 +36,10 @@ body.is-reveal-open { /*avoid jumping of body to the left*/
     min-width: 6em;
 }
 
+.section-name {
+    display: inline;
+}
+
 .bs-value {
     display: inline;
     padding-left: 0.3em;
