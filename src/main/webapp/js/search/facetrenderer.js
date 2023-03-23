@@ -11,7 +11,7 @@ var FacetRenderer = (function (_self) {
                 data.existing = getExistingParams(params, 'facet.');
                 var html = template(data);
                 $('#facets').html(html);
-                if (collection && collection.toLowerCase() =='bioimages') {
+                if (collection && collection.toLowerCase() =='bioimages' && thisFacet.toLowerCase()==='facet.collection') {
                     var ul = $('#facet_facet\\.collection');
                     handleBioImagesFacets(ul);
                 }
