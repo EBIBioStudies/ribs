@@ -419,7 +419,7 @@ var FileTable = (function (_self) {
             columns[3]['name']='Section';
             columns[3]['search'] = []
             columns[3]['search']['value'] = divId;
-            $.post(getSecretUrl(key, acc), {
+            $.post(getDownloadUrl(key, acc), {
                     columns: [null,null,{name:'Section', search: {value:divId}}],
                     length: -1,
                     metadata: false,
@@ -503,7 +503,7 @@ var FileTable = (function (_self) {
             if ($(this).is(':checked')) {
                 $('.select-checkbox').parent().addClass('selected');
                 $('.select-checkbox input').prop('checked',true);
-                $.post(getSecretUrl(key, acc), $.extend(true, {}, filesTable.ajax.params(), {
+                $.post(getDownloadUrl(key, acc), $.extend(true, {}, filesTable.ajax.params(), {
                         length: -1,
                         metadata: false,
                         start: 0
@@ -529,7 +529,7 @@ var FileTable = (function (_self) {
             if (selectedFiles.size) {
                 createDownloadDialog(key, relativePath, selectedFiles, hasZippedFolders, isPublic);
             } else {
-                $.post(getSecretUrl(key, acc), {
+                $.post(getDownloadUrl(key, acc), {
                         length: -1,
                         metadata: false,
                         start: 0
@@ -544,7 +544,7 @@ var FileTable = (function (_self) {
         });
     }
 
-    function getSecretUrl(key, acc){
+    function getDownloadUrl(key, acc){
         var purl=contextPath+ '/api/v1/files/'+ acc;
         if(key)
             purl = purl+'?key='+key;
