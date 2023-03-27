@@ -10,6 +10,6 @@ $('a[data-links-id]').off('click')
                     return $(v).data('search')==linkid ;
                 })
             .each( function(v) {
-                window.open($('a',$(v).prev()).attr('href'));
+                window.open($('a',$(v).parent().children(0)).attr('href'));
             });
     });
