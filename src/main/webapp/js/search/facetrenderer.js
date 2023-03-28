@@ -11,7 +11,7 @@ var FacetRenderer = (function (_self) {
                 data.existing = getExistingParams(params, 'facet.');
                 var html = template(data);
                 $('#facets').html(html);
-                if (collection && collection.toLowerCase() =='bioimages' && thisFacet.toLowerCase()==='facet.collection') {
+                if (collection && collection.toLowerCase() =='bioimages') {
                     var ul = $('#facet_facet\\.collection');
                     handleBioImagesFacets(ul);
                 }
@@ -126,7 +126,7 @@ var FacetRenderer = (function (_self) {
         var template = Handlebars.compile(templateSource);
         var existing = getExistingParams(params, thisFacet);
         $('body').append(template({facets:data, existing:  existing}));
-        if (collection && collection.toLowerCase() =='bioimages') {
+        if (collection && collection.toLowerCase() =='bioimages' && thisFacet.toLowerCase()==='facet.collection') {
             handleBioImagesFacets($('.allfacets ul'));
         }
         $('#facet-search').focus()
