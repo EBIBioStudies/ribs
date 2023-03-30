@@ -171,7 +171,7 @@ public class FilePaginationServiceImpl implements FilePaginationService {
                 }
             }
             if (allSortedFields.isEmpty())
-                allSortedFields.add(new SortField(Constants.File.NAME, SortField.Type.STRING, false));
+                allSortedFields.add(new SortField(Constants.File.POSITION, SortField.Type.LONG, false));
             Sort sort = new Sort(allSortedFields.toArray(new SortField[allSortedFields.size()]));
             Query query = parser.parse(Constants.File.OWNER + ":" + accession);
             if (search != null && !search.isEmpty() && hasUnescapedDoubleQuote(search)) {

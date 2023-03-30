@@ -228,7 +228,7 @@ var FileTable = (function (_self) {
             serverSide: true,
             columns: columns,
             scrollX: !isDetailPage,
-            order: [[ 1, "asc" ]],
+            order: [],
             language:
                 {
                     processing: '<i class="fa fa-3x fa-spinner fa-pulse"></i>',

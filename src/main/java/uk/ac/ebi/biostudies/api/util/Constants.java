@@ -134,6 +134,7 @@ public interface Constants {
         String DATA = "data";
         String IS_DIRECTORY = "isDirectory";
         String RELPATH = "relPath";
+        String POSITION = "position";
 
         enum StorageMode {
             NFS,
