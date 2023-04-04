@@ -179,7 +179,7 @@ public class FileIndexServiceImpl implements FileIndexService {
 
         //find file lists
         List<JsonNode> subSections = json.findParents("attributes");
-        Map<String, JsonNode> parents = new HashMap<>();
+        Map<String, JsonNode> parents = new LinkedHashMap<>();
         for (JsonNode subSection : subSections) {
             ArrayNode attributes = (ArrayNode) subSection.get("attributes");
             for (JsonNode attribute : attributes) {
