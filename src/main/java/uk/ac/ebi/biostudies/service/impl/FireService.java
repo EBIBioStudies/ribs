@@ -4,19 +4,17 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.config.FireConfig;
 import uk.ac.ebi.biostudies.file.download.FIREDownloadFile;
 import uk.ac.ebi.biostudies.file.download.IDownloadFile;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -27,7 +25,12 @@ public class FireService {
     @Autowired
     FireConfig fireConfig;
     @Autowired
-    AmazonS3 s3;
+    @Qualifier("S3DownloadClient")
+    AmazonS3 s3DownloadClient;
+
+    @Autowired
+    @Qualifier("S3MageTabClient")
+    AmazonS3 s3MageTabClient;
 
     public IDownloadFile getFireFile(String accession, String relativePath, String requestedFilePath) throws  FileNotFoundException {
         return getFireFile(accession, relativePath, requestedFilePath, false);
@@ -46,7 +49,8 @@ public class FireService {
         S3Object fireObject = null;
         boolean isDirectory = false;
         try {
-            fireObject = getFireObjectByPath(path);
+            logger.debug("accessing s3DownloadClient");
+            fireObject = getFireObjectByPath(s3DownloadClient, path);
         } catch (Exception ex1) {
             try {
                 if(fireObject!=null)
@@ -60,7 +64,8 @@ public class FireService {
                     path = path + ".zip";
                 }
                 // For folders
-                fireObject = getFireObjectByPath(path);
+                logger.debug("accessing s3DownloadClient");
+                fireObject = getFireObjectByPath(s3DownloadClient, path);
             } catch (Exception ex4) {
                 try {
                     if(fireObject!=null)
@@ -81,10 +86,11 @@ public class FireService {
      * @return
      */
     public InputStream cloneFireS3ObjectStream(String path) throws IOException {
+        logger.debug("accessing s3MageTabClient");
         S3Object s3Object = null;
         ByteArrayInputStream fireCloneInputStream = null;
         try {
-            s3Object = getFireObjectByPath(path);
+            s3Object = getFireObjectByPath(s3MageTabClient, path);
             fireCloneInputStream = new ByteArrayInputStream(s3Object.getObjectContent().readAllBytes());
         } catch (Exception exception) {
             logger.error(exception);
@@ -102,21 +108,7 @@ public class FireService {
         return fireCloneInputStream;
     }
 
-    public StringWriter getFireObjectStringContentByPath(String bucketName, String path) {
-        if (bucketName == null)
-            bucketName = fireConfig.getBucketName();
-        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, path);
-        try (S3ObjectInputStream inputStream = s3.getObject(getObjectRequest).getObjectContent()) {
-            StringWriter stringWriter = new StringWriter();
-            IOUtils.copy(inputStream, stringWriter, StandardCharsets.UTF_8);
-            return stringWriter;
-        } catch (Exception exception) {
-            logger.error(exception);
-            return null;
-        }
-    }
-
-    public S3Object getFireObjectByPath(String path) throws FileNotFoundException {
+    public S3Object getFireObjectByPath(AmazonS3 s3, String path) throws FileNotFoundException {
         String bucketName = fireConfig.getBucketName();
         GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, path);
         return s3.getObject(getObjectRequest);
@@ -136,7 +128,7 @@ public class FireService {
         try {
             while (subDirectoriesStack.size() > 0) {
                 String currentPath = subDirectoriesStack.pop();
-                ObjectListing objectListing = s3.listObjects(fireConfig.getBucketName(), currentPath);
+                ObjectListing objectListing = s3DownloadClient.listObjects(fireConfig.getBucketName(), currentPath);
                 do {
                     allFileResult.addAll(objectListing.getObjectSummaries().stream().map(sum -> sum.getKey()).collect(Collectors.toList()));
                     List<String> embeddedDirectories = objectListing.getCommonPrefixes();
@@ -152,7 +144,7 @@ public class FireService {
     public boolean isValidFolder(String path) {
         boolean isFolder = false;
         try {
-            ObjectListing objectListing = s3.listObjects(fireConfig.getBucketName(), path);
+            ObjectListing objectListing = s3DownloadClient.listObjects(fireConfig.getBucketName(), path);
             isFolder = objectListing.getMaxKeys() > 0;
         } catch (Exception e) {
 
