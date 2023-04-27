@@ -127,6 +127,13 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
             Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
 
+            // redirect public files to fire
+            boolean isPublic = (" " + document.get(Constants.Fields.ACCESS) + " ").toLowerCase().contains(" public ");
+            if (isPublic) {
+                response.sendRedirect( "https://ftp.ebi.ac.uk/biostudies/"+ storageModeString.toLowerCase() +"/" + relativePath + "/Files/" + requestedFilePath );
+                return;
+            }
+
             downloadFile = getDownloadFile(accession, relativePath, requestedFilePath, storageMode);
 
 
