@@ -49,7 +49,7 @@ public class FireService {
         S3Object fireObject = null;
         boolean isDirectory = false;
         try {
-            logger.debug("accessing s3DownloadClient");
+            logger.debug("accessing s3DownloadClient {}", path);
             fireObject = getFireObjectByPath(s3DownloadClient, path);
         } catch (Exception ex1) {
             try {
@@ -64,7 +64,7 @@ public class FireService {
                     path = path + ".zip";
                 }
                 // For folders
-                logger.debug("accessing s3DownloadClient");
+                logger.debug("accessing s3DownloadClient {}", path);
                 fireObject = getFireObjectByPath(s3DownloadClient, path);
             } catch (Exception ex4) {
                 try {
@@ -86,7 +86,7 @@ public class FireService {
      * @return
      */
     public InputStream cloneFireS3ObjectStream(String path) throws IOException {
-        logger.debug("accessing s3MageTabClient");
+        logger.debug("accessing s3MageTabClient {}", path);
         S3Object s3Object = null;
         ByteArrayInputStream fireCloneInputStream = null;
         try {

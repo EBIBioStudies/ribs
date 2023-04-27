@@ -26,6 +26,10 @@ public class FireConfig {
     private String bucketName;
     @Value("${fire.s3.connection.pool}")
     private Integer conPoolSize;
+    @Value("${fire.s3.connection.timeout}")
+    private int conTimeout;
+    @Value("${fire.s3.connection.socket.timeout}")
+    private int sockTimeout;
     @Value("${fire.s3.connection.magetab.pool}")
     private Integer mergetabPoolSize;
 
@@ -34,7 +38,7 @@ public class FireConfig {
         AwsClientBuilder.EndpointConfiguration endpointConfiguration = new AwsClientBuilder.EndpointConfiguration(
                 endpoint, region); // The region is not important
         return AmazonS3Client.builder()
-                .withClientConfiguration(new ClientConfiguration().withMaxConnections(poolSize))
+                .withClientConfiguration(new ClientConfiguration().withMaxConnections(poolSize).withConnectionTimeout(conTimeout).withSocketTimeout(sockTimeout))
                 .withEndpointConfiguration(endpointConfiguration)
                 .withPathStyleAccessEnabled(true)
                 .withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials))
