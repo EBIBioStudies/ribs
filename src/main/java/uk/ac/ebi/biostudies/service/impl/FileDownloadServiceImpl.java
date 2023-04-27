@@ -103,12 +103,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 key = null;
             }
 
-            if (key != null &&
-                    (requestedFilePath.equalsIgnoreCase(accession + ".xml")
-                            || requestedFilePath.equalsIgnoreCase(accession + ".json")
-                            || requestedFilePath.equalsIgnoreCase(accession + ".pagetab.tsv")
-                            || requestedFilePath.equalsIgnoreCase(accession + ".tsv")
-                    )) {
+            if (key != null && isPageTabFile(accession, requestedFilePath)) {
                 throw new SubmissionNotAccessibleException();
             }
 
@@ -129,7 +124,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
 
             // redirect public files to fire
             boolean isPublic = (" " + document.get(Constants.Fields.ACCESS) + " ").toLowerCase().contains(" public ");
-            if (isPublic) {
+            if (isPublic && !isPageTabFile(accession, requestedFilePath) ) {
                 response.sendRedirect( "https://ftp.ebi.ac.uk/biostudies/"+ storageModeString.toLowerCase() +"/" + relativePath + "/Files/" + requestedFilePath );
                 return;
             }
@@ -158,6 +153,13 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         }
     }
 
+    private boolean isPageTabFile(String accession, String requestedFilePath) {
+        return requestedFilePath.equalsIgnoreCase(accession + ".json")
+                || requestedFilePath.equalsIgnoreCase(accession + ".xml")
+                || requestedFilePath.equalsIgnoreCase(accession + ".pagetab.tsv")
+                || requestedFilePath.equalsIgnoreCase(accession + ".tsv");
+    }
+
     public IDownloadFile getDownloadFile(String accession, String relativePath, String requestedFilePath,
                                          Constants.File.StorageMode storageMode) throws FileNotFoundException {
         return getDownloadFile(accession, relativePath, requestedFilePath, storageMode, false);
@@ -172,10 +174,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
 
     private IDownloadFile getNFSFile(String accession, String relativePath, String requestedFilePath) throws FileNotFoundException {
 
-        if (requestedFilePath.equalsIgnoreCase(accession + ".json")
-                || requestedFilePath.equalsIgnoreCase(accession + ".xml")
-                || requestedFilePath.equalsIgnoreCase(accession + ".pagetab.tsv")
-                || requestedFilePath.equalsIgnoreCase(accession + ".tsv")) {
+        if (isPageTabFile(accession, requestedFilePath)) {
             if (requestedFilePath.equalsIgnoreCase(accession + ".tsv")) { // exception for fire file
                 requestedFilePath = accession + ".pagetab.tsv";
             }
