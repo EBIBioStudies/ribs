@@ -90,10 +90,10 @@ public class Thumbnails implements InitializingBean, DisposableBean {
         try {
             try {
                 // check in the Thumbnails folder in storage
-                existingThumbnail = fileDownloadService.getDownloadFile(accession, relativePath , name, storageMode);
+                existingThumbnail = fileDownloadService.getDownloadFile(accession, relativePath , name, storageMode, true);
                 thumbnailInputStream = existingThumbnail.getInputStream();
             } catch (Exception ex1) {
-                File cachedThumbnail = new File(getThumbnailsFolder() + "/" + relativePath + "/", name);
+                File cachedThumbnail = new File(getThumbnailsFolder() + "/" + relativePath + "/", name + ".thumbnail.png");
                 if (!cachedThumbnail.exists()) {
                     // create thumbnail in cache
 

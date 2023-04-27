@@ -29,7 +29,14 @@ public class StudyUtils {
 
     public static String decodeForFireBug(String inputStr) {
         try {
-            return jsEngine.eval(String.format("unescape(encodeURIComponent('%s'))", inputStr)).toString().replace("#", "%23").replace("+", "%2B").replace("=", "%3D").replace("@", "%40").replace("$", "%24").toString();
+            return jsEngine.eval(String.format("unescape(encodeURIComponent('%s'))", inputStr)).toString()
+                    .replace("#", "%23")
+                    .replace("+", "%2B")
+                    .replace("=", "%3D")
+                    .replace("@", "%40")
+                    .replace("$", "%24")
+                    .replace(" ", "+")
+                    .toString();
         } catch (ScriptException e) {
             LOGGER.error(inputStr + " problem in unescapeing for Fire encoding bug", e);
         }

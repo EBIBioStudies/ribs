@@ -38,7 +38,7 @@ public class FireService {
 
     public IDownloadFile getFireFile(String accession, String relativePath, String requestedFilePath, boolean isThumbnail) throws FileNotFoundException {
 
-        String path = relativePath + (isThumbnail ? "/Thumbnail/" : "/Files/")
+        String path = relativePath + (isThumbnail ? "/Thumbnails/" : "/Files/")
                 + requestedFilePath + (isThumbnail ? ".thumbnail.png" : "");
 
         // For study json/xml/tsv pagetab files
