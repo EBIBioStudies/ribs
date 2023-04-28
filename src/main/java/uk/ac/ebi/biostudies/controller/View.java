@@ -2,15 +2,28 @@ package uk.ac.ebi.biostudies.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.lucene.document.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.service.SearchService;
+
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
 
 @RestController
 public class View {
     private final Logger logger = LogManager.getLogger(View.class.getName());
+
+    @Autowired
+    private ServletContext servletContext;
+
+    @Autowired
+    private SearchService searchService;
+
 
     @RequestMapping(value = "/")
     public ModelAndView index() throws Exception {
@@ -97,6 +110,12 @@ public class View {
     public ModelAndView genericView(@PathVariable String view) throws Exception {
         var mav = new ModelAndView();
         mav.setViewName(view);
+        if (servletContext.getResource("jsp/"+view.toLowerCase()+".jsp") == null) {
+            Document collection = searchService.getDocumentByAccessionAndType(view, null, Constants.SubmissionTypes.COLLECTION);
+            if (collection!=null) {
+                mav.setViewName("redirect:" + view + "/studies");
+            }
+        }
         return mav;
     }
 
