@@ -254,6 +254,7 @@ var FileTable = (function (_self) {
                             + '" href="'
                             + window.contextPath +'/files/'+acc+'/' + unescape(encodeURIComponent(row.path)).replaceAll('#','%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
                                 .replaceAll("[", "%5B").replaceAll("]", "%5D")
+                            + (row.type==='directory' && hasZippedFolders ? '.zip' : '')
                             + (params.key ? '?key='+params.key : '')
                             + '" target="_blank" style="max-width: 500px;">'
                             + data +'</a>'
