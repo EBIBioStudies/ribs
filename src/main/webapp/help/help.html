@@ -70,6 +70,13 @@
         border: none !important;
     }
 
+    .source-icon-globus:before, .source-icon-globus {
+        color: #FFFFFF !important;
+        background-color: #335a95;
+        border: none !important;
+    }
+
+
     .source-icon-ftp .fa {
         padding-right: 2px;
     }
@@ -91,7 +98,7 @@
 
 <ul class="accordion" data-accordion data-allow-all-closed="true">
 
-    <li class="accordion-item is-active" data-accordion-item>
+    <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title" id="how-to-search"><h3><i class="fa-solid fa-magnifying-glass"></i> Search
         </h3></a>
         <div class="accordion-content" data-tab-content>
@@ -205,7 +212,7 @@
     S-EPMC/001/S-EPMC3521001
     </pre>
 
-            <h4>FTP downloads</h4>
+            <h4 id="ftp-downloads">FTP downloads</h4>
             <p>The BioStudies FTP path is <span class="mono"><a
                     href="ftp://ftp.ebi.ac.uk/biostudies">ftp://ftp.ebi.ac.uk/biostudies</a></span>.
                 Anonymous downloads are enabled. For each study, you can click on the <span
@@ -247,7 +254,7 @@
             </p>
             <p></p>
 
-            <h4>Aspera downloads</h4>
+            <h4 id="aspera-downloads">Aspera downloads</h4>
             <p>You will need to <a target="_blank"
                                    href="https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Other%20software&product=ibm/Other%20software/IBM%20Aspera%20CLI&release=All&platform=All&function=all">
                 download the Aspera <span class="mono">ascp</span> command line interface</a>. Please select the correct
@@ -287,6 +294,16 @@
             <span
                     class="mono">fire</span>.
             </p>
+
+            <h4 id="globus-downloads" name="globus-downloads">Globus downloads</h4>
+            <p>BioStudies supports file downloads through <a href="https://www.globus.org/">Globus</a> as well. You can
+                click on the <a
+                        id="globus-link" href="" title="Open Globus" class="source-icon source-icon-globus"
+                        data-icon="="><img src="images/globus-logo.png"/>Globus</a> icon to open up the <a
+                        href="https://app.globus.org/file-manager?origin_id=47772002-3e5b-4fd3-b97c-18cee38d6df2&origin_path=%2Fbiostudies%2F">
+                    EMBL-EBI Public Data collection</a> in the Globus File Manager app. You may want to install <a href="https://www.globus.org/globus-connect-personal">
+                    Globus Connect Personal</a> which creates a personal collection on your machine for <a
+                        href="https://docs.globus.org/how-to/get-started/">transferring multiple files</a>. </p>
         </div>
     </li>
 
