@@ -21,14 +21,25 @@ var Help = (function (_self) {
     };
 
     function loadCommonHelp() {
-        $('#renderedContent').load(contextPath + '/help/help.html',
+        $.get(contextPath + '/help/help.html',
             function (responseText, textStatus, jqXHR) {
-                $('#renderedContent').foundation();
+                $('#renderedContent').html(responseText);
                 if (location.hash) {
-                    location.hash = location.hash; //scrolls to the anchor
-                    $('a[name="'+location.hash.substr(1)+'"]').click();
+                    $('*[name="'+location.hash.substr(1)+'"]').closest('.accordion-item').first().addClass("is-active")
+                } else {
+                    $('.accordion-item',$('#renderedContent')).first().addClass("is-active")
                 }
-            });
+                $('#renderedContent').foundation();
+
+                if (location.hash) {
+                    setTimeout(function () {
+                        $('html, body').animate({
+                            scrollTop: $('*[name="'+location.hash.substr(1)+'"]').offset().top
+                        }, 100);
+                    }, 200)
+                }
+
+        });
 
     }
 
