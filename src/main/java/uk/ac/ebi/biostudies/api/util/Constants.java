@@ -30,6 +30,7 @@ public interface Constants {
         String ID = "id";
         String EFOID = "efoid";
         String TERM = "term";
+        String TERM_SORT = "term_sort";
         String ALTERNATIVE_TERMS = "altterm";
         String CONTENT = "content";
         String CHILDRERN = "child";

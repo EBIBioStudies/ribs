@@ -15,6 +15,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.analyzer.LowercaseAnalyzer;
 import uk.ac.ebi.biostudies.config.EFOConfig;
 import uk.ac.ebi.biostudies.config.IndexManager;
 import uk.ac.ebi.biostudies.efo.EFOLoader;
@@ -71,10 +72,10 @@ public class EFOManager {
             if (field == null || field.isEmpty())
                 field = OWL.ALL;
             if (field.equalsIgnoreCase(OWL.ALL) || field.equalsIgnoreCase(OWL.TERM)) {
-                QueryParser parser = new QueryParser(OWL.TERM, new KeywordAnalyzer());
+                QueryParser parser = new QueryParser(OWL.TERM, new LowercaseAnalyzer());
                 query = modifyQuery(query);
                 Query myQuery = parser.parse(query);
-                topResult = indexManager.getEfoIndexSearcher().search(myQuery, limit, new Sort(new SortField(OWL.TERM, SortField.Type.STRING, false)));
+                topResult = indexManager.getEfoIndexSearcher().search(myQuery, limit, new Sort(new SortField(OWL.TERM_SORT, SortField.Type.STRING, false)));
                 totalHit = (int) topResult.totalHits.value;
                 serializeSearchResult(topResult, resultStr);
             }
@@ -215,9 +216,10 @@ public class EFOManager {
             document.add(new Field(OWL.EFOID, node.getEfoUri().toLowerCase(), TYPE_NOT_ANALYZED));
         if (node.getTerm() != null) {
             String curTerm = node.getTerm().toLowerCase();
-            document.add(new StringField(OWL.TERM, curTerm, Field.Store.NO));
-            document.add(new SortedDocValuesField(OWL.TERM, new BytesRef(curTerm)));
-            document.add(new StoredField(OWL.TERM, curTerm));
+            document.add(new TextField(OWL.TERM, curTerm, Field.Store.YES));
+            document.add(new StringField(OWL.TERM_SORT, curTerm, Field.Store.NO));
+            document.add(new SortedDocValuesField(OWL.TERM_SORT, new BytesRef(curTerm)));
+
         }
         if (node.getAlternativeTerms() != null)
             createDocPerAlternativeTerm(indexWriter, node.getAlternativeTerms());
