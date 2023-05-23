@@ -66,6 +66,7 @@ public class EFOExpansionLookupIndex {
         return expansion;
     }
 
+    @Deprecated
     public Set<String> getReverseExpansion(String text) throws IOException {
         Set<String> reverseExpansion = new HashSet<>();
 

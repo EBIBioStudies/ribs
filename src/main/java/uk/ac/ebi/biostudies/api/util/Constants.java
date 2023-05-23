@@ -38,8 +38,9 @@ public interface Constants {
     }
     interface QEXPAND{
         String TERM = "qe.term";
-        String ALL = "qe.term";
         String EFO = "qe.efo";
+        @Deprecated
+        String ALL = "qe.all";
     }
 
     interface SortOrder {

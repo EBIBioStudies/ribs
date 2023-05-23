@@ -2,9 +2,7 @@ package uk.ac.ebi.biostudies.efo.index;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,11 +72,10 @@ public class EFOExpanderIndex {
             for (String term : this.customSynonyms.keySet()) {
                 if (!addedTerms.contains(term)) {
                     Document d = new Document();
-
+                    addIndexField(d, Constants.QEXPAND.TERM, term.toLowerCase(), false);
                     Set<String> syns = this.customSynonyms.get(term);
                     for (String syn : syns) {
-                        addIndexField(d, Constants.QEXPAND.TERM, syn, true, true);
-
+                        addIndexField(d, Constants.QEXPAND.EFO, syn, false);
                     }
                     w.addDocument(d);
                     addedTerms.addAll(syns);
@@ -88,7 +85,6 @@ public class EFOExpanderIndex {
     }
 
     private void addNodeAndChildren(EFONode node, IndexWriter w) throws IOException, InterruptedException {
-        Thread.sleep(0);
         if (null != node) {
             addNodeToIndex(node, w);
             for (EFONode child : node.getChildren()) {
@@ -110,10 +106,14 @@ public class EFOExpanderIndex {
                             : getEFO().getTerms(node.getId(), IEFO.INCLUDE_CHILDREN);
 
             // here we add custom synonyms to EFO synonyms/child terms and their synonyms
+            Set<String> tempAltTerm = new HashSet<>(synonyms);
             if (null != this.customSynonyms) {
-                for (String syn : new HashSet<>(synonyms)) {
-                    if (null != syn && this.customSynonyms.containsKey(syn)) {
-                        synonyms.addAll(this.customSynonyms.get(syn));
+                for (String syn : tempAltTerm) {
+                    if (null != syn) {
+                        synonyms.add(syn);
+                        if(this.customSynonyms.containsKey(syn))
+                            synonyms.addAll(this.customSynonyms.get(syn));
+
                     }
                 }
 
@@ -141,13 +141,11 @@ public class EFOExpanderIndex {
                 int terms = 0, efoChildren = 0;
 
                 for (String syn : synonyms) {
-                    if (childTerms.contains(syn)) {
+//                    if (childTerms.contains(syn)) {
                         // this.logger.debug("Synonym [{}] for term [{}] is present as a child term itelf, skipping", syn, term);
-                    } else if (isStopExpansionTerm(syn)) {
-                        // this.logger.debug("Synonym [{}] for term [{}] is a stop-word, skipping", syn, term);
-                    } else {
-                        addIndexField(d, Constants.QEXPAND.TERM, syn, true, true);
-                        addIndexField(d, Constants.QEXPAND.ALL, syn, true, true);
+                    if (!isStopExpansionTerm(syn)) {
+                        addIndexField(d, Constants.QEXPAND.TERM, syn.toLowerCase(), false);
+                        addIndexField(d, Constants.QEXPAND.EFO, syn.toLowerCase(), false);
                         terms++;
                     }
                 }
@@ -156,15 +154,14 @@ public class EFOExpanderIndex {
                     if (isStopExpansionTerm(efoTerm)) {
                         // this.logger.debug("Child EFO term [{}] for term [{}] is a stop-word, skipping", efoTerm, term);
                     } else {
-                        addIndexField(d, Constants.QEXPAND.EFO, efoTerm, false, true);
-                        addIndexField(d, Constants.QEXPAND.ALL, efoTerm, true, true);
+                        addIndexField(d, Constants.QEXPAND.EFO, efoTerm.toLowerCase(), false);
                         efoChildren++;
                     }
                 }
 
                 if (!isStopExpansionTerm(term)) {
-                    addIndexField(d, Constants.QEXPAND.TERM, term, true, true);
-                    addIndexField(d, Constants.QEXPAND.ALL, term, true, true);
+                    addIndexField(d, Constants.QEXPAND.TERM, term.toLowerCase(), false);
+//                    addIndexField(d, Constants.QEXPAND.ALL, term, false);
                     terms++;
                 }
 
@@ -174,7 +171,7 @@ public class EFOExpanderIndex {
                     // this.logger.debug("EFO term [{}] was not added due to insufficient mappings", term);
                 }
 
-                Thread.sleep(0);
+//                Thread.sleep(0);
             }
         } else {
             // this.logger.debug("EFO Term [{}] is a stop-word, skipping", term);
@@ -182,13 +179,14 @@ public class EFOExpanderIndex {
     }
 
 
-    private void addIndexField(Document document, String name, String value, boolean shouldAnalyze, boolean shouldStore) {
+    private void addIndexField(Document document, String name, String value, boolean shouldAnalyze) {
         value = value.replaceAll("[^\\d\\w-]", " ").toLowerCase();
-        FieldType fieldType = new FieldType();
-        fieldType.setIndexOptions(IndexOptions.DOCS);
-        fieldType.setTokenized(shouldAnalyze);
-        fieldType.setStored(shouldStore);
-        document.add(new Field(name, value, fieldType));
+        if(shouldAnalyze){
+            document.add(new TextField(name, value, Field.Store.YES));
+        }
+        else{
+            document.add(new StringField(name, value, Field.Store.YES));
+        }
     }
 
     private boolean isStopTerm(String str) {
