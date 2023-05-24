@@ -10,12 +10,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.config.FireConfig;
 import uk.ac.ebi.biostudies.file.download.FIREDownloadFile;
 import uk.ac.ebi.biostudies.file.download.IDownloadFile;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -40,8 +42,6 @@ public class FireService {
     public IDownloadFile getFireFile(String accession, String relativePath, String requestedFilePath, boolean isThumbnail) throws FileNotFoundException {
 
         String path = relativePath + (isThumbnail ? "/Thumbnails/" : "/Files/") + requestedFilePath + (isThumbnail ? ".thumbnail.png" : "");
-
-        path = StudyUtils.decodeForFireBug(path);
 
         // For study json/xml/tsv pagetab files
         if (requestedFilePath.equals(accession + ".json") || requestedFilePath.equals(accession + ".xml") || requestedFilePath.equals(accession + ".tsv")) {

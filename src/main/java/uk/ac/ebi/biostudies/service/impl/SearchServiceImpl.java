@@ -111,7 +111,7 @@ public class SearchServiceImpl implements SearchService {
         SortField.Type sortFieldType = extractFieldType(sortBy);
         boolean shouldReverse = extractSortOrder(sortOrder, sortBy);
         SortField sortField;
-        if (sortBy.equalsIgnoreCase(RELEVANCE))
+        if (sortBy.isEmpty() || RELEVANCE.equalsIgnoreCase(sortBy))
             sortField = new SortField(null, SortField.Type.SCORE, shouldReverse);
         else {
             sortField = sortFieldType == SortField.Type.LONG
@@ -136,6 +136,9 @@ public class SearchServiceImpl implements SearchService {
             response.put("isTotalHitsExact", isTotalHitsExact);
             response.put("sortBy", sortBy.equalsIgnoreCase(Fields.RELEASE_TIME) ? RELEASE_DATE : sortBy);
             response.put("sortOrder", shouldReverse ? SortOrder.DESCENDING : SortOrder.ASCENDING);
+            if (sortBy.equalsIgnoreCase(RELEVANCE)) {
+                response.put("sortOrder", !shouldReverse ? SortOrder.DESCENDING : SortOrder.ASCENDING);
+            }
             if (totalHits > 0) {
                 ArrayNode docs = mapper.createArrayNode();
                 for (int i = (page - 1) * pageSize; i < to; i++) {
