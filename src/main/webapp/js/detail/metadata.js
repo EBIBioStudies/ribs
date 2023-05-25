@@ -49,7 +49,11 @@ var Metadata = (function (_self) {
                 if (!isCollectionCorrect && lastCollection) {
                     location.href= contextPath + '/'+lastCollection.toLowerCase() +'/studies/' + accession + (params.key ? '?key='+params.key : '');
                     return;
+                } else if (collection && collection !=='' && !lastCollection) {
+                    location.href= contextPath + '/studies/' + accession + (params.key ? '?key='+params.key : '');
+                    return;
                 }
+
                 if (location.href.toLowerCase().indexOf(collection.toLowerCase())<0)
                     handleProjectSpecificUI();
                 title = data.attributes.filter(function (v, i) {
@@ -566,14 +570,14 @@ var Metadata = (function (_self) {
             $.ajax({
                 async: true,
                 context: this,
-                url: "https://www.ebi.ac.uk/ols/api/ontologies/" + ont + "/terms",
+                url: "https://www.ebi.ac.uk/ols4/api/ontologies/" + ont + "/terms",
                 data: {short_form: termId, size: 1},
                 success: function (data) {
                     if (data && data._embedded && data._embedded.terms && data._embedded.terms.length > 0) {
                         var n = name ? name : data._embedded.terms[0].description ? data._embedded.terms[0].description : null;
                         const efoBadge= $('<a title="' + data._embedded.terms[0].obo_id +
                             ( n ? ' - ' + n : '') + '" ' +
-                            'class="ontology-icon" data-tooltip target="_blank" href="https://www.ebi.ac.uk/ols/ontologies/'
+                            'class="ontology-icon" data-tooltip target="_blank" href="https://www.ebi.ac.uk/ols4/ontologies/'
                             + ont + '/terms?iri=' + data._embedded.terms[0].iri
                             + '"><i class="fa fa-external-link-alt" aria-hidden="true"></i> '
                             + ont
