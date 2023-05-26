@@ -2,8 +2,10 @@ package uk.ac.ebi.biostudies.efo.index;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.lucene.document.*;
-import org.apache.lucene.index.IndexOptions;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -49,14 +51,12 @@ public class EFOExpanderIndex {
         }
     }
 
-    private void loadCustomSynonyms() throws IOException {
+    private void loadCustomSynonyms() {
         String synFileLocation = efoConfig.getSynonymFilename();
         if (null != synFileLocation) {
             try (InputStream resourceInputStream = (new ClassPathResource(synFileLocation)).getInputStream()){
                 Map<String, Set<String>> synonyms = new SynonymsFileReader(new InputStreamReader(resourceInputStream)).readSynonyms();
                 setCustomSynonyms(synonyms);
-                //lookBack index
-                //this.lookBackIndex.setCustomSynonyms(synonyms);
                 LOGGER.debug("Loaded custom synonyms from [{}]", synFileLocation);
             } catch (Exception ex){
                 LOGGER.error("could not open synonyms file", ex);
@@ -141,8 +141,6 @@ public class EFOExpanderIndex {
                 int terms = 0, efoChildren = 0;
 
                 for (String syn : synonyms) {
-//                    if (childTerms.contains(syn)) {
-                        // this.logger.debug("Synonym [{}] for term [{}] is present as a child term itelf, skipping", syn, term);
                     if (!isStopExpansionTerm(syn)) {
                         addIndexField(d, Constants.QEXPAND.TERM, syn.toLowerCase(), false);
                         addIndexField(d, Constants.QEXPAND.EFO, syn.toLowerCase(), false);
@@ -151,9 +149,7 @@ public class EFOExpanderIndex {
                 }
 
                 for (String efoTerm : childTerms) {
-                    if (isStopExpansionTerm(efoTerm)) {
-                        // this.logger.debug("Child EFO term [{}] for term [{}] is a stop-word, skipping", efoTerm, term);
-                    } else {
+                    if (!isStopExpansionTerm(efoTerm)) {
                         addIndexField(d, Constants.QEXPAND.EFO, efoTerm.toLowerCase(), false);
                         efoChildren++;
                     }
@@ -161,20 +157,13 @@ public class EFOExpanderIndex {
 
                 if (!isStopExpansionTerm(term)) {
                     addIndexField(d, Constants.QEXPAND.TERM, term.toLowerCase(), false);
-//                    addIndexField(d, Constants.QEXPAND.ALL, term, false);
                     terms++;
                 }
 
                 if (terms > 1 || (1 == terms && efoChildren > 0)) {
                     w.addDocument(d);
-                } else {
-                    // this.logger.debug("EFO term [{}] was not added due to insufficient mappings", term);
                 }
-
-//                Thread.sleep(0);
             }
-        } else {
-            // this.logger.debug("EFO Term [{}] is a stop-word, skipping", term);
         }
     }
 
@@ -196,13 +185,6 @@ public class EFOExpanderIndex {
     private boolean isStopExpansionTerm(String str) {
         return isStopTerm(str) || str.length() < 3 || str.matches(".*(\\s\\(.+\\)|\\s\\[.+\\]|,\\s|\\s-\\s|/|NOS).*");
     }
-
-    @SuppressWarnings("unused")
-    private boolean isLongTerm(String str) {
-        // returns true if number of words is over 5;
-        return null != str && str.replaceAll("\\s+", " ").replaceAll("[^ ]+", "").length() >= 4;
-    }
-
 
     public IEFO getEFO() {
         return efo;
