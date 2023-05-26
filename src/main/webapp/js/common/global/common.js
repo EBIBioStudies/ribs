@@ -22,6 +22,7 @@ $(function() {
         $(data.section.attributes).each(function () {
             collectionObj[this.name.toLowerCase()] = this.value
         })
+        collectionObj.title = collectionObj.title || collectionObj.accno;
         var html = template(collectionObj);
         if (collection.toLowerCase()!='bioimages') {
             $('#collection-banner').html(html);
