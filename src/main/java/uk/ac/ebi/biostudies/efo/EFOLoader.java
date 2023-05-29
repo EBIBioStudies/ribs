@@ -41,7 +41,7 @@ public class EFOLoader
 
     private final static IRI IRI_AE_LABEL = IRI.create("http://www.ebi.ac.uk/efo/ArrayExpress_label");
     private final static IRI IRI_EFO_URI = IRI.create("http://www.ebi.ac.uk/efo/EFO_URI");
-    private final static IRI IRI_ALT_TERM = IRI.create("http://www.ebi.ac.uk/efo/alternative_term");
+    private final static IRI IRI_ALT_TERM = IRI.create("http://www.geneontology.org/formats/oboInOwl#hasExactSynonym");
     private final static IRI IRI_ORG_CLASS = IRI.create("http://www.ebi.ac.uk/efo/organizational_class");
     private final static IRI IRI_PART_OF = IRI.create("http://www.obofoundry.org/ro/ro.owl#part_of");
     private final static IRI IRI_VERSION_INFO = IRI.create("http://www.w3.org/2002/07/owl#versionInfo");

@@ -26,7 +26,7 @@ public interface Constants {
         String COLLECTION = "collection";
     }
 
-    interface OWL{
+    interface OWL {
         String ID = "id";
         String EFOID = "efoid";
         String TERM = "term";
@@ -36,9 +36,9 @@ public interface Constants {
         String FATHER = "father";
         String ALL = "all";
     }
-    interface QEXPAND{
+
+    interface QEXPAND {
         String TERM = "qe.term";
-        String ALL = "qe.term";
         String EFO = "qe.efo";
     }
 
