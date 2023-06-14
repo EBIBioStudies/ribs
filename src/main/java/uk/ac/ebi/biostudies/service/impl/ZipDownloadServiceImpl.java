@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.config.IndexConfig;
-import uk.ac.ebi.biostudies.file.download.FilteredMageTabDownloadFile;
-import uk.ac.ebi.biostudies.file.download.FilteredMageTabDownloadStream;
-import uk.ac.ebi.biostudies.file.download.IDownloadFile;
+import uk.ac.ebi.biostudies.service.FileDownloadService;
 import uk.ac.ebi.biostudies.service.SearchService;
 import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
 import uk.ac.ebi.biostudies.service.ZipDownloadService;
+import uk.ac.ebi.biostudies.service.file.FileMetaData;
+import uk.ac.ebi.biostudies.service.file.chain.MageTabFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.Stack;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import static uk.ac.ebi.biostudies.service.file.chain.FileChainFilter.KB;
 
 
 @Service
@@ -35,7 +37,7 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
     @Autowired
     IndexConfig indexConfig;
     @Autowired
-    FireService fireService;
+    FileService fileService;
 
     @Override
     public void sendZip(HttpServletRequest request, HttpServletResponse response, String[] files, Constants.File.StorageMode storageMode) throws Exception {
@@ -80,32 +82,36 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
 
     private void sendFireZip(String accession, String key, String relativePath, String rootFolder, String[] files, ZipOutputStream zos) throws Exception {
 
-        byte[] buffer = new byte[4 * IDownloadFile.KB];
+        byte[] buffer = new byte[64 * KB];
         String canonicalPath = relativePath + "/Files/";
         InputStream zipInputStream = null;
         for (String fileEntry : files) {
-            IDownloadFile fireFile = null;
+            FileMetaData fireFile = new FileMetaData(accession);
             try {
                 final String fileName = StringUtils.replace(fileEntry, "..", ".");
-                fireFile = fireService.getFireFile(accession, relativePath, fileName);
+                fireFile.setFileName(fileName);
+                fireFile.setStorageMode(Constants.File.StorageMode.FIRE);
+                fireFile.setRelativePath(relativePath);
+                fireFile.setUiRequestedPath(fileName);
+                fileService.getDownloadFile(fireFile);
                 zipInputStream = fireFile.getInputStream();
 
                 String curFileName = fileName.replaceAll(canonicalPath, "");
                 ZipEntry entry = new ZipEntry(curFileName + (fireFile.isDirectory() ? ".zip" : ""));
                 zos.putNextEntry(entry);
                 if (key != null) {
-                    FilteredMageTabDownloadStream filteredMageTabDownloadStream =
-                            new FilteredMageTabDownloadStream(curFileName, zipInputStream);
-                    if (filteredMageTabDownloadStream.isSupported()) {
-                        zipInputStream = filteredMageTabDownloadStream.getInputStream();
-                    }
+                    zipInputStream = MageTabFilter.applyFilter(curFileName, zipInputStream);
                 }
                 int length;
                 while ((length = zipInputStream.read(buffer)) > 0) {
                     zos.write(buffer, 0, length);
                 }
             } finally {
-                zos.closeEntry();
+                try{
+                    zos.closeEntry();
+                }catch (Exception exception){
+                    logger.debug("cant close zip stream. Download cancelled by user", exception);
+                }
                 if (fireFile != null)
                     fireFile.close();
             }
@@ -114,7 +120,7 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
 
     private void sendNFSZip(String key, String relativePath, String rootFolder, String[] files, ZipOutputStream zos) throws IOException {
 
-        byte[] buffer = new byte[4 * IDownloadFile.KB];
+        byte[] buffer = new byte[64 * KB];
         Stack<String> fileStack = new Stack<>();
         fileStack.addAll(Arrays.asList(files));
         String canonicalPath = rootFolder + "/" + relativePath + "/Files/";
@@ -140,11 +146,7 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
                     zos.putNextEntry(entry);
                     InputStream fin = new FileInputStream(file);
                     if (key != null) {
-                        FilteredMageTabDownloadFile filteredMageTabDownloadFile =
-                                new FilteredMageTabDownloadFile(file);
-                        if (filteredMageTabDownloadFile.isSupported()) {
-                            fin = filteredMageTabDownloadFile.getInputStream();
-                        }
+                        fin = MageTabFilter.applyFilter(filename, fin);
                     }
                     int length;
                     while ((length = fin.read(buffer)) > 0) {

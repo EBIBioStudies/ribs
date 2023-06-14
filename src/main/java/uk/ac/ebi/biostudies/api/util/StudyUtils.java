@@ -42,4 +42,11 @@ public class StudyUtils {
         }
         return inputStr;
     }
+
+    public static boolean isPageTabFile(String accession, String requestedFilePath) {
+        return requestedFilePath.equalsIgnoreCase(accession + ".json")
+                || requestedFilePath.equalsIgnoreCase(accession + ".xml")
+                || requestedFilePath.equalsIgnoreCase(accession + ".pagetab.tsv")
+                || requestedFilePath.equalsIgnoreCase(accession + ".tsv");
+    }
 }

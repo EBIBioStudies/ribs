@@ -22,9 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.config.IndexConfig;
-import uk.ac.ebi.biostudies.file.download.IDownloadFile;
 import uk.ac.ebi.biostudies.service.FileDownloadService;
 import uk.ac.ebi.biostudies.service.FileIndexService;
+import uk.ac.ebi.biostudies.service.file.FileMetaData;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,7 +43,8 @@ public class FileIndexServiceImpl implements FileIndexService {
 
     @Autowired
     IndexConfig indexConfig;
-
+    @Autowired
+    FileService fileService;
     @Autowired
     FileDownloadService fileDownloadService;
 
@@ -200,12 +201,16 @@ public class FileIndexServiceImpl implements FileIndexService {
 
         parents.forEach((filename, jsonNode) -> {
             if (jsonNode == null) return;
-            IDownloadFile fileList = null;
+            FileMetaData fileList = new FileMetaData(accession);
+            fileList.setUiRequestedPath(filename + (filename.toLowerCase().endsWith(".json") ? "" : ".json"));
+            fileList.setRelativePath(relativePath);
             try {
                 Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(json.get(Constants.Fields.STORAGE_MODE).asText());
-                fileList = fileDownloadService.getDownloadFile(accession, relativePath, filename + (filename.toLowerCase().endsWith(".json") ? "" : ".json"), storageMode);
+                fileList.setStorageMode(storageMode);
+                fileService.getDownloadFile(fileList);
                 if (fileList.getInputStream() == null) {
-                    fileList = fileDownloadService.getDownloadFile(accession, relativePath, "Files/" + filename + (filename.toLowerCase().endsWith(".json") ? "" : ".json"), storageMode);
+                    fileList.setUiRequestedPath("Files/" + filename + (filename.toLowerCase().endsWith(".json") ? "" : ".json"));
+                    fileService.getDownloadFile(fileList);
                 }
                 indexLibraryFile(accession, writer, counter, columns, sectionsWithFiles, fileKeyValuePureTextForSearch, jsonNode, fileList);
 
@@ -256,7 +261,7 @@ public class FileIndexServiceImpl implements FileIndexService {
         }
     }
 
-    private void indexLibraryFile(String accession, IndexWriter writer, AtomicLong counter, List<String> columns, Set<String> sectionsWithFiles, Set<String> fileKeyValuePureTextForSearch, JsonNode parent, IDownloadFile libraryFile) throws IOException {
+    private void indexLibraryFile(String accession, IndexWriter writer, AtomicLong counter, List<String> columns, Set<String> sectionsWithFiles, Set<String> fileKeyValuePureTextForSearch, JsonNode parent, FileMetaData libraryFile) throws IOException {
         List<Future> submittedTasks = new ArrayList<>();
         try (InputStreamReader inputStreamReader = new InputStreamReader(libraryFile.getInputStream(), StandardCharsets.UTF_8)) {
             JsonFactory factory = new JsonFactory();
