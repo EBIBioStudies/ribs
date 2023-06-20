@@ -86,13 +86,9 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
         String canonicalPath = relativePath + "/Files/";
         InputStream zipInputStream = null;
         for (String fileEntry : files) {
-            FileMetaData fireFile = new FileMetaData(accession);
+            final String fileName = StringUtils.replace(fileEntry, "..", ".");
+            FileMetaData fireFile = new FileMetaData(accession, fileName, fileName, relativePath, Constants.File.StorageMode.FIRE);
             try {
-                final String fileName = StringUtils.replace(fileEntry, "..", ".");
-                fireFile.setFileName(fileName);
-                fireFile.setStorageMode(Constants.File.StorageMode.FIRE);
-                fireFile.setRelativePath(relativePath);
-                fireFile.setUiRequestedPath(fileName);
                 fileService.getDownloadFile(fireFile);
                 zipInputStream = fireFile.getInputStream();
 

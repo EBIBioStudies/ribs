@@ -86,12 +86,9 @@ public class Thumbnails implements InitializingBean, DisposableBean {
     public void sendThumbnail(HttpServletResponse response, String accession, String relativePath, String name, Constants.File.StorageMode storageMode) throws IOException {
         String fileType = FilenameUtils.getExtension(name).toLowerCase();
         InputStream thumbnailInputStream = null;
-        FileMetaData fileMetaData = new FileMetaData(accession);
+        FileMetaData fileMetaData = new FileMetaData(accession, name, name, relativePath, storageMode);
         try {
             try {
-                fileMetaData.setRelativePath(relativePath);
-                fileMetaData.setFileName(name);
-                fileMetaData.setStorageMode(storageMode);
                 fileMetaData.setThumbnail(true);
                 // check in the Thumbnails folder in storage
                 fileService.getDownloadFile(fileMetaData);
@@ -118,7 +115,7 @@ public class Thumbnails implements InitializingBean, DisposableBean {
                     } else {
                         // create thumbnail from file
 //                        IDownloadFile downloadFile = null;
-                        FileMetaData thumbMetaData = new FileMetaData(accession);
+                        FileMetaData thumbMetaData = new FileMetaData(accession, name, name, relativePath, storageMode);
                         try {
                             fileMetaData.setRelativePath(relativePath);
                             fileMetaData.setFileName(name);

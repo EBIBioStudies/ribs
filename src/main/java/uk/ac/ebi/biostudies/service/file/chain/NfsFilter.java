@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 
-public class HandleNfsDirFilter implements FileChainFilter{
+public class NfsFilter implements FileChainFilter{
     @Autowired
     ZipDownloadService zipDownloadService;
     @Override

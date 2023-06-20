@@ -110,13 +110,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
             Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
 
-            fileMetaData = new FileMetaData(accession);
-            fileMetaData.setStorageMode(storageMode);
-            fileMetaData.setRelativePath(relativePath);
-            fileMetaData.setUiRequestedPath(requestedFilePath);
-            fileMetaData.setAccession(accession);
-            fileMetaData.setCollection(collection);
-            fileMetaData.setPublic((" " + document.get(Constants.Fields.ACCESS) + " ").toLowerCase().contains(" public "));
+            fileMetaData = new FileMetaData(accession, requestedFilePath, requestedFilePath, relativePath, storageMode, (" " + document.get(Constants.Fields.ACCESS) + " ").toLowerCase().contains(" public "), (key!=null && key.length()>0), collection);
 
             try {
                 fileMetaData.setThumbnail(false);
@@ -127,7 +121,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             }
             List<FileChainFilter> appliedFilters = new ArrayList<>();
             appliedFilters.add(new FtpRedirectFilter());
-            appliedFilters.add(new HandleNfsDirFilter());
+            appliedFilters.add(new NfsFilter());
             appliedFilters.add(new MageTabFilter());
             appliedFilters.add(new SendFileFilter());
 

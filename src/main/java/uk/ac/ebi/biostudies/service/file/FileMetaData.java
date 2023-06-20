@@ -53,6 +53,25 @@ public class FileMetaData {
         this.accession = accession;
     }
 
+    public FileMetaData(String accession, String uiRequestedPath, String fileName, String relativePath, Constants.File.StorageMode storageMode, boolean isPublicStudy, boolean secretKey, String collection){
+        this.accession=accession;
+        this.uiRequestedPath=uiRequestedPath;
+        this.fileName=fileName;
+        this.relativePath=relativePath;
+        this.storageMode=storageMode;
+        this.isPublic=isPublicStudy;
+        this.hasKey=secretKey;
+        this.collection=collection;
+    }
+
+    public FileMetaData(String accession, String uiRequestedPath, String fileName, String relativePath, Constants.File.StorageMode storageMode){
+        this.accession=accession;
+        this.uiRequestedPath=uiRequestedPath;
+        this.relativePath=relativePath;
+        this.fileName=fileName;
+        this.storageMode=storageMode;
+    }
+
     public String getAccession() {
         return accession;
     }
