@@ -17,7 +17,7 @@ var FileTable = (function (_self) {
                 var hasZippedFolders = response.hasZippedFolders || false;
                 if (isDetailPage) {
                     handleSecretKey(response.seckey, params.key);
-                    handleDateMetadata(response.released, response.modified);
+                    handleStats(response.released, response.modified, response.views);
                     if (response.isPublic) {
                         handleSubmissionFolderLinks(response.ftpLink, response.globusLink);
                     }
@@ -106,11 +106,14 @@ var FileTable = (function (_self) {
         $('#globus-link').show();
     }
 
-    function handleDateMetadata(released, modified) {
+    function handleStats(released, modified, views) {
         if (released) $('#orcid-publication-year').text( getDateFromEpochTime(released))
         if (modified) $('#modification-date').append('&nbsp; ' + String.fromCharCode(0x25AA)+' &nbsp; Modified: '+ getDateFromEpochTime(modified));
         if (!released || released > Date.now()) {
             $('#modification-date').append(' &nbsp; ' + String.fromCharCode(0x25AA)+' &nbsp; <i class="fa fa-lock" aria-hidden="true"></i> Private ');
+        }
+        if (views && views!=0) {
+            $('#modification-date').append(' &nbsp; ' + String.fromCharCode(0x25AA)+ ' &nbsp; <span title="Updated monthly">Views: ' + views + "</span>");
         }
     }
 
