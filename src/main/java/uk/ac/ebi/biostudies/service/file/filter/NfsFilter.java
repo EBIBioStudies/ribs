@@ -1,4 +1,4 @@
-package uk.ac.ebi.biostudies.service.file.chain;
+package uk.ac.ebi.biostudies.service.file.filter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.biostudies.api.util.Constants;

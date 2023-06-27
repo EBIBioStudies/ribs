@@ -31,7 +31,7 @@ import uk.ac.ebi.biostudies.service.SearchService;
 import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
 import uk.ac.ebi.biostudies.service.ZipDownloadService;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
-import uk.ac.ebi.biostudies.service.file.chain.*;
+import uk.ac.ebi.biostudies.service.file.filter.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

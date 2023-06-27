@@ -1,9 +1,8 @@
-package uk.ac.ebi.biostudies.service.file.chain;
+package uk.ac.ebi.biostudies.service.file.filter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
-import uk.ac.ebi.biostudies.service.impl.FileDownloadServiceImpl;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package uk.ac.ebi.biostudies.service.file.chain;
+package uk.ac.ebi.biostudies.service.file.filter;
 
 import au.com.bytecode.opencsv.CSVReader;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;

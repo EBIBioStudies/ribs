@@ -1,4 +1,4 @@
-package uk.ac.ebi.biostudies.service.file.chain;
+package uk.ac.ebi.biostudies.service.file.filter;
 
 import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
