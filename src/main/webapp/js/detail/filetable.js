@@ -514,7 +514,7 @@ var FileTable = (function (_self) {
                     }),
                     function (response) {
                         for (var i=0; i< response.data.length; i++) {
-                            selectedFiles.add(response.data[i].path + (hasZippedFolders && response.data[i].type==='directory' ? '.zip' : ''));
+                            selectedFiles.add(response.data[i].path + (hasZippedFolders && response.data[i].type==='directory' && !response.data[i].path.toLowerCase().endsWith('.zip') ? '.zip' : ''));
                         }
                         updateSelectedFiles();
                     }
@@ -540,7 +540,7 @@ var FileTable = (function (_self) {
                     },
                 function (response) {
                     var filelist = response.data.map( function (v) {
-                        return v.path + (hasZippedFolders && v.type==='directory' ? '.zip' : '')
+                        return v.path + (hasZippedFolders && v.type==='directory' && !v.path.toLowerCase().endsWith('.zip') ? '.zip' : '')
                     });
                     createDownloadDialog(key, relativePath, new Set(filelist), hasZippedFolders, isPublic);
                 });
