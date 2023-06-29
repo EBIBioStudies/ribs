@@ -35,7 +35,6 @@ public class StudyUtils {
                     .replace("=", "%3D")
                     .replace("@", "%40")
                     .replace("$", "%24")
-                    .replace(" ", "+")
                     .toString();
         } catch (ScriptException e) {
             LOGGER.error(inputStr + " problem in unescapeing for Fire encoding bug", e);
