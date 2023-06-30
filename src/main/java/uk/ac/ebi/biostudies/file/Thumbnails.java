@@ -44,6 +44,7 @@ import java.util.Map;
 @Service
 public class Thumbnails implements InitializingBean, DisposableBean {
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     IndexConfig indexConfig;
     @Autowired
@@ -52,7 +53,7 @@ public class Thumbnails implements InitializingBean, DisposableBean {
     FireService fireService;
 
     private String thumbnailsFolder;
-    private Map<String, IThumbnail> thumbnailGenerators = new HashMap<>();
+    private final Map<String, IThumbnail> thumbnailGenerators = new HashMap<>();
 
     @Override
     public void afterPropertiesSet() {
@@ -83,7 +84,7 @@ public class Thumbnails implements InitializingBean, DisposableBean {
         FileDeleteStrategy.FORCE.delete(new File(getThumbnailsFolder()));
     }
 
-    public void sendThumbnail(HttpServletResponse response, String accession, String relativePath, String name, Constants.File.StorageMode storageMode) throws IOException {
+    public void     sendThumbnail(HttpServletResponse response, String accession, String relativePath, String name, Constants.File.StorageMode storageMode) throws IOException {
         String fileType = FilenameUtils.getExtension(name).toLowerCase();
         InputStream thumbnailInputStream = null;
         FileMetaData fileMetaData = new FileMetaData(accession, name, name, relativePath, storageMode);
@@ -114,7 +115,6 @@ public class Thumbnails implements InitializingBean, DisposableBean {
 
                     } else {
                         // create thumbnail from file
-//                        IDownloadFile downloadFile = null;
                         FileMetaData thumbMetaData = new FileMetaData(accession, name, name, relativePath, storageMode);
                         try {
                             fileMetaData.setRelativePath(relativePath);
@@ -133,7 +133,6 @@ public class Thumbnails implements InitializingBean, DisposableBean {
                 }
                 thumbnailInputStream = new FileInputStream(cachedThumbnail);
             }
-
 
             response.setContentType("image/png");
             IOUtils.copy(thumbnailInputStream, response.getOutputStream());

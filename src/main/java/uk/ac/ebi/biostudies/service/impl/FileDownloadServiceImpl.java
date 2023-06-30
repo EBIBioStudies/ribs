@@ -33,59 +33,45 @@ import uk.ac.ebi.biostudies.service.ZipDownloadService;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
 import uk.ac.ebi.biostudies.service.file.filter.*;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.FileNotFoundException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class FileDownloadServiceImpl implements FileDownloadService {
 
-
-
     private static final Logger logger = LogManager.getLogger(FileDownloadServiceImpl.class);
-
-
+    private static List<FileChainFilter> fileChainFilters;
 
     @Autowired
     FileService fileService;
     @Autowired
     SearchService searchService;
-
     @Autowired
     ZipDownloadService zipDownloadService;
-
     @Autowired
     IndexConfig indexConfig;
-
     @Autowired
     FireService fireService;
 
-
-
-
-
+    @PostConstruct
+    public void init() {
+        fileChainFilters = List.of(new FtpRedirectFilter(), new NfsFilter(), new MageTabFilter(), new SendFileFilter());
+    }
 
     public void sendFile(String collection, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
         request.setCharacterEncoding("UTF-8");
-//        IDownloadFile downloadFile = null;
         FileMetaData fileMetaData = null;
         try {
-            List<String> requestArgs = new ArrayList<>(Arrays.asList(
-                    request.getRequestURI().replaceAll(request.getContextPath()
-                                    + (StringUtils.isEmpty(collection) ? "" : "/" + collection)
-                                    + "/files/", "")
-                            .split("/")));
-
+            String uriParts = request.getRequestURI().replaceAll(request.getContextPath() + (StringUtils.isEmpty(collection) ? "" : "/" + collection) + "/files/", "");
+            List<String> requestArgs = Arrays.asList(uriParts.split("/"));
             String accession = requestArgs.remove(0);
-            String requestedFilePath = URLDecoder.decode(
-                    StringUtils.replace(StringUtils.join(requestArgs, '/'), "..", "")
-                    , StandardCharsets.UTF_8.toString());
+            String requestedFilePath = URLDecoder.decode(StringUtils.replace(StringUtils.join(requestArgs, '/'), "..", ""), StandardCharsets.UTF_8);
             String key = request.getParameter("key");
             if ("null".equalsIgnoreCase(key)) {
                 key = null;
@@ -110,27 +96,21 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
             Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
 
-            fileMetaData = new FileMetaData(accession, requestedFilePath, requestedFilePath, relativePath, storageMode, (" " + document.get(Constants.Fields.ACCESS) + " ").toLowerCase().contains(" public "), (key!=null && key.length()>0), collection);
+            fileMetaData = new FileMetaData(accession, requestedFilePath, requestedFilePath, relativePath,
+                    storageMode, (" " + document.get(Constants.Fields.ACCESS) + " ").toLowerCase().contains(" public "
+            ), (key != null && key.length() > 0), collection);
 
             try {
                 fileMetaData.setThumbnail(false);
                 fileService.getDownloadFile(fileMetaData);
-            }catch (Exception exception){
+                for (FileChainFilter fileFilter : fileChainFilters) {
+                    if (fileFilter.handleFile(fileMetaData, request, response)) break;
+                }
+                logger.debug("Download of [{}] completed - {}", fileMetaData.getUiRequestedPath(), request.getMethod());
+            } catch (Exception exception) {
                 fileMetaData.close();
                 logger.error(exception);
             }
-            List<FileChainFilter> appliedFilters = new ArrayList<>();
-            appliedFilters.add(new FtpRedirectFilter());
-            appliedFilters.add(new NfsFilter());
-            appliedFilters.add(new MageTabFilter());
-            appliedFilters.add(new SendFileFilter());
-
-            for(FileChainFilter fileFilter:appliedFilters){
-                if(fileFilter.handleFile(fileMetaData, request, response))
-                    break;
-            }
-            logger.debug("Download of [{}] completed - {}", fileMetaData.getUiRequestedPath(), request.getMethod());
-
         } finally {
             if (null != fileMetaData) {
                 fileMetaData.close();

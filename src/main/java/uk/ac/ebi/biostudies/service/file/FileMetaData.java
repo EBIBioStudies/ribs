@@ -5,71 +5,70 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.biostudies.api.util.Constants;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Date;
 
 public class FileMetaData {
     private static final Logger LOGGER = LogManager.getLogger(FileMetaData.class.getName());
 
     private String accession;
     private String fileName;
+    private String uiRequestedPath;
+    private String collection;
+    private String relativePath;
 
     private boolean isPublic;
-
-    private String uiRequestedPath;
-
     private boolean isThumbnail;
-
-    private String collection;
-
-    private String relativePath;
-    private S3Object s3Object;
-    private Constants.File.StorageMode storageMode;
-    private Path path;
     private boolean hasKey;
     private boolean isDirectory;
 
+    private Path path;
+    private S3Object s3Object;
+    private Constants.File.StorageMode storageMode;
     private InputStream inputStream;
 
-    public InputStream getInputStream(){
+    public FileMetaData(String accession) {
+        this.accession = accession;
+    }
+
+    public FileMetaData(String accession, String uiRequestedPath, String fileName, String relativePath, Constants.File.StorageMode storageMode, boolean isPublicStudy, boolean secretKey, String collection) {
+        this.accession = accession;
+        this.uiRequestedPath = uiRequestedPath;
+        this.fileName = fileName;
+        this.relativePath = relativePath;
+        this.storageMode = storageMode;
+        this.isPublic = isPublicStudy;
+        this.hasKey = secretKey;
+        this.collection = collection;
+    }
+
+    public FileMetaData(String accession, String uiRequestedPath, String fileName, String relativePath, Constants.File.StorageMode storageMode) {
+        this.accession = accession;
+        this.uiRequestedPath = uiRequestedPath;
+        this.relativePath = relativePath;
+        this.fileName = fileName;
+        this.storageMode = storageMode;
+    }
+
+    public InputStream getInputStream() {
         try {
-            if (inputStream != null)
-                return inputStream;
+            if (inputStream != null) return inputStream;
             if (s3Object != null) {
                 inputStream = s3Object.getObjectContent();
-            }
-            else if (storageMode == Constants.File.StorageMode.NFS && path != null && Files.exists(path)) {
+            } else if (storageMode == Constants.File.StorageMode.NFS && path != null && Files.exists(path)) {
                 inputStream = Files.newInputStream(path);
             }
-        }catch (Exception exception){
+        } catch (Exception exception) {
             LOGGER.error("problem in sending inputstream {}", fileName, exception);
         }
         return inputStream;
     }
 
-    public FileMetaData(String accession){
-        this.accession = accession;
-    }
-
-    public FileMetaData(String accession, String uiRequestedPath, String fileName, String relativePath, Constants.File.StorageMode storageMode, boolean isPublicStudy, boolean secretKey, String collection){
-        this.accession=accession;
-        this.uiRequestedPath=uiRequestedPath;
-        this.fileName=fileName;
-        this.relativePath=relativePath;
-        this.storageMode=storageMode;
-        this.isPublic=isPublicStudy;
-        this.hasKey=secretKey;
-        this.collection=collection;
-    }
-
-    public FileMetaData(String accession, String uiRequestedPath, String fileName, String relativePath, Constants.File.StorageMode storageMode){
-        this.accession=accession;
-        this.uiRequestedPath=uiRequestedPath;
-        this.relativePath=relativePath;
-        this.fileName=fileName;
-        this.storageMode=storageMode;
+    public void setInputStream(InputStream mageTabInputStream) throws Exception {
+        if (inputStream != null) inputStream.close();
+        inputStream = mageTabInputStream;
     }
 
     public String getAccession() {
@@ -128,18 +127,18 @@ public class FileMetaData {
         isDirectory = directory;
     }
 
-    public Long getLastModified() throws IOException{
-        if(storageMode!=null && storageMode== Constants.File.StorageMode.FIRE && s3Object!=null)
+    public Long getLastModified() throws IOException {
+        if (storageMode != null && storageMode == Constants.File.StorageMode.FIRE && s3Object != null)
             return s3Object.getObjectMetadata().getLastModified().getTime();
-        if(storageMode!=null && storageMode== Constants.File.StorageMode.NFS && path!=null)
+        if (storageMode != null && storageMode == Constants.File.StorageMode.NFS && path != null)
             return Files.getLastModifiedTime(path).toMillis();
         return 0L;
     }
 
-    public Long getFileLength() throws IOException{
-        if(storageMode!=null && storageMode== Constants.File.StorageMode.FIRE && s3Object!=null)
+    public Long getFileLength() throws IOException {
+        if (storageMode != null && storageMode == Constants.File.StorageMode.FIRE && s3Object != null)
             return s3Object.getObjectMetadata().getContentLength();
-        if(storageMode!=null && storageMode== Constants.File.StorageMode.NFS && path!=null)
+        if (storageMode != null && storageMode == Constants.File.StorageMode.NFS && path != null)
             return Files.size(path);
         return 0L;
     }
@@ -168,12 +167,6 @@ public class FileMetaData {
         this.isPublic = isPublic;
     }
 
-    public void setInputStream(InputStream mageTabInputStream) throws Exception{
-        if(inputStream!=null)
-            inputStream.close();
-        inputStream = mageTabInputStream;
-    }
-
     public boolean isThumbnail() {
         return isThumbnail;
     }
@@ -189,12 +182,13 @@ public class FileMetaData {
     public void setCollection(String collection) {
         this.collection = collection;
     }
-    public void close(){
+
+    public void close() {
         try {
-            if(s3Object!=null) s3Object.close();
-            if(inputStream!=null) inputStream.close();
-        }catch (Exception exception){
-        LOGGER.error("problem in closing stream", exception);
+            if (s3Object != null) s3Object.close();
+            if (inputStream != null) inputStream.close();
+        } catch (Exception exception) {
+            LOGGER.error("problem in closing stream", exception);
         }
     }
 }
