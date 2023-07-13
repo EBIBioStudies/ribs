@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         FileMetaData fileMetaData = null;
         try {
             String uriParts = request.getRequestURI().replaceAll(request.getContextPath() + (StringUtils.isEmpty(collection) ? "" : "/" + collection) + "/files/", "");
-            List<String> requestArgs = Arrays.asList(uriParts.split("/"));
+            List<String> requestArgs = new ArrayList<>(Arrays.asList(uriParts.split("/")));
             String accession = requestArgs.remove(0);
             String requestedFilePath = URLDecoder.decode(StringUtils.replace(StringUtils.join(requestArgs, '/'), "..", ""), StandardCharsets.UTF_8);
             String key = request.getParameter("key");
