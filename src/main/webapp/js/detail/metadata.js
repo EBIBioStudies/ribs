@@ -110,6 +110,7 @@ var Metadata = (function (_self) {
 
     function postRender(params, data) {
         FileTable.render(data.accno, params, true);
+        LinkMiningTable.render(data.accno, params);
         $('body').append('<div id="blocker"/><div id="tooltip"/>');
         drawSubsections();
         createMainLinkTable();

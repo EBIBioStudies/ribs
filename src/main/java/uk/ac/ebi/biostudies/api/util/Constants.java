@@ -110,6 +110,11 @@ public interface Constants {
         String CREATION_TIME_FULL = "creationTime";
         String STORAGE_MODE = "storageMode";
     }
+    interface Link{
+        String TYPE = "type";
+        String VALUE = "value";
+        String URL = "url";
+    }
 
     interface File {
         //        String JSONPATH = "path";

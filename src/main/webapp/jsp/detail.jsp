@@ -31,6 +31,7 @@
         <script type="text/javascript" src="${contextPath}/js/common/connect/v4/asperaweb-4.min.js"></script>
         <%@include file="detail/main-file-table.hbs" %>
         <%@include file="detail/main-link-table.hbs" %>
+        <%@include file="detail/mining-link-table.hbs" %>
         <%@include file="detail/orcid-claimer.hbs" %>
         <%@include file="detail/publication.hbs" %>
         <%@include file="detail/section.hbs" %>
