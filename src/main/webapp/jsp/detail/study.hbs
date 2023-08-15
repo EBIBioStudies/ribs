@@ -49,7 +49,7 @@
             <ul id="bs-authors">
                 {{#eachAuthor this}}
                 <li {{#ifCond @index '>=' 10}}class="hidden"{{/ifCond}} ><span class="author">
-                        <span class="author-name" itemscope itemtype="http://schema.org/Person"><span itemprop="name" data-card-id="author-card-{{@index}}">{{Name}}</span>
+                        <span class="author-name" itemprop="creator" itemscope itemtype="http://schema.org/Person"><span itemprop="name" data-card-id="author-card-{{@index}}">{{Name}}</span>
                             <div class="author-card" id="author-card-{{@index}}">
                                 <h5>{{Name}}</h5>
                                 {{#each this}}
@@ -145,6 +145,7 @@
 
             <!-- Hidden description -->
             <div style="display:none" itemprop="description">{{valueWithName 'Description' attributes}}</div>
+            <div style="display:none" itemprop="license">{{valueWithName 'License' attributes}}</div>
 
             <!-- Subsections v1-->
             {{#if subsections}}
