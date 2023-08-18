@@ -59,10 +59,12 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     IndexConfig indexConfig;
     @Autowired
     FireService fireService;
+    @Autowired
+    FtpRedirectFilter ftpRedirectFilter;
 
     @PostConstruct
     public void init() {
-        fileChainFilters = List.of(new FtpRedirectFilter(), new NfsFilter(), new MageTabFilter(), new SendFileFilter());
+        fileChainFilters = List.of(ftpRedirectFilter, new NfsFilter(), new MageTabFilter(), new SendFileFilter());
     }
 
     public void sendFile(String collection, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -99,7 +101,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
 
             fileMetaData = new FileMetaData(accession, requestedFilePath, requestedFilePath, relativePath,
                     storageMode, (" " + document.get(Constants.Fields.ACCESS) + " ").toLowerCase().contains(" public "
-            ), (key != null && key.length() > 0), collection);
+            ), (key != null && !key.isEmpty()), collection);
 
             try {
                 fileMetaData.setThumbnail(false);

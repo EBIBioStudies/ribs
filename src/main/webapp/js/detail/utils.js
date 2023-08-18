@@ -41,10 +41,10 @@ function getURL(accession, type, valqual) {
         }
     }
     var url =  DetailPage.linkMap[type.toLowerCase()] ? String.format(DetailPage.linkMap[type.toLowerCase()], encodeURIComponent(accession).replace('EMPIAR-','')) : null;
-    if (type.toLowerCase()=='ega' && accession.toUpperCase().indexOf('EGAD')==0) {
+    if (type.toLowerCase()==='ega' && accession.toUpperCase().indexOf('EGAD')===0) {
         url = url.replace('/studies/','/datasets/');
     }
-    if (accession.indexOf('http:')==0 || accession.indexOf('https:')==0  || accession.indexOf('ftp:')==0 ) {
+    if (accession?.indexOf('http:')===0 || accession?.indexOf('https:')===0  || accession?.indexOf('ftp:')===0 ) {
         var value = accession.replace("http://",'').replace("https://",'').replace("ftp://",'')
         for(var r in DetailPage.reverseLinkMap) {
             var acc = new RegExp(r).exec(value);
