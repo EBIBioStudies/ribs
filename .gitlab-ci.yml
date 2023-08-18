@@ -42,11 +42,14 @@ build-develop:
       - target/biostudies.war
   script:
     - apt-get update
-    - driver=$(curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE -s)
-    - wget "https://chromedriver.storage.googleapis.com/$driver/chromedriver_linux64.zip"
-    - unzip chromedriver_linux64.zip
-    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-    - apt install ./google-chrome*.deb -y
+    - apt install jq -y
+    - wget https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json
+    - wget `jq -r '.channels.Stable.downloads.chrome[] | select(.platform == "linux64").url'  last-known-good-versions-with-downloads.json`
+    - wget `jq -r '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64").url'  last-known-good-versions-with-downloads.json`
+    - unzip chrome-linux64.zip
+    - unzip chromedriver-linux64.zip
+    - apt install ca-certificates fonts-liberation libasound2 libatk-bridge2.0-0 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgbm1 libgcc1 libglib2.0-0 libgtk-3-0 libnspr4 libnss3 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 lsb-release wget xdg-utils -y
+    - PATH=/chrome-linux64:/chromedriver-linux64:$PATH
     - mvn clean install spring-boot:repackage
   environment: dev
   only:
