@@ -16,8 +16,7 @@ var Metadata = (function (_self) {
             let e = obj.filter(function (o) {
                 return o['name'].trim().toLowerCase() === val.trim().toLowerCase()
             })[0];
-            if (e===undefined)
-                return val.trim().toLowerCase() === 'license' ? 'CC0':  '';
+            if (e===undefined) return '';
             $.each(e.valqual, function(i,v){
                 if (v.name.toLowerCase()==='url') {
                     e.url = v.value;
