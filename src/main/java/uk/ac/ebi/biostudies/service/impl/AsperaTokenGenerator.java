@@ -48,7 +48,7 @@ public class AsperaTokenGenerator {
         try {
             HttpPost httpPost = new HttpPost(securityConfig.getAsperaTokenServer());
             ObjectMapper mapper = new ObjectMapper();
-            StringEntity entity = new StringEntity(String.format(JSONCONFIG, requestFiles.toString()));
+            StringEntity entity = new StringEntity(String.format(JSONCONFIG, requestFiles.toString()), StandardCharsets.UTF_8);
             httpPost.setEntity(entity);
             httpPost.setHeader("Accept", "application/json");
             httpPost.setHeader("Content-type", "application/json");
