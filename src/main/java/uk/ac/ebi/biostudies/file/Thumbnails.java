@@ -117,17 +117,18 @@ public class Thumbnails implements InitializingBean, DisposableBean {
                         // create thumbnail from file
                         FileMetaData thumbMetaData = new FileMetaData(accession, name, name, relativePath, storageMode);
                         try {
-                            fileMetaData.setRelativePath(relativePath);
-                            fileMetaData.setFileName(name);
-                            fileMetaData.setStorageMode(storageMode);
-                            fileService.getDownloadFile(fileMetaData);
-                            createThumbnail(fileMetaData.getInputStream(), fileType, cachedThumbnail);
+                            thumbMetaData.setRelativePath(relativePath);
+                            thumbMetaData.setFileName(name);
+                            thumbMetaData.setStorageMode(storageMode);
+                            fileService.getDownloadFile(thumbMetaData);
+                            createThumbnail(thumbMetaData.getInputStream(), fileType, cachedThumbnail);
                         } catch (Exception ex3) {
                             logger.debug("Will try to create placeholder now");
                             createPlaceholderThumbnail(fileType, cachedThumbnail);
                         }
                         finally {
                             thumbMetaData.close();
+                            fileMetaData.close();
                         }
                     }
                 }
