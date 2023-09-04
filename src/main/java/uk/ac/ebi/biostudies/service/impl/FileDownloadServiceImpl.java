@@ -61,10 +61,12 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     FireService fireService;
     @Autowired
     FtpRedirectFilter ftpRedirectFilter;
+    @Autowired
+    NfsFilter nfsFilter;
 
     @PostConstruct
     public void init() {
-        fileChainFilters = List.of(ftpRedirectFilter, new NfsFilter(), new MageTabFilter(), new SendFileFilter());
+        fileChainFilters = List.of(ftpRedirectFilter, nfsFilter, new MageTabFilter(), new SendFileFilter());
     }
 
     public void sendFile(String collection, HttpServletRequest request, HttpServletResponse response) throws Exception {
