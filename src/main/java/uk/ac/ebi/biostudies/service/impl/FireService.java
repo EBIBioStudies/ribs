@@ -11,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.config.FireConfig;
-import uk.ac.ebi.biostudies.file.download.FIREDownloadFile;
-import uk.ac.ebi.biostudies.file.download.IDownloadFile;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -31,55 +30,6 @@ public class FireService {
     @Qualifier("S3DownloadClient")
     AmazonS3 s3DownloadClient;
 
-    @Autowired
-    @Qualifier("S3MageTabClient")
-    AmazonS3 s3MageTabClient;
-
-    public IDownloadFile getFireFile(String accession, String relativePath, String requestedFilePath) throws  FileNotFoundException {
-        return getFireFile(accession, relativePath, requestedFilePath, false);
-    }
-
-    public IDownloadFile getFireFile(String accession, String relativePath, String requestedFilePath, boolean isThumbnail) throws FileNotFoundException {
-
-        String path = relativePath + (isThumbnail ? "/Thumbnails/" : "/Files/") + requestedFilePath + (isThumbnail ? ".thumbnail.png" : "");
-
-        // For study json/xml/tsv pagetab files
-        if (requestedFilePath.equals(accession + ".json") || requestedFilePath.equals(accession + ".xml") || requestedFilePath.equals(accession + ".tsv")) {
-            path = relativePath + "/" + requestedFilePath;
-        }
-
-        S3Object fireObject = null;
-        boolean isDirectory = false;
-        try {
-            logger.debug("accessing s3DownloadClient {}", path);
-            fireObject = getFireObjectByPath(s3DownloadClient, path);
-        } catch (Exception ex1) {
-            try {
-                if(fireObject!=null)
-                    fireObject.close();
-                if (requestedFilePath.equals(accession + ".tsv")) {
-                    logger.debug("{} not found. Trying old .pagetab.tsv file.", path);
-                    path = relativePath + "/" + accession + ".pagetab.tsv";
-                } else {
-                    logger.debug("{} not found and might be a folder. Trying zipped archive.", path);
-                    isDirectory = true;
-                    path = path + ".zip";
-                }
-                // For folders
-                logger.debug("accessing s3DownloadClient {}", path);
-                fireObject = getFireObjectByPath(s3DownloadClient, path);
-            } catch (Exception ex4) {
-                try {
-                    if(fireObject!=null)
-                        fireObject.close();
-                }catch (Exception exception){
-                    logger.debug("can not close fire pool http connection");
-                }
-                throw new FileNotFoundException(ex4.getMessage());
-            }
-        }
-        return new FIREDownloadFile(path, fireObject.getObjectContent(), fireObject.getObjectMetadata().getContentLength(), isDirectory);
-    }
 
     /**
      * This method load file from Fire to Ram and is just suitable for small files
@@ -92,7 +42,7 @@ public class FireService {
         S3Object s3Object = null;
         ByteArrayInputStream fireCloneInputStream = null;
         try {
-            s3Object = getFireObjectByPath(s3MageTabClient, path);
+            s3Object = getFireObjectByPath(path);
             fireCloneInputStream = new ByteArrayInputStream(s3Object.getObjectContent().readAllBytes());
         } catch (Exception exception) {
             logger.error(exception);
@@ -110,10 +60,10 @@ public class FireService {
         return fireCloneInputStream;
     }
 
-    public S3Object getFireObjectByPath(AmazonS3 s3, String path) throws FileNotFoundException {
+    public S3Object getFireObjectByPath(String path) throws FileNotFoundException {
         String bucketName = fireConfig.getBucketName();
         GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, path);
-        return s3.getObject(getObjectRequest);
+        return s3DownloadClient.getObject(getObjectRequest);
     }
 
 

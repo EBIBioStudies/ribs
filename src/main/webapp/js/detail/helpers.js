@@ -108,7 +108,7 @@ var Metadata = (function (_self) {
         Handlebars.registerHelper('ifRenderable', function(arr,options) {
             var specialSections = ['author', 'organization','organisation', 'funding', 'publication'];
             var type = Array.isArray(arr) ? arr[0].type : arr.type;
-            if( $.inArray(type.toLowerCase(),specialSections) < 0) {
+            if(type && $.inArray(type.toLowerCase(),specialSections) < 0) {
                 return options.fn(this);
             } else if (arr.extType && arr.extType.toLowerCase()=='sectionstable') {
                 return options.fn(this);

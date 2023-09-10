@@ -109,6 +109,13 @@
                 You are able to edit your BioStudy after submission, including adding publication details, more data and
                 links and changing the release date.
             </p>
+
+            <h5 class="icon icon-generic" data-icon="i">Under what license(s) is BioStudies data available?</h5>
+            <p class="justify">
+                New datasets in BioStudies are released into the public domain under the terms of a
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/legalcode">Creative Commons Zero (CC0) waiver</a>.
+            </p>
+
             <div class="submitlnk">
                 <h2>
                     <a href="submissions" title="Browse BioStudies">

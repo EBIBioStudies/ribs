@@ -29,9 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.config.IndexConfig;
-import uk.ac.ebi.biostudies.file.download.IDownloadFile;
 import uk.ac.ebi.biostudies.file.thumbnails.*;
-import uk.ac.ebi.biostudies.service.FileDownloadService;
+import uk.ac.ebi.biostudies.service.file.FileMetaData;
+import uk.ac.ebi.biostudies.service.impl.FileService;
 import uk.ac.ebi.biostudies.service.impl.FireService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -44,15 +44,16 @@ import java.util.Map;
 @Service
 public class Thumbnails implements InitializingBean, DisposableBean {
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     IndexConfig indexConfig;
     @Autowired
-    FileDownloadService fileDownloadService;
+    FileService fileService;
     @Autowired
     FireService fireService;
 
     private String thumbnailsFolder;
-    private Map<String, IThumbnail> thumbnailGenerators = new HashMap<>();
+    private final Map<String, IThumbnail> thumbnailGenerators = new HashMap<>();
 
     @Override
     public void afterPropertiesSet() {
@@ -83,15 +84,16 @@ public class Thumbnails implements InitializingBean, DisposableBean {
         FileDeleteStrategy.FORCE.delete(new File(getThumbnailsFolder()));
     }
 
-    public void sendThumbnail(HttpServletResponse response, String accession, String relativePath, String name, Constants.File.StorageMode storageMode) throws IOException {
+    public void     sendThumbnail(HttpServletResponse response, String accession, String relativePath, String name, Constants.File.StorageMode storageMode) throws IOException {
         String fileType = FilenameUtils.getExtension(name).toLowerCase();
         InputStream thumbnailInputStream = null;
-        IDownloadFile existingThumbnail = null;
+        FileMetaData fileMetaData = new FileMetaData(accession, name, name, relativePath, storageMode);
         try {
             try {
+                fileMetaData.setThumbnail(true);
                 // check in the Thumbnails folder in storage
-                existingThumbnail = fileDownloadService.getDownloadFile(accession, relativePath , name, storageMode, true);
-                thumbnailInputStream = existingThumbnail.getInputStream();
+                fileService.getDownloadFile(fileMetaData);
+                thumbnailInputStream = fileMetaData.getInputStream();
             } catch (Exception ex1) {
                 File cachedThumbnail = new File(getThumbnailsFolder() + "/" + relativePath + "/", name + ".thumbnail.png");
                 if (!cachedThumbnail.exists()) {
@@ -113,31 +115,32 @@ public class Thumbnails implements InitializingBean, DisposableBean {
 
                     } else {
                         // create thumbnail from file
-                        IDownloadFile downloadFile = null;
+                        FileMetaData thumbMetaData = new FileMetaData(accession, name, name, relativePath, storageMode);
                         try {
-                            downloadFile = fileDownloadService.getDownloadFile(accession, relativePath, name, storageMode);
-                            createThumbnail(downloadFile.getInputStream(), fileType, cachedThumbnail);
+                            thumbMetaData.setRelativePath(relativePath);
+                            thumbMetaData.setFileName(name);
+                            thumbMetaData.setStorageMode(storageMode);
+                            fileService.getDownloadFile(thumbMetaData);
+                            createThumbnail(thumbMetaData.getInputStream(), fileType, cachedThumbnail);
                         } catch (Exception ex3) {
                             logger.debug("Will try to create placeholder now");
                             createPlaceholderThumbnail(fileType, cachedThumbnail);
                         }
                         finally {
-                            if(downloadFile!=null)
-                                downloadFile.close();
+                            thumbMetaData.close();
+                            fileMetaData.close();
                         }
                     }
                 }
                 thumbnailInputStream = new FileInputStream(cachedThumbnail);
             }
 
-
             response.setContentType("image/png");
             IOUtils.copy(thumbnailInputStream, response.getOutputStream());
         } finally {
             if (thumbnailInputStream != null) {
                 thumbnailInputStream.close();
-            if(existingThumbnail!=null)
-                existingThumbnail.close();
+            fileMetaData.close();
 
             }
         }

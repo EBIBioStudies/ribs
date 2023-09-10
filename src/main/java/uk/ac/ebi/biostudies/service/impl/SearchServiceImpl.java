@@ -95,6 +95,7 @@ public class SearchServiceImpl implements SearchService {
         sectionsToFilter.add("author");
         sectionsToFilter.add("organisation");
         sectionsToFilter.add("organization");
+        sectionsToFilter.add("publication");
 
         try {
             excludeCompound = parser.parse("type:compound");

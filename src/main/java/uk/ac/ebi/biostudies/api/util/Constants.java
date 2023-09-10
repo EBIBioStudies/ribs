@@ -109,6 +109,7 @@ public interface Constants {
         String MODIFICATION_TIME_FULL = "modificationTime";
         String CREATION_TIME_FULL = "creationTime";
         String STORAGE_MODE = "storageMode";
+        String VIEWS = "views";
     }
     interface Link{
         String TYPE = "type";

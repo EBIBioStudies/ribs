@@ -32,6 +32,9 @@ public class FireConfig {
     private int sockTimeout;
     @Value("${fire.s3.connection.magetab.pool}")
     private Integer mergetabPoolSize;
+    @Value("${fire.s3.ftp.redirect.enabled}")
+    private boolean isFtpRedirectEnabled;
+
 
     private AmazonS3 amazonS3Client(int poolSize) {
         BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKey, secretKey);
@@ -72,5 +75,9 @@ public class FireConfig {
 
     public String getBucketName() {
         return bucketName;
+    }
+
+    public boolean isFtpRedirectEnabled() {
+        return isFtpRedirectEnabled;
     }
 }

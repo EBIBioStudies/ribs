@@ -35,11 +35,17 @@ public class StudyUtils {
                     .replace("=", "%3D")
                     .replace("@", "%40")
                     .replace("$", "%24")
-                    .replace(" ", "+")
                     .toString();
         } catch (ScriptException e) {
             LOGGER.error(inputStr + " problem in unescapeing for Fire encoding bug", e);
         }
         return inputStr;
+    }
+
+    public static boolean isPageTabFile(String accession, String requestedFilePath) {
+        return requestedFilePath.equalsIgnoreCase(accession + ".json")
+                || requestedFilePath.equalsIgnoreCase(accession + ".xml")
+                || requestedFilePath.equalsIgnoreCase(accession + ".pagetab.tsv")
+                || requestedFilePath.equalsIgnoreCase(accession + ".tsv");
     }
 }
