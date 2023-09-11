@@ -134,6 +134,8 @@ public interface Constants {
         String VALUE = "value";
         String FILE = "file";
         String OWNER = "owner";
+
+        String DIGEST = "digest";
         String DRAW = "draw";
         String RECORDTOTAL = "recordsTotal";
         String RECORDFILTERED = "recordsFiltered";

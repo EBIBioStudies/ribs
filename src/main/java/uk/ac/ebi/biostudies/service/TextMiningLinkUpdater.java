@@ -1,7 +1,7 @@
 package uk.ac.ebi.biostudies.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.commons.lang3.StringUtils;
+import java.security.MessageDigest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
@@ -19,7 +19,6 @@ import uk.ac.ebi.biostudies.config.IndexManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -28,6 +27,8 @@ public class TextMiningLinkUpdater {
     IndexManager indexManager;
     @Autowired
     IndexService indexService;
+
+    private static MessageDigest MESSAGE_DIGEST = null;
 
     private final Logger LOGGER = LogManager.getLogger(TextMiningLinkUpdater.class.getName());
 
@@ -100,18 +101,21 @@ public class TextMiningLinkUpdater {
 
     }
 
-    public void addToLinkIndex(String accession, String fileName, List<LinkInfo> allLinks) throws IOException{
+    public void addToLinkIndex(String accession, String fileName, List<LinkInfo> allLinks) throws Exception{
         int counter = 0;
-        TermQuery ownerTermQuery = new TermQuery(new Term(Constants.File.OWNER, accession));
-//        TermQuery fNameTermQuery = new TermQuery(new Term(Constants.File.NAME, fileName));
-//        BooleanQuery booleanClauses = new BooleanQuery.Builder().add(ownerTermQuery, BooleanClause.Occur.MUST).add(fNameTermQuery, BooleanClause.Occur.MUST).build();
-        long delNumber = indexManager.getLinkIndexWriter().deleteDocuments(ownerTermQuery);
+        if(MESSAGE_DIGEST==null)
+            MESSAGE_DIGEST = MessageDigest.getInstance("MD5");
+        byte[] digestKey = MESSAGE_DIGEST.digest((accession+fileName).getBytes("UTF-8"));
+        String digestKeyStr = new String(digestKey, "UTF-8");
+        TermQuery digestTermQuery = new TermQuery(new Term(Constants.File.DIGEST, digestKeyStr));
+        long delNumber = indexManager.getLinkIndexWriter().deleteDocuments(digestTermQuery);
         indexManager.getLinkIndexWriter().commit();
         LOGGER.debug("{} old links are deleted", delNumber);
         for(LinkInfo linkInfo:allLinks){
             counter++;
             Document document = new Document();
             document.add(new StringField(Constants.Fields.ID, accession+"_"+counter, Field.Store.YES));
+            document.add(new StringField(Constants.File.DIGEST, digestKeyStr, Field.Store.YES));
             document.add(new StringField(Constants.File.OWNER, accession, Field.Store.YES));
             document.add(new StringField(Constants.File.FILENAME, fileName, Field.Store.NO));
             document.add(new StringField(Constants.File.FILENAME, fileName.toLowerCase(), Field.Store.NO));
