@@ -95,8 +95,7 @@ public class TextMiningLinkUpdater {
             document.add(new TextField(Constants.Fields.CONTENT, linkInfo.getLink(), Field.Store.NO));
             document.add(new TextField(Constants.Fields.CONTENT, linkInfo.getType(), Field.Store.NO));
         }
-
-        indexManager.getIndexWriter().updateDocument(new Term(Constants.Fields.ID, document.get(Constants.Fields.ID)), document);
+        indexManager.getIndexWriter().updateDocument(new Term(Constants.Fields.ACCESSION, document.get(Constants.Fields.ACCESSION).toLowerCase()), document);
         indexManager.getIndexWriter().commit();
 
     }
@@ -107,7 +106,7 @@ public class TextMiningLinkUpdater {
             MESSAGE_DIGEST = MessageDigest.getInstance("MD5");
         byte[] digestKey = MESSAGE_DIGEST.digest((accession+fileName).getBytes("UTF-8"));
         String digestKeyStr = new String(digestKey, "UTF-8");
-        TermQuery digestTermQuery = new TermQuery(new Term(Constants.File.DIGEST, digestKeyStr));
+        TermQuery digestTermQuery = new TermQuery(new Term(Constants.Link.KEY, digestKeyStr));
         long delNumber = indexManager.getLinkIndexWriter().deleteDocuments(digestTermQuery);
         indexManager.getLinkIndexWriter().commit();
         LOGGER.debug("{} old links are deleted", delNumber);
@@ -115,7 +114,7 @@ public class TextMiningLinkUpdater {
             counter++;
             Document document = new Document();
             document.add(new StringField(Constants.Fields.ID, accession+"_"+counter, Field.Store.YES));
-            document.add(new StringField(Constants.File.DIGEST, digestKeyStr, Field.Store.YES));
+            document.add(new StringField(Constants.Link.KEY, digestKeyStr, Field.Store.YES));
             document.add(new StringField(Constants.File.OWNER, accession, Field.Store.YES));
             document.add(new StringField(Constants.File.FILENAME, fileName, Field.Store.NO));
             document.add(new StringField(Constants.File.FILENAME, fileName.toLowerCase(), Field.Store.NO));

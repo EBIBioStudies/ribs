@@ -20,7 +20,7 @@ import static uk.ac.ebi.biostudies.api.util.Constants.JSON_UNICODE_MEDIA_TYPE;
  */
 
 @RestController
-@RequestMapping(value="/api/v1/mining")
+@RequestMapping(value="/api/v1/flink")
 public class Mining {
     private static final Logger LOGGER = LogManager.getLogger(Mining.class.getName());
 
@@ -29,7 +29,7 @@ public class Mining {
     ObjectMapper mapper = new ObjectMapper();
 
 
-    @RequestMapping(value = "/mine", produces = JSON_UNICODE_MEDIA_TYPE, consumes = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.POST)
+    @RequestMapping(value = "/update", produces = JSON_UNICODE_MEDIA_TYPE, consumes = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.POST)
     public ResponseEntity<String> mine(@RequestBody String requestBody){
         try {
             textMiningLinkUpdater.receivedMessage(mapper.readTree(requestBody));
