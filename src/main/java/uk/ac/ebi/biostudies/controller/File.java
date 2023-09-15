@@ -9,7 +9,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.biostudies.api.util.DataTableColumnInfo;
 import uk.ac.ebi.biostudies.service.FilePaginationService;
-import uk.ac.ebi.biostudies.service.LinkPaginationService;
+import uk.ac.ebi.biostudies.service.ExtractedLinkPaginationService;
 import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
 
 import java.util.Map;
@@ -24,7 +24,7 @@ public class File {
     @Autowired
     FilePaginationService paginationService;
     @Autowired
-    LinkPaginationService linkPaginationService;
+    ExtractedLinkPaginationService linkPaginationService;
 
 
     @RequestMapping(value = "/files/{accession:.+}", produces = JSON_UNICODE_MEDIA_TYPE, method = {RequestMethod.POST, RequestMethod.GET})
@@ -51,7 +51,7 @@ public class File {
         }
     }
 
-    @RequestMapping(value = "/links/{accession:.+}", produces = JSON_UNICODE_MEDIA_TYPE, method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/{accession:.+}/extractedlinks", produces = JSON_UNICODE_MEDIA_TYPE, method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<String> searchLink(@PathVariable(value="accession") String accession,
                                          @RequestParam(value="start", required=false, defaultValue = "0") Integer start,
                                          @RequestParam(value="length", required=false, defaultValue = "5") Integer pageSize,
@@ -68,7 +68,7 @@ public class File {
         Map<Integer, DataTableColumnInfo> parseResult = DataTableColumnInfo.ParseDataTableRequest(order);
         try {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(linkPaginationService.getLinkList(accession, start, pageSize, search, draw, metadata, parseResult, seckey).toString());
+                    .body(linkPaginationService.getExtractedLinkList(accession, start, pageSize, search, draw, metadata, parseResult, seckey).toString());
         } catch (SubmissionNotAccessibleException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("{\"errorMessage\":\"Study not accessible\"}");

@@ -169,8 +169,8 @@ var Metadata = (function (_self) {
             return template(o);
         });
 
-        Handlebars.registerHelper('mining-link-table', function() {
-            var template = Handlebars.compile($('script#mining-link-table').html());
+        Handlebars.registerHelper('extracted-link-table', function() {
+            var template = Handlebars.compile($('script#extracted-link-table').html());
             return template();
         });
 

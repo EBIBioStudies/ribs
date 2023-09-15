@@ -24,8 +24,8 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     private String indexDirectory;
     @Value("${index.fileIndexDirectory}")
     private String fileIndexDirectory;
-    @Value("${index.linkIndexDirectory}")
-    private String linkIndexDirectory;
+    @Value("${index.extractedLinkIndexDirectory}")
+    private String extractedLinkIndexDirectory;
     @Value("${index.facetDirectory}")
     private String facetDirectory;
     @Value("${files.baseDirectory}")
@@ -158,8 +158,8 @@ public class IndexConfig implements InitializingBean, DisposableBean {
         return fileIndexDirectory;
     }
 
-    public String getLinkIndexDirectory() {
-        return linkIndexDirectory;
+    public String getExtractedLinkIndexDirectory() {
+        return extractedLinkIndexDirectory;
     }
 
     public String getIndexSyncBackupFile() {

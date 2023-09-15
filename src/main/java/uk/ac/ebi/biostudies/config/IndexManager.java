@@ -62,16 +62,16 @@ public class IndexManager implements DisposableBean {
     IndexTransferer indexTransferer;
     private IndexReader indexReader;
     private IndexReader fileIndexReader;
-    private IndexReader linkIndexReader;
+    private IndexReader extractedLinkIndexReader;
     private IndexSearcher indexSearcher;
     private IndexSearcher fileIndexSearcher;
-    private IndexSearcher linkIndexSearcher;
+    private IndexSearcher extractedLinkIndexSearcher;
     private IndexWriter indexWriter;
     private IndexWriter fileIndexWriter;
-    private IndexWriter linkIndexWriter;
-    private Directory indexDirectory, fileIndexDirectory, linkIndexDirectory;
-    private IndexWriterConfig indexWriterConfig, fileIndexWriterConfig, linkIndexWriterConfig;
-    private SnapshotDeletionPolicy mainIndexSnapShot, fileIndexSnapShot, linkIndexSnapShot;
+    private IndexWriter extractedLinkIndexWriter;
+    private Directory indexDirectory, fileIndexDirectory, extractedLinkIndexDirectory;
+    private IndexWriterConfig indexWriterConfig, fileIndexWriterConfig, extractedLinkIndexWriterConfig;
+    private SnapshotDeletionPolicy mainIndexSnapShot, fileIndexSnapShot, extractedLinkIndexSnapShot;
     private SnapshotDeletionPolicy efoIndexSnapShot;
     private Directory efoIndexDirectory;
     private IndexReader efoIndexReader;
@@ -132,7 +132,7 @@ public class IndexManager implements DisposableBean {
         try {
             indexWriter.commit();
             fileIndexWriter.commit();
-            linkIndexWriter.commit();
+            extractedLinkIndexWriter.commit();
             efoIndexWriter.commit();
             facetWriter.commit();
 
@@ -146,7 +146,7 @@ public class IndexManager implements DisposableBean {
         try {
             indexReader.close();
             fileIndexReader.close();
-            linkIndexReader.close();
+            extractedLinkIndexReader.close();
             efoIndexReader.close();
             facetReader.close();
             indexWriter.close();
@@ -169,8 +169,8 @@ public class IndexManager implements DisposableBean {
             indexTransferer.copyIndexFromSnapShot(efoSnapShot.getFileNames(), eFOConfig.getIndexLocation(), indexConfig.getIndexBackupDirectory() + "/efo");
             fileSnapShot = fileIndexSnapShot.snapshot();
             indexTransferer.copyIndexFromSnapShot(fileSnapShot.getFileNames(), indexConfig.getFileIndexDirectory(), indexConfig.getIndexBackupDirectory() + "/files");
-            linkSnapShot = linkIndexSnapShot.snapshot();
-            indexTransferer.copyIndexFromSnapShot(linkSnapShot.getFileNames(), indexConfig.getLinkIndexDirectory(), indexConfig.getIndexBackupDirectory() + "/links");
+            linkSnapShot = extractedLinkIndexSnapShot.snapshot();
+            indexTransferer.copyIndexFromSnapShot(linkSnapShot.getFileNames(), indexConfig.getExtractedLinkIndexDirectory(), indexConfig.getIndexBackupDirectory() + "/links");
         } catch (Exception ex) {
             logger.error("problem in taking snapshot from main index", ex);
             throw ex;
@@ -185,7 +185,7 @@ public class IndexManager implements DisposableBean {
                 if (fileSnapShot != null)
                     fileIndexSnapShot.release(fileSnapShot);
                 if (linkSnapShot != null)
-                    linkIndexSnapShot.release(linkSnapShot);
+                    extractedLinkIndexSnapShot.release(linkSnapShot);
             } catch (Exception ex) {
                 logger.error("problem in releasing snapshot lock", ex);
             }
@@ -198,7 +198,7 @@ public class IndexManager implements DisposableBean {
             indexTransferer.copyIndexFromNetworkFileSystemToLocal(indexConfig.getIndexBackupDirectory() + "/taxonomy", indexConfig.getFacetDirectory());
             indexTransferer.copyIndexFromNetworkFileSystemToLocal(indexConfig.getIndexBackupDirectory() + "/efo", eFOConfig.getIndexLocation());
             indexTransferer.copyIndexFromNetworkFileSystemToLocal(indexConfig.getIndexBackupDirectory() + "/files", indexConfig.getFileIndexDirectory());
-            indexTransferer.copyIndexFromNetworkFileSystemToLocal(indexConfig.getIndexBackupDirectory() + "/links", indexConfig.getLinkIndexDirectory());
+            indexTransferer.copyIndexFromNetworkFileSystemToLocal(indexConfig.getIndexBackupDirectory() + "/links", indexConfig.getExtractedLinkIndexDirectory());
         } catch (Exception ex) {
             logger.fatal("problem in copying remote index to local file system, INDEX's STATE IS INVALID", ex);
             return false;
@@ -226,37 +226,37 @@ public class IndexManager implements DisposableBean {
         String indexDir = indexConfig.getIndexDirectory();
         indexDirectory = FSDirectory.open(Paths.get(indexDir));
         fileIndexDirectory = FSDirectory.open(Paths.get(indexConfig.getFileIndexDirectory()));
-        linkIndexDirectory = FSDirectory.open(Paths.get(indexConfig.getLinkIndexDirectory()));
+        extractedLinkIndexDirectory = FSDirectory.open(Paths.get(indexConfig.getExtractedLinkIndexDirectory()));
         indexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
         indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         fileIndexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
         fileIndexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-        linkIndexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
-        linkIndexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+        extractedLinkIndexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
+        extractedLinkIndexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         mainIndexSnapShot = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
         fileIndexSnapShot = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
-        linkIndexSnapShot = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
+        extractedLinkIndexSnapShot = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
         indexWriterConfig.setIndexDeletionPolicy(mainIndexSnapShot);
         fileIndexWriterConfig.setIndexDeletionPolicy(fileIndexSnapShot);
-        linkIndexWriterConfig.setIndexDeletionPolicy(linkIndexSnapShot);
+        extractedLinkIndexWriterConfig.setIndexDeletionPolicy(extractedLinkIndexSnapShot);
         if (indexWriter == null || indexWriter.isOpen() == false)
             indexWriter = new IndexWriter(getIndexDirectory(), getIndexWriterConfig());
         if (fileIndexWriter == null || fileIndexWriter.isOpen() == false)
             fileIndexWriter = new IndexWriter(fileIndexDirectory, fileIndexWriterConfig);
-        if (linkIndexWriter == null || linkIndexWriter.isOpen() == false)
-            linkIndexWriter = new IndexWriter(linkIndexDirectory, linkIndexWriterConfig);
+        if (extractedLinkIndexWriter == null || extractedLinkIndexWriter.isOpen() == false)
+            extractedLinkIndexWriter = new IndexWriter(extractedLinkIndexDirectory, extractedLinkIndexWriterConfig);
         if (indexReader != null)
             indexReader.close();
         if (fileIndexReader != null)
             fileIndexReader.close();
-        if (linkIndexReader != null)
-            linkIndexReader.close();
+        if (extractedLinkIndexReader != null)
+            extractedLinkIndexReader.close();
         indexReader = DirectoryReader.open(indexWriter);
         fileIndexReader = DirectoryReader.open(fileIndexWriter);
-        linkIndexReader = DirectoryReader.open(linkIndexWriter);
+        extractedLinkIndexReader = DirectoryReader.open(extractedLinkIndexWriter);
         indexSearcher = new IndexSearcher(indexReader);
         fileIndexSearcher = new IndexSearcher(fileIndexReader);
-        linkIndexSearcher = new IndexSearcher(linkIndexReader);
+        extractedLinkIndexSearcher = new IndexSearcher(extractedLinkIndexReader);
     }
 
     public void openEfoIndex() throws Throwable {
@@ -295,13 +295,13 @@ public class IndexManager implements DisposableBean {
         try {
             indexReader.close();
             fileIndexReader.close();
-            linkIndexReader.close();
+            extractedLinkIndexReader.close();
             indexReader = DirectoryReader.open(indexWriter);
             fileIndexReader = DirectoryReader.open(fileIndexWriter);
-            linkIndexReader = DirectoryReader.open(linkIndexWriter);
+            extractedLinkIndexReader = DirectoryReader.open(extractedLinkIndexWriter);
             indexSearcher = new IndexSearcher(indexReader);
             fileIndexSearcher = new IndexSearcher(fileIndexReader);
-            linkIndexSearcher = new IndexSearcher(linkIndexReader);
+            extractedLinkIndexSearcher = new IndexSearcher(extractedLinkIndexReader);
             drillSideways = new DrillSideways(indexSearcher, taxonomyManager.getFacetsConfig(), facetReader);
         } catch (Exception ex) {
             logger.error("Problem in refreshing index", ex);
@@ -491,15 +491,15 @@ public class IndexManager implements DisposableBean {
         return fileIndexReader;
     }
 
-    public IndexSearcher getLinkIndexSearcher() {
-        return linkIndexSearcher;
+    public IndexSearcher getExtractedLinkIndexSearcher() {
+        return extractedLinkIndexSearcher;
     }
 
-    public IndexWriter getLinkIndexWriter() {
-        return linkIndexWriter;
+    public IndexWriter getExtractedLinkIndexWriter() {
+        return extractedLinkIndexWriter;
     }
 
-    public IndexReader getLinkIndexReader() {
-        return linkIndexReader;
+    public IndexReader getExtractedLinkIndexReader() {
+        return extractedLinkIndexReader;
     }
 }

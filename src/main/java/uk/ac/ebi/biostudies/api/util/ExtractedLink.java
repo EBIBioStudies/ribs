@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinkInfo {
+public class ExtractedLink {
     private final static String ANSWER = "anns";
     private final static String EXACT = "exact";
     private final static String TYPE = "type";
@@ -17,14 +17,14 @@ public class LinkInfo {
     private String value;
     private String link;
 
-    public static List<LinkInfo> parseLinks(JsonNode msg){
-        List<LinkInfo> allLinks = new ArrayList<>();
+    public static List<ExtractedLink> parseLinks(JsonNode msg){
+        List<ExtractedLink> allLinks = new ArrayList<>();
         if(msg==null) return allLinks;
         ArrayNode anns = (ArrayNode)msg.get("anns");
         if(anns==null || anns.size()<1)
             return allLinks;
         for(JsonNode node: anns){
-            LinkInfo lInfo = new LinkInfo();
+            ExtractedLink lInfo = new ExtractedLink();
             lInfo.setValue(node.get(EXACT).asText(""));
             lInfo.setType(node.get(TYPE).asText(""));
             ArrayNode tagNode = (ArrayNode) node.get(TAGS);

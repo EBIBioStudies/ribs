@@ -1,6 +1,5 @@
 package uk.ac.ebi.biostudies.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -9,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -20,19 +18,16 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.api.util.DataTableColumnInfo;
 import uk.ac.ebi.biostudies.api.util.StudyUtils;
-import uk.ac.ebi.biostudies.auth.Session;
-import uk.ac.ebi.biostudies.auth.User;
 import uk.ac.ebi.biostudies.config.IndexManager;
-import uk.ac.ebi.biostudies.service.LinkPaginationService;
+import uk.ac.ebi.biostudies.service.ExtractedLinkPaginationService;
 import uk.ac.ebi.biostudies.service.SearchService;
 import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
 
-import java.io.IOException;
 import java.util.*;
 
 @Component
-public class LinkPaginationServiceImpl implements LinkPaginationService {
-    private final Logger logger = LogManager.getLogger(LinkPaginationServiceImpl.class.getName());
+public class ExtractedLinkPaginationServiceImpl implements ExtractedLinkPaginationService {
+    private final Logger logger = LogManager.getLogger(ExtractedLinkPaginationServiceImpl.class.getName());
     static String[] linkColumns = {Constants.Link.TYPE, Constants.Link.VALUE, Constants.Link.URL, Constants.File.FILENAME};
 
     @Autowired
@@ -40,12 +35,12 @@ public class LinkPaginationServiceImpl implements LinkPaginationService {
     @Autowired
     IndexManager indexManager;
     @Override
-    public ObjectNode getLinkList(String accession, int start, int pageSize, String search, int draw, boolean metadata, Map<Integer, DataTableColumnInfo> dataTableUiResult, String secretKey) throws SubmissionNotAccessibleException {
+    public ObjectNode getExtractedLinkList(String accession, int start, int pageSize, String search, int draw, boolean metadata, Map<Integer, DataTableColumnInfo> dataTableUiResult, String secretKey) throws SubmissionNotAccessibleException {
 
         ObjectMapper mapper = new ObjectMapper();
-        IndexSearcher searcher = indexManager.getLinkIndexSearcher();
+        IndexSearcher searcher = indexManager.getExtractedLinkIndexSearcher();
         QueryParser parser = new QueryParser(Constants.Fields.ACCESSION, new KeywordAnalyzer());
-        IndexReader reader = indexManager.getLinkIndexReader();
+        IndexReader reader = indexManager.getExtractedLinkIndexReader();
         Document linkDoc = searchService.getDocumentByAccession(accession, secretKey);
         long totalLinks = getTotalLinks(accession);
         if (linkDoc == null) return mapper.createObjectNode();
@@ -160,7 +155,7 @@ public class LinkPaginationServiceImpl implements LinkPaginationService {
     private long getTotalLinks(String accession){
         try{
             Query query = new TermQuery(new Term(Constants.File.OWNER, accession.toLowerCase()));
-            TopDocs resultsDoc = indexManager.getLinkIndexSearcher().search(query, Integer.MAX_VALUE);
+            TopDocs resultsDoc = indexManager.getExtractedLinkIndexSearcher().search(query, Integer.MAX_VALUE);
             return resultsDoc.totalHits.value;
         }catch (Exception exception){
             logger.error(exception);

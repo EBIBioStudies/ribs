@@ -1,9 +1,9 @@
-var LinkMiningTable = (function (_self) {
-    var mLinkTable;
+var Extractedlinktable = (function (_self) {
+    var extractedLinkTable;
 
-    _self.render = function(acc){
-        if(!mLinkTable){
-            mLinkTable = $('#mining-list').DataTable({
+    _self.render = function(acc) {
+        if (!extractedLinkTable) {
+            extractedLinkTable = $('#mining-list').DataTable({
                 lengthMenu: [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
                 pageLength: 5,//(isDetailPage ? 5 : 25),
                 processing: true,
@@ -15,8 +15,16 @@ var LinkMiningTable = (function (_self) {
                         processing: '<i class="fa fa-3x fa-spinner fa-pulse"></i>',
                     },
                 ajax: {
-                    url: contextPath +'/api/v1/links/'+acc,
-                    type: 'post'
+                    url: contextPath + '/api/v1/' + acc + '/extractedlinks',
+                    type: 'post',
+                    dataSrc: function (response) {
+                        if (response && response.recordsTotal && response.recordsTotal > 0)
+                            $('#extracted-links-container').show();
+                        else
+                            $('#extracted-links-container').hide();
+
+                        return response.data;
+                    }
                 },
                 columns: [
                     {
@@ -24,7 +32,8 @@ var LinkMiningTable = (function (_self) {
                         title: 'Link',
                         data: 'value'
                     },
-                    {   name: 'type',
+                    {
+                        name: 'type',
                         title: 'Type',
                         data: 'type'
                     },
@@ -34,7 +43,7 @@ var LinkMiningTable = (function (_self) {
                         name: 'fileName'
                     },
                     {
-                        searchable:false,
+                        searchable: false,
                         name: 'url',
                         data: 'url',
                         title: 'Url',
@@ -48,16 +57,15 @@ var LinkMiningTable = (function (_self) {
                             return '<a class="overflow-name-column" ' + ' title="' + row.url
                                 + '" href="'
                                 + row.url + '" target="_blank" style="max-width: 500px;">'
-                                + data +'</a>'
+                                + data + '</a>'
                         }
                     },
                     {
                         targets: 2,
                         render: function (data) {
-                            debugger;
                             return '<a class="overflow-name-column" ' + ' title="' + data
                                 + '" href="'
-                                + (function(url){
+                                + (function (url) {
                                     var url = new URL(url);
                                     var search_params = url.searchParams;
                                     search_params.set('fs', data);
@@ -65,13 +73,12 @@ var LinkMiningTable = (function (_self) {
                                     return url.toString();
                                 })(window.location.href)
                                 + '" style="max-width: 500px;">'
-                                + data +'</a>'
+                                + data + '</a>'
                         }
                     }
                 ]
             });
         }
-
     }
     return _self;
-})(LinkMiningTable || {});
+})(Extractedlinktable || {});

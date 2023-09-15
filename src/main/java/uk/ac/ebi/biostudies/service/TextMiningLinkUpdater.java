@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.biostudies.api.util.Constants;
-import uk.ac.ebi.biostudies.api.util.LinkInfo;
+import uk.ac.ebi.biostudies.api.util.ExtractedLink;
 import uk.ac.ebi.biostudies.config.IndexManager;
 
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class TextMiningLinkUpdater {
                 ownerDoc = indexManager.getIndexReader().document(resultDocs.scoreDocs[0].doc);
             }
             if(ownerDoc!=null){
-                List<LinkInfo> allLinks = LinkInfo.parseLinks(msg);
+                List<ExtractedLink> allLinks = ExtractedLink.parseLinks(msg);
                 addToMainIndex(ownerDoc, allLinks);
                 addToLinkIndex(accession, fileName, allLinks);
                 LOGGER.debug("accession: {} links are indexed properly", accession);
@@ -63,7 +63,7 @@ public class TextMiningLinkUpdater {
         }
     }
 
-    public void addToMainIndex(Document document, List<LinkInfo> allLinks) throws IOException {
+    public void addToMainIndex(Document document, List<ExtractedLink> allLinks) throws IOException {
         List<JsonNode> allNodes = new ArrayList<>();
         for(IndexableField field: document.getFields()) {
             JsonNode curNode = indexManager.getIndexEntryMap().get(field.name());
@@ -90,27 +90,27 @@ public class TextMiningLinkUpdater {
                 LOGGER.error("field name: {} doc accession: {}", field.name(), document.get(Constants.Fields.ACCESSION), ex);
             }
         }
-        for(LinkInfo linkInfo: allLinks){
-            document.add(new TextField(Constants.Fields.CONTENT, linkInfo.getValue().toLowerCase(), Field.Store.NO));
-            document.add(new TextField(Constants.Fields.CONTENT, linkInfo.getLink(), Field.Store.NO));
-            document.add(new TextField(Constants.Fields.CONTENT, linkInfo.getType(), Field.Store.NO));
+        for(ExtractedLink extractedLink : allLinks){
+            document.add(new TextField(Constants.Fields.CONTENT, extractedLink.getValue().toLowerCase(), Field.Store.NO));
+            document.add(new TextField(Constants.Fields.CONTENT, extractedLink.getLink(), Field.Store.NO));
+            document.add(new TextField(Constants.Fields.CONTENT, extractedLink.getType(), Field.Store.NO));
         }
         indexManager.getIndexWriter().updateDocument(new Term(Constants.Fields.ACCESSION, document.get(Constants.Fields.ACCESSION).toLowerCase()), document);
         indexManager.getIndexWriter().commit();
 
     }
 
-    public void addToLinkIndex(String accession, String fileName, List<LinkInfo> allLinks) throws Exception{
+    public void addToLinkIndex(String accession, String fileName, List<ExtractedLink> allLinks) throws Exception{
         int counter = 0;
         if(MESSAGE_DIGEST==null)
             MESSAGE_DIGEST = MessageDigest.getInstance("MD5");
         byte[] digestKey = MESSAGE_DIGEST.digest((accession+fileName).getBytes("UTF-8"));
         String digestKeyStr = new String(digestKey, "UTF-8");
         TermQuery digestTermQuery = new TermQuery(new Term(Constants.Link.KEY, digestKeyStr));
-        long delNumber = indexManager.getLinkIndexWriter().deleteDocuments(digestTermQuery);
-        indexManager.getLinkIndexWriter().commit();
+        long delNumber = indexManager.getExtractedLinkIndexWriter().deleteDocuments(digestTermQuery);
+        indexManager.getExtractedLinkIndexWriter().commit();
         LOGGER.debug("{} old links are deleted", delNumber);
-        for(LinkInfo linkInfo:allLinks){
+        for(ExtractedLink extractedLink :allLinks){
             counter++;
             Document document = new Document();
             document.add(new StringField(Constants.Fields.ID, accession+"_"+counter, Field.Store.YES));
@@ -121,21 +121,21 @@ public class TextMiningLinkUpdater {
             document.add(new StoredField(Constants.File.FILENAME, fileName));
             document.add(new SortedDocValuesField(Constants.File.FILENAME, new BytesRef(fileName)));
 
-            document.add(new StringField(Constants.Link.TYPE, linkInfo.getType(), Field.Store.NO));
-            document.add(new StringField(Constants.Link.TYPE, linkInfo.getType().toLowerCase(), Field.Store.NO));
-            document.add(new StoredField(Constants.Link.TYPE, linkInfo.getType()));
-            document.add(new SortedDocValuesField(Constants.Link.TYPE, new BytesRef(linkInfo.getType())));
+            document.add(new StringField(Constants.Link.TYPE, extractedLink.getType(), Field.Store.NO));
+            document.add(new StringField(Constants.Link.TYPE, extractedLink.getType().toLowerCase(), Field.Store.NO));
+            document.add(new StoredField(Constants.Link.TYPE, extractedLink.getType()));
+            document.add(new SortedDocValuesField(Constants.Link.TYPE, new BytesRef(extractedLink.getType())));
 
-            document.add(new StringField(Constants.Link.URL, linkInfo.getLink(), Field.Store.YES));
+            document.add(new StringField(Constants.Link.URL, extractedLink.getLink(), Field.Store.YES));
 
-            document.add(new StringField(Constants.Link.VALUE, linkInfo.getValue(), Field.Store.NO));
-            document.add(new StringField(Constants.Link.VALUE, linkInfo.getValue().toLowerCase(), Field.Store.NO));
-            document.add(new StoredField(Constants.Link.VALUE, linkInfo.getValue()));
-            document.add(new SortedDocValuesField(Constants.Link.VALUE, new BytesRef(linkInfo.getValue())));
+            document.add(new StringField(Constants.Link.VALUE, extractedLink.getValue(), Field.Store.NO));
+            document.add(new StringField(Constants.Link.VALUE, extractedLink.getValue().toLowerCase(), Field.Store.NO));
+            document.add(new StoredField(Constants.Link.VALUE, extractedLink.getValue()));
+            document.add(new SortedDocValuesField(Constants.Link.VALUE, new BytesRef(extractedLink.getValue())));
 
-            indexManager.getLinkIndexWriter().addDocument(document);
+            indexManager.getExtractedLinkIndexWriter().addDocument(document);
         }
-        indexManager.getLinkIndexWriter().commit();
+        indexManager.getExtractedLinkIndexWriter().commit();
         indexManager.refreshIndexSearcherAndReader();
     }
 }
