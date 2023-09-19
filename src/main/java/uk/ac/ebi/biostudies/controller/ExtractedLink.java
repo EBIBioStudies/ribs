@@ -21,8 +21,8 @@ import static uk.ac.ebi.biostudies.api.util.Constants.JSON_UNICODE_MEDIA_TYPE;
 
 @RestController
 @RequestMapping(value="/api/v1/extractedlink")
-public class MiningExtractedLink {
-    private static final Logger LOGGER = LogManager.getLogger(MiningExtractedLink.class.getName());
+public class ExtractedLink {
+    private static final Logger LOGGER = LogManager.getLogger(ExtractedLink.class.getName());
 
     @Autowired
     TextMiningLinkUpdater textMiningLinkUpdater;

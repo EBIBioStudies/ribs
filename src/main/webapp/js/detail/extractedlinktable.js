@@ -2,8 +2,8 @@ var Extractedlinktable = (function (_self) {
     var extractedLinkTable;
 
     _self.render = function(acc) {
-        if (!extractedLinkTable) {
-            extractedLinkTable = $('#mining-list').DataTable({
+        if (extractedLinkTable) return;
+        extractedLinkTable = $('#mining-list').DataTable({
                 lengthMenu: [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
                 pageLength: 5,//(isDetailPage ? 5 : 25),
                 processing: true,
@@ -21,7 +21,7 @@ var Extractedlinktable = (function (_self) {
                         if (response && response.recordsTotal && response.recordsTotal > 0)
                             $('#extracted-links-container').show();
                         else
-                            $('#extracted-links-container').hide();
+                            $('#extracted-links-container').parent().hide();
 
                         return response.data;
                     }
@@ -78,7 +78,7 @@ var Extractedlinktable = (function (_self) {
                     }
                 ]
             });
-        }
+
     }
     return _self;
 })(Extractedlinktable || {});
