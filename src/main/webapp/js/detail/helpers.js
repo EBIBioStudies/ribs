@@ -169,6 +169,11 @@ var Metadata = (function (_self) {
             return template(o);
         });
 
+        Handlebars.registerHelper('extracted-link-table', function() {
+            var template = Handlebars.compile($('script#extracted-link-table').html());
+            return template();
+        });
+
         Handlebars.registerHelper('main-orcid-claimer', function(o,k) {
             var template = Handlebars.compile($('script#main-orcid-claimer').html());
             return template({accession:o.data.root.accno});

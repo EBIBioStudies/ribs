@@ -111,6 +111,12 @@ public interface Constants {
         String STORAGE_MODE = "storageMode";
         String VIEWS = "views";
     }
+    interface Link{
+        String TYPE = "type";
+        String VALUE = "value";
+        String URL = "url";
+        String KEY ="key";
+    }
 
     interface File {
         //        String JSONPATH = "path";
