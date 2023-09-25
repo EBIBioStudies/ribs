@@ -91,9 +91,8 @@ public class TextMiningLinkUpdater {
             }
         }
         for(ExtractedLink extractedLink : allLinks){
-            document.add(new TextField(Constants.Fields.CONTENT, extractedLink.getValue().toLowerCase(), Field.Store.NO));
-            document.add(new TextField(Constants.Fields.CONTENT, extractedLink.getLink(), Field.Store.NO));
-            document.add(new TextField(Constants.Fields.CONTENT, extractedLink.getType(), Field.Store.NO));
+            document.add(new TextField(Constants.Fields.CONTENT, extractedLink.getValue().toLowerCase(), Field.Store.YES));
+            document.add(new TextField(Constants.Fields.CONTENT, extractedLink.getType(), Field.Store.YES));
         }
         indexManager.getIndexWriter().updateDocument(new Term(Constants.Fields.ACCESSION, document.get(Constants.Fields.ACCESSION).toLowerCase()), document);
         indexManager.getIndexWriter().commit();
