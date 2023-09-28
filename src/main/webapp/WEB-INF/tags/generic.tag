@@ -33,7 +33,6 @@
     <meta name="theme-color" content="#75C8EC" /> <!-- Android Chrome mobile browser tab color -->
     <meta http-equiv="pragma" content="no-cache" />
 
-    <spring:eval expression="@externalServicesConfig.getAnalyticsCode()"/>
     <!-- shared variables -->
     <script>
         var contextPath = '${contextPath}';
