@@ -27,8 +27,7 @@
     </jsp:attribute>
 
     <jsp:attribute name="postBody">
-        <script type="text/javascript" src="${contextPath}/js/common/connect/v4/connectinstaller-4.min.js"></script>
-        <script type="text/javascript" src="${contextPath}/js/common/connect/v4/asperaweb-4.min.js"></script>
+        <script type="text/javascript" src="${contextPath}/js/common/connect/v5/connect-sdk.min.js"></script>
         <%@include file="detail/main-file-table.hbs" %>
         <%@include file="detail/main-link-table.hbs" %>
         <%@include file="detail/extracted-link-table.hbs" %>
