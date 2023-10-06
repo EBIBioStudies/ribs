@@ -12,7 +12,6 @@ import uk.ac.ebi.biostudies.service.SearchService;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import java.io.FileNotFoundException;
 
 @RestController
 public class View {
@@ -65,6 +64,8 @@ public class View {
             "/studies/{accession}/",
             "/arrays/{accession}",
             "/arrays/{accession}/",
+            "/compounds/{accession}",
+            "/compounds/{accession}/",
             "/{collection}/studies/{accession}",
             "/{collection}/studies/{accession}/",
             "/{collection}/arrays/{accession}/",
@@ -75,14 +76,20 @@ public class View {
                                @RequestParam(value = "key", required = false) String key,
                                HttpServletRequest request) throws Exception {
         var mav = new ModelAndView();
-        boolean isArrayExpressStudy = collection==null && (accession.toUpperCase().startsWith("E-") || accession.toUpperCase().startsWith("A-"));
-        String type = accession.toUpperCase().startsWith("A-") ? "arrays":"studies";
-        if(type.equals("arrays")&& request.getRequestURL().toString().contains("/studies"))
-            throw new FileNotFoundException();
-        mav.addObject("collection", collection);
-        mav.addObject("accession", accession);
-        String viewName = isArrayExpressStudy ? String.format("redirect:/arrayexpress/%s/%s"
-                + (key != null ? "?key=" + key : ""), type, accession) : "detail";
+        String inferredType = accession.toUpperCase().startsWith("A-") ? "arrays"
+                : accession.toUpperCase().startsWith("C-") ? "compounds"
+                : "studies";
+        String viewName = "detail";
+        if (collection == null && (accession.toUpperCase().startsWith("E-") || accession.toUpperCase().startsWith("A-"))) {
+            viewName = String.format("redirect:/arrayexpress/%s/%s"
+                    + (key != null ? "?key=" + key : ""), inferredType, accession);
+        } else if (collection == null && request.getRequestURL().toString().contains("/studies/") && !inferredType.equalsIgnoreCase("studies")) {
+            viewName = String.format("redirect:/%s/%s"
+                    + (key != null ? "?key=" + key : ""), inferredType, accession);
+        } else {
+            mav.addObject("collection", collection);
+            mav.addObject("accession", accession);
+        }
         mav.setViewName(viewName);
         return mav;
     }
@@ -110,9 +117,9 @@ public class View {
     public ModelAndView genericView(@PathVariable String view) throws Exception {
         var mav = new ModelAndView();
         mav.setViewName(view);
-        if (servletContext.getResource("jsp/"+view.toLowerCase()+".jsp") == null) {
+        if (servletContext.getResource("jsp/" + view.toLowerCase() + ".jsp") == null) {
             Document collection = searchService.getDocumentByAccessionAndType(view, null, Constants.SubmissionTypes.COLLECTION);
-            if (collection!=null) {
+            if (collection != null) {
                 mav.setViewName("redirect:" + view + "/studies");
             }
         }

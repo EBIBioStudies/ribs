@@ -23,6 +23,7 @@ public interface Constants {
     interface SubmissionTypes {
         String STUDY = "study";
         String ARRAY = "array";
+        String COMPOUND = "compound";
         String COLLECTION = "collection";
     }
 
