@@ -15,8 +15,8 @@ var Metadata = (function (_self) {
         var template = Handlebars.compile(templateSource);
         var slashOffset = window.location.pathname[window.location.pathname.length-1]==='/';
         var parts =  window.location.pathname.split('/');
-        var accession = parts[parts.length - 1 - slashOffset];
-        var url = contextPath + '/api/v1/'+(accession.startsWith("A-")?'arrays/':'studies/') + accession;
+        var accession = parts[parts.length - 1 - slashOffset].toUpperCase();
+        var url = contextPath + '/api/v1/'+(accession.startsWith("A-")?'arrays/':accession.startsWith("C-")?'compounds/':'studies/') + accession;
         var params = getParams();
         $.getJSON(url, params, function (data) {
             if (!data.accno && data.submissions) data = data.submissions[0]; // for v0, when everything was a submission
@@ -46,7 +46,7 @@ var Metadata = (function (_self) {
                     }
                 })
                 // redirect if collection of study does not match collection in url
-                if (!isCollectionCorrect && lastCollection) {
+                if (!isCollectionCorrect && lastCollection && !accession.startsWith('C-') && !accession[0].startsWith('A-')) {
                     location.href= contextPath + '/'+lastCollection.toLowerCase() +'/studies/' + accession + (params.key ? '?key='+params.key : '');
                     return;
                 } else if (collection && collection !=='' && !lastCollection) {
