@@ -119,6 +119,13 @@ function handleBioImagesUI() {
     $('.menu.float-left li a:contains("Home")').attr('href','/bioimage-archive/');
     $('.menu.float-left li a:contains("Browse")').attr('href','/biostudies/BioImages/studies');
     $('.menu.float-left li a:contains("Submit")').attr('href','/bioimage-archive/submit');
+    
+    // Add Galleries menu Item
+    const galleriesmenu = $('<li role="none">' +
+        '                       <a href="/bioimage-archive/galleries/galleries.html" role="menuitem">Galleries</a>' +
+        '                    </li>');
+    $('.menu.float-left li a:contains("Submit")').parent().after(galleriesmenu);
+
     const helpmenu = $('.menu.float-left li:contains("Help")');
     const newhelpmenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="Help" data-is-click="false">\n' +
         '                            <a href="#" role="menuitem">Help</a>\n' +
@@ -127,8 +134,6 @@ function handleBioImagesUI() {
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-search/" role="menuitem">Searching the archive</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-download/" role="menuitem">Downloading data</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-file-list/" role="menuitem">Submission File List guide</a></li>\n' +
-        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-images-at-ebi/" role="menuitem">Depositing image data to EBI resources</a></li>\n' +
-        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-policies/" role="menuitem">Archive policies</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-tools/" role="menuitem">Supporting Tools</a></li>\n' +
         '                            </ul>\n' +
         '                        </li>');
@@ -143,6 +148,16 @@ function handleBioImagesUI() {
         '                            </ul>\n' +
         '                        </li>');
     newhelpmenu.after(rembimenu);
+
+    const policiesmenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="Policies" data-is-click="false">\n' +
+        '                            <a href="#" role="menuitem">Policies</a>\n' +
+        '                            <ul class="menu submenu is-dropdown-submenu first-sub vertical" data-submenu="" role="menubar" style="">\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-policies/" role="menuitem">Archive policies</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-images-at-ebi/" role="menuitem">Depositing image data to EBI resources</a></li>\n' +
+        '                            </ul>\n' +
+        '                        </li>');
+    rembimenu.after(policiesmenu);
+
     const about = $('.menu.float-left li:contains("About")')
     const newaboutmenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="About us" data-is-click="false">\n' +
         '                            <a href="#" role="menuitem">About us</a>\n' +
