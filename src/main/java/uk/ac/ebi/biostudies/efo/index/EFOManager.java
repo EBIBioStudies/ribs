@@ -177,10 +177,10 @@ public class EFOManager {
         final int minFreq = 10;
         String termStr;
         try {
-            IndexReader reader = indexManager.getIndexReader();
+            IndexReader reader = indexManager.getSearchIndexReader();
             if (reader == null) {
                 indexManager.openMainIndex();
-                reader = indexManager.getIndexReader();
+                reader = indexManager.getSearchIndexReader();
             }
             Terms terms = MultiTerms.getTerms(reader, Constants.Fields.CONTENT);
             if (null != terms) {

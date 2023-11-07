@@ -107,7 +107,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     private ObjectNode applySearchOnQuery(Query query, int page, int pageSize, String sortBy, String sortOrder, boolean doHighlight, String queryString) {
-        IndexReader reader = indexManager.getIndexReader();
+        IndexReader reader = indexManager.getSearchIndexReader();
         IndexSearcher searcher = indexManager.getIndexSearcher();
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode response = mapper.createObjectNode();
@@ -260,37 +260,38 @@ public class SearchServiceImpl implements SearchService {
         return response.toString();
     }
 
-
     @Override
     public InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode)
+            throws IOException {
+        return getStudyAsStream(accession, relativePath, anonymise, storageMode, true);
+    }
+
+    @Override
+    public InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean fillPagetabIndex)
             throws IOException {
 
         InputStream inputStream = null;
         Exception codeIOException = null;
-        try {
-            switch (storageMode) {
-
-                case FIRE:
-                    inputStream = fireService.cloneFireS3ObjectStream(relativePath + "/" + accession + ".json");
-                    break;
-                default:
-                    inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(), relativePath, accession + ".json").toFile());
-            }
-        } catch (Exception exception) {
-            codeIOException = exception;
+        if (fillPagetabIndex) {
             try {
-                TopDocs pagetabResult = indexManager.getPagetabIndexSearcher().search(new TermQuery(new Term(Constants.Fields.ACCESSION, accession)), 1);
-                if (pagetabResult.totalHits.value == 1L) {
-                    Document doc = indexManager.getPagetabIndexReader().document(pagetabResult.scoreDocs[0].doc);
-                    BytesRef contentBytes = doc.getBinaryValue(Constants.Fields.CONTENT);
-                    if (contentBytes != null) {
-                        inputStream = new ByteArrayInputStream(contentBytes.bytes);
-                    }
-                }
+                inputStream = getPagetabFromPagetabIndex(accession);
             } catch (Exception ex) {
                 codeIOException = ex;
                 logger.error("problem in searching pagetab index", ex);
             }
+        }
+        try {
+            if (inputStream == null) {
+                switch (storageMode) {
+                    case FIRE:
+                        inputStream = fireService.cloneFireS3ObjectStream(relativePath + "/" + accession + ".json");
+                        break;
+                    default:
+                        inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(), relativePath, accession + ".json").toFile());
+                }
+            }
+        } catch (Exception exception) {
+            codeIOException = exception;
         }
         if (inputStream == null)
             throw new IOException(codeIOException);
@@ -316,6 +317,20 @@ public class SearchServiceImpl implements SearchService {
         return new InputStreamResource(inputStream);
     }
 
+    private InputStream getPagetabFromPagetabIndex(String accession) throws Exception {
+        TopDocs pagetabResult = indexManager.getPagetabIndexSearcher().search(new TermQuery(new Term(Constants.Fields.ACCESSION, accession)), 1);
+        InputStream pagetabStream = null;
+        if (pagetabResult.totalHits.value == 1L) {
+            Document doc = indexManager.getPagetabIndexReader().document(pagetabResult.scoreDocs[0].doc);
+            BytesRef contentBytes = doc.getBinaryValue(Constants.Fields.CONTENT);
+            if (contentBytes != null) {
+                pagetabStream = new ByteArrayInputStream(contentBytes.bytes);
+                logger.debug("pagetab retrieved from pagetab index for acc: {}", accession);
+            }
+        }
+        return pagetabStream;
+    }
+
     @Override
     public String getFieldStats() throws Exception {
         String responseString = statsCache.getIfPresent(STATS_ENDPOINT);
@@ -332,7 +347,7 @@ public class SearchServiceImpl implements SearchService {
             searcher.search(new MatchAllDocsQuery(), new DocValuesStatsCollector(linkStats));
             response.put("links", linkStats.sum());
 
-            indexManager.getIndexWriter().getLiveCommitData().forEach(entry -> {
+            indexManager.getSearchIndexWriter().getLiveCommitData().forEach(entry -> {
                 if (entry.getKey().equalsIgnoreCase("updateTime")) {
                     response.put("time", Long.parseLong(entry.getValue()));
                 }
@@ -355,7 +370,7 @@ public class SearchServiceImpl implements SearchService {
         if (secretKey != null)
             return result;
         int maxHits = 4;
-        MoreLikeThis mlt = new MoreLikeThis(indexManager.getIndexReader());
+        MoreLikeThis mlt = new MoreLikeThis(indexManager.getSearchIndexReader());
         mlt.setFieldNames(new String[]{Fields.CONTENT, Fields.TITLE, Facets.COLLECTION});
         mlt.setAnalyzer(analyzerManager.getPerFieldAnalyzerWrapper());
         Integer docNumber = getDocumentNumberByAccession(accession, null);
@@ -365,8 +380,8 @@ public class SearchServiceImpl implements SearchService {
         ArrayNode similarStudies = mapper.createArrayNode();
         for (int i = 0; i < mltDocs.scoreDocs.length; i++) {
             ObjectNode study = mapper.createObjectNode();
-            study.set(Fields.ACCESSION, mapper.valueToTree(indexManager.getIndexReader().document(mltDocs.scoreDocs[i].doc).get(Fields.ACCESSION)));
-            study.set(Fields.TITLE, mapper.valueToTree(indexManager.getIndexReader().document(mltDocs.scoreDocs[i].doc).get(Fields.TITLE)));
+            study.set(Fields.ACCESSION, mapper.valueToTree(indexManager.getSearchIndexReader().document(mltDocs.scoreDocs[i].doc).get(Fields.ACCESSION)));
+            study.set(Fields.TITLE, mapper.valueToTree(indexManager.getSearchIndexReader().document(mltDocs.scoreDocs[i].doc).get(Fields.TITLE)));
             if (!study.get(Fields.ACCESSION).asText().equalsIgnoreCase(accession)) {
                 similarStudies.add(study);
             }
@@ -388,7 +403,7 @@ public class SearchServiceImpl implements SearchService {
             return null;
         }
         try {
-            return indexManager.getIndexReader().document(docNumber);
+            return indexManager.getSearchIndexReader().document(docNumber);
         } catch (IOException ex) {
             logger.error("Problem retrieving " + accession, ex);
         }

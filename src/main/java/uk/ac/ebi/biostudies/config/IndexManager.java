@@ -60,7 +60,7 @@ public class IndexManager implements DisposableBean {
     ParserManager parserManager;
     @Autowired
     IndexTransferer indexTransferer;
-    private IndexReader indexReader;
+    private IndexReader searchIndexReader;
     private IndexReader fileIndexReader;
     private IndexReader extractedLinkIndexReader;
     private IndexReader pagetabIndexReader;
@@ -68,12 +68,12 @@ public class IndexManager implements DisposableBean {
     private IndexSearcher fileIndexSearcher;
     private IndexSearcher extractedLinkIndexSearcher;
     private IndexSearcher pagetabIndexSearcher;
-    private IndexWriter indexWriter;
+    private IndexWriter searchIndexWriter;
     private IndexWriter fileIndexWriter;
     private IndexWriter extractedLinkIndexWriter;
     private IndexWriter pagetabIndexWriter;
-    private Directory indexDirectory, fileIndexDirectory, extractedLinkIndexDirectory, pagetabDirectory;
-    private IndexWriterConfig indexWriterConfig, fileIndexWriterConfig, extractedLinkIndexWriterConfig, pagetabIndexWriterConfig;
+    private Directory searchIndexDirectory, fileIndexDirectory, extractedLinkIndexDirectory, pagetabDirectory;
+    private IndexWriterConfig searchIndexWriterConfig, fileIndexWriterConfig, extractedLinkIndexWriterConfig, pagetabIndexWriterConfig;
     private SnapshotDeletionPolicy mainIndexSnapShot, fileIndexSnapShot, extractedLinkIndexSnapShot, pagetabIndexSnapShot;
     private SnapshotDeletionPolicy efoIndexSnapShot;
     private Directory efoIndexDirectory;
@@ -123,7 +123,7 @@ public class IndexManager implements DisposableBean {
             openFacetIndex();
             if (spellChecker == null) {
                 spellChecker = new SpellChecker(FSDirectory.open(Paths.get(indexConfig.getSpellcheckerLocation())));
-                spellChecker.indexDictionary(new LuceneDictionary(indexReader, Constants.Fields.CONTENT), new IndexWriterConfig(), false);
+                spellChecker.indexDictionary(new LuceneDictionary(searchIndexReader, Constants.Fields.CONTENT), new IndexWriterConfig(), false);
             }
         } catch (Throwable error) {
             logger.error(error);
@@ -133,7 +133,7 @@ public class IndexManager implements DisposableBean {
 
     public void commitIndices() {
         try {
-            indexWriter.commit();
+            searchIndexWriter.commit();
             fileIndexWriter.commit();
             extractedLinkIndexWriter.commit();
             efoIndexWriter.commit();
@@ -147,13 +147,13 @@ public class IndexManager implements DisposableBean {
 
     public void closeIndices() {
         try {
-            indexReader.close();
+            searchIndexReader.close();
             fileIndexReader.close();
             extractedLinkIndexReader.close();
             efoIndexReader.close();
             facetReader.close();
             pagetabIndexReader.close();
-            indexWriter.close();
+            searchIndexWriter.close();
             fileIndexWriter.close();
             efoIndexWriter.close();
             facetWriter.close();
@@ -234,12 +234,12 @@ public class IndexManager implements DisposableBean {
 
     public void openMainIndex() throws Throwable {
         String indexDir = indexConfig.getIndexDirectory();
-        indexDirectory = FSDirectory.open(Paths.get(indexDir));
+        searchIndexDirectory = FSDirectory.open(Paths.get(indexDir));
         fileIndexDirectory = FSDirectory.open(Paths.get(indexConfig.getFileIndexDirectory()));
         extractedLinkIndexDirectory = FSDirectory.open(Paths.get(indexConfig.getExtractedLinkIndexDirectory()));
         pagetabDirectory = FSDirectory.open(Paths.get(indexConfig.getPageTabDirectory()));
-        indexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
-        indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+        searchIndexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
+        searchIndexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         fileIndexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
         fileIndexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         extractedLinkIndexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
@@ -250,31 +250,31 @@ public class IndexManager implements DisposableBean {
         fileIndexSnapShot = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
         extractedLinkIndexSnapShot = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
         pagetabIndexSnapShot = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
-        indexWriterConfig.setIndexDeletionPolicy(mainIndexSnapShot);
+        searchIndexWriterConfig.setIndexDeletionPolicy(mainIndexSnapShot);
         fileIndexWriterConfig.setIndexDeletionPolicy(fileIndexSnapShot);
         extractedLinkIndexWriterConfig.setIndexDeletionPolicy(extractedLinkIndexSnapShot);
         pagetabIndexWriterConfig.setIndexDeletionPolicy(pagetabIndexSnapShot);
-        if (indexWriter == null || indexWriter.isOpen() == false)
-            indexWriter = new IndexWriter(getIndexDirectory(), getIndexWriterConfig());
+        if (searchIndexWriter == null || searchIndexWriter.isOpen() == false)
+            searchIndexWriter = new IndexWriter(getSearchIndexDirectory(), getSearchIndexWriterConfig());
         if (fileIndexWriter == null || fileIndexWriter.isOpen() == false)
             fileIndexWriter = new IndexWriter(fileIndexDirectory, fileIndexWriterConfig);
         if (extractedLinkIndexWriter == null || extractedLinkIndexWriter.isOpen() == false)
             extractedLinkIndexWriter = new IndexWriter(extractedLinkIndexDirectory, extractedLinkIndexWriterConfig);
         if (pagetabIndexWriter == null || pagetabIndexWriter.isOpen() == false)
             pagetabIndexWriter = new IndexWriter(pagetabDirectory, pagetabIndexWriterConfig);
-        if (indexReader != null)
-            indexReader.close();
+        if (searchIndexReader != null)
+            searchIndexReader.close();
         if (fileIndexReader != null)
             fileIndexReader.close();
         if (extractedLinkIndexReader != null)
             extractedLinkIndexReader.close();
         if (pagetabIndexReader != null)
             pagetabIndexReader.close();
-        indexReader = DirectoryReader.open(indexWriter);
+        searchIndexReader = DirectoryReader.open(searchIndexWriter);
         fileIndexReader = DirectoryReader.open(fileIndexWriter);
         extractedLinkIndexReader = DirectoryReader.open(extractedLinkIndexWriter);
         pagetabIndexReader = DirectoryReader.open(pagetabIndexWriter);
-        indexSearcher = new IndexSearcher(indexReader);
+        indexSearcher = new IndexSearcher(searchIndexReader);
         fileIndexSearcher = new IndexSearcher(fileIndexReader);
         extractedLinkIndexSearcher = new IndexSearcher(extractedLinkIndexReader);
         pagetabIndexSearcher = new IndexSearcher(pagetabIndexReader);
@@ -314,15 +314,15 @@ public class IndexManager implements DisposableBean {
     public void refreshIndexSearcherAndReader() {
 
         try {
-            indexReader.close();
+            searchIndexReader.close();
             fileIndexReader.close();
             extractedLinkIndexReader.close();
             pagetabIndexReader.close();
-            indexReader = DirectoryReader.open(indexWriter);
+            searchIndexReader = DirectoryReader.open(searchIndexWriter);
             fileIndexReader = DirectoryReader.open(fileIndexWriter);
             extractedLinkIndexReader = DirectoryReader.open(extractedLinkIndexWriter);
             pagetabIndexReader = DirectoryReader.open(pagetabIndexWriter);
-            indexSearcher = new IndexSearcher(indexReader);
+            indexSearcher = new IndexSearcher(searchIndexReader);
             fileIndexSearcher = new IndexSearcher(fileIndexReader);
             extractedLinkIndexSearcher = new IndexSearcher(extractedLinkIndexReader);
             pagetabIndexSearcher = new IndexSearcher(pagetabIndexReader);
@@ -383,24 +383,24 @@ public class IndexManager implements DisposableBean {
             return collectionRelatedFields.get(prjName);
     }
 
-    public IndexReader getIndexReader() {
-        return indexReader;
+    public IndexReader getSearchIndexReader() {
+        return searchIndexReader;
     }
 
     public IndexSearcher getIndexSearcher() {
         return indexSearcher;
     }
 
-    public IndexWriter getIndexWriter() {
-        return indexWriter;
+    public IndexWriter getSearchIndexWriter() {
+        return searchIndexWriter;
     }
 
-    public Directory getIndexDirectory() {
-        return indexDirectory;
+    public Directory getSearchIndexDirectory() {
+        return searchIndexDirectory;
     }
 
-    public IndexWriterConfig getIndexWriterConfig() {
-        return indexWriterConfig;
+    public IndexWriterConfig getSearchIndexWriterConfig() {
+        return searchIndexWriterConfig;
     }
 
     public Directory getEfoIndexDirectory() {
