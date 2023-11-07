@@ -122,6 +122,13 @@ public class Index {
         return "Updating and building EFO Ontology";
     }
 
+    @RequestMapping(value = "/index/pagetab", method = RequestMethod.GET, produces = STRING_UNICODE_MEDIA_TYPE)
+    public String makePagetabIndex(){
+        indexService.makePagetabIndex();
+        return "Generating pagetab index";
+    }
+
+
     @RequestMapping(value = "/index/backup", method = RequestMethod.GET, produces = STRING_UNICODE_MEDIA_TYPE)
     String backUp() {
         try {

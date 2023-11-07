@@ -12,9 +12,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.mlt.MoreLikeThis;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
+import org.apache.lucene.util.BytesRef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
@@ -130,7 +132,7 @@ public class SearchServiceImpl implements SearchService {
             TopDocs hits = searcher.search(query, searchResultsSize, sort);
             long totalHits = hits.totalHits != null ? hits.totalHits.value : 0;
             boolean isTotalHitsExact = hits.totalHits == null || hits.totalHits.relation.equals(TotalHits.Relation.EQUAL_TO);
-            long to = page * pageSize > totalHits ? totalHits : page * pageSize;
+            long to = (long) page * pageSize > totalHits ? totalHits : (long) page * pageSize;
             response.put("page", page);
             response.put("pageSize", pageSize);
             response.put("totalHits", totalHits);
@@ -264,13 +266,35 @@ public class SearchServiceImpl implements SearchService {
             throws IOException {
 
         InputStream inputStream = null;
-        switch (storageMode) {
-            case FIRE:
-                inputStream = fireService.cloneFireS3ObjectStream(relativePath + "/" + accession + ".json");
-                break;
-            default:
-                inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(), relativePath, accession + ".json").toFile());
+        Exception codeIOException = null;
+        try {
+            switch (storageMode) {
+
+                case FIRE:
+                    inputStream = fireService.cloneFireS3ObjectStream(relativePath + "/" + accession + ".json");
+                    break;
+                default:
+                    inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(), relativePath, accession + ".json").toFile());
+            }
+        } catch (Exception exception) {
+            codeIOException = exception;
+            try {
+                TopDocs pagetabResult = indexManager.getPagetabIndexSearcher().search(new TermQuery(new Term(Constants.Fields.ACCESSION, accession)), 1);
+                if (pagetabResult.totalHits.value == 1L) {
+                    Document doc = indexManager.getPagetabIndexReader().document(pagetabResult.scoreDocs[0].doc);
+                    BytesRef contentBytes = doc.getBinaryValue(Constants.Fields.CONTENT);
+                    if (contentBytes != null) {
+                        inputStream = new ByteArrayInputStream(contentBytes.bytes);
+                    }
+                }
+            } catch (Exception ex) {
+                codeIOException = ex;
+                logger.error("problem in searching pagetab index", ex);
+            }
         }
+        if (inputStream == null)
+            throw new IOException(codeIOException);
+
 
         if (anonymise) {
             ObjectMapper mapper = new ObjectMapper();
@@ -299,7 +323,7 @@ public class SearchServiceImpl implements SearchService {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode response = mapper.createObjectNode();
             IndexSearcher searcher = indexManager.getIndexSearcher();
-            if (searcher==null) return "{}";
+            if (searcher == null) return "{}";
             DocValuesStats.SortedLongDocValuesStats fileStats = new DocValuesStats.SortedLongDocValuesStats("files");
             searcher.search(new MatchAllDocsQuery(), new DocValuesStatsCollector(fileStats));
             response.put("files", fileStats.sum());
@@ -372,9 +396,9 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public Document getDocumentByAccessionAndType(String accession, String secretKey, String type) throws SubmissionNotAccessibleException{
+    public Document getDocumentByAccessionAndType(String accession, String secretKey, String type) throws SubmissionNotAccessibleException {
         Document document = getDocumentByAccession(accession, secretKey);
-        if(document==null || !document.get(Fields.TYPE).equalsIgnoreCase(type.trim()))
+        if (document == null || !document.get(Fields.TYPE).equalsIgnoreCase(type.trim()))
             return null;
         return document;
     }
@@ -431,6 +455,7 @@ public class SearchServiceImpl implements SearchService {
 
         return responseString;
     }
+
     public boolean isDocumentInCollection(Document submissionDoc, String collection) {
         return StringUtils.isEmpty(collection) || submissionDoc.get("collection").contains(collection.toLowerCase());
     }

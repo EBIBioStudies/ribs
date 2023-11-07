@@ -63,15 +63,18 @@ public class IndexManager implements DisposableBean {
     private IndexReader indexReader;
     private IndexReader fileIndexReader;
     private IndexReader extractedLinkIndexReader;
+    private IndexReader pagetabIndexReader;
     private IndexSearcher indexSearcher;
     private IndexSearcher fileIndexSearcher;
     private IndexSearcher extractedLinkIndexSearcher;
+    private IndexSearcher pagetabIndexSearcher;
     private IndexWriter indexWriter;
     private IndexWriter fileIndexWriter;
     private IndexWriter extractedLinkIndexWriter;
-    private Directory indexDirectory, fileIndexDirectory, extractedLinkIndexDirectory;
-    private IndexWriterConfig indexWriterConfig, fileIndexWriterConfig, extractedLinkIndexWriterConfig;
-    private SnapshotDeletionPolicy mainIndexSnapShot, fileIndexSnapShot, extractedLinkIndexSnapShot;
+    private IndexWriter pagetabIndexWriter;
+    private Directory indexDirectory, fileIndexDirectory, extractedLinkIndexDirectory, pagetabDirectory;
+    private IndexWriterConfig indexWriterConfig, fileIndexWriterConfig, extractedLinkIndexWriterConfig, pagetabIndexWriterConfig;
+    private SnapshotDeletionPolicy mainIndexSnapShot, fileIndexSnapShot, extractedLinkIndexSnapShot, pagetabIndexSnapShot;
     private SnapshotDeletionPolicy efoIndexSnapShot;
     private Directory efoIndexDirectory;
     private IndexReader efoIndexReader;
@@ -135,7 +138,7 @@ public class IndexManager implements DisposableBean {
             extractedLinkIndexWriter.commit();
             efoIndexWriter.commit();
             facetWriter.commit();
-
+            pagetabIndexWriter.commit();
         } catch (Exception ex) {
             logger.error("problem in committing indices", ex);
 
@@ -149,17 +152,19 @@ public class IndexManager implements DisposableBean {
             extractedLinkIndexReader.close();
             efoIndexReader.close();
             facetReader.close();
+            pagetabIndexReader.close();
             indexWriter.close();
             fileIndexWriter.close();
             efoIndexWriter.close();
             facetWriter.close();
+            pagetabIndexWriter.close();
         } catch (Exception ex) {
             logger.error("problem in closing indices", ex);
         }
     }
 
     public void takeIndexSnapShotForBackUp() throws IOException {
-        IndexCommit mainSnapShot = null, facetSnapshot = null, efoSnapShot = null, fileSnapShot = null, linkSnapShot=null;
+        IndexCommit mainSnapShot = null, facetSnapshot = null, efoSnapShot = null, fileSnapShot = null, linkSnapShot = null, pagetabSnapShot = null;
         try {
             mainSnapShot = mainIndexSnapShot.snapshot();
             indexTransferer.copyIndexFromSnapShot(mainSnapShot.getFileNames(), indexConfig.getIndexDirectory(), indexConfig.getIndexBackupDirectory() + "/submission");
@@ -171,6 +176,8 @@ public class IndexManager implements DisposableBean {
             indexTransferer.copyIndexFromSnapShot(fileSnapShot.getFileNames(), indexConfig.getFileIndexDirectory(), indexConfig.getIndexBackupDirectory() + "/files");
             linkSnapShot = extractedLinkIndexSnapShot.snapshot();
             indexTransferer.copyIndexFromSnapShot(linkSnapShot.getFileNames(), indexConfig.getExtractedLinkIndexDirectory(), indexConfig.getIndexBackupDirectory() + "/links");
+            pagetabSnapShot = pagetabIndexSnapShot.snapshot();
+            indexTransferer.copyIndexFromSnapShot(pagetabSnapShot.getFileNames(), indexConfig.getPageTabDirectory(), indexConfig.getIndexBackupDirectory() + "/pagetab");
         } catch (Exception ex) {
             logger.error("problem in taking snapshot from main index", ex);
             throw ex;
@@ -186,6 +193,8 @@ public class IndexManager implements DisposableBean {
                     fileIndexSnapShot.release(fileSnapShot);
                 if (linkSnapShot != null)
                     extractedLinkIndexSnapShot.release(linkSnapShot);
+                if (pagetabSnapShot != null)
+                    pagetabIndexSnapShot.release(pagetabSnapShot);
             } catch (Exception ex) {
                 logger.error("problem in releasing snapshot lock", ex);
             }
@@ -199,6 +208,7 @@ public class IndexManager implements DisposableBean {
             indexTransferer.copyIndexFromNetworkFileSystemToLocal(indexConfig.getIndexBackupDirectory() + "/efo", eFOConfig.getIndexLocation());
             indexTransferer.copyIndexFromNetworkFileSystemToLocal(indexConfig.getIndexBackupDirectory() + "/files", indexConfig.getFileIndexDirectory());
             indexTransferer.copyIndexFromNetworkFileSystemToLocal(indexConfig.getIndexBackupDirectory() + "/links", indexConfig.getExtractedLinkIndexDirectory());
+            indexTransferer.copyIndexFromNetworkFileSystemToLocal(indexConfig.getIndexBackupDirectory() + "/pagetab", indexConfig.getPageTabDirectory());
         } catch (Exception ex) {
             logger.fatal("problem in copying remote index to local file system, INDEX's STATE IS INVALID", ex);
             return false;
@@ -227,36 +237,47 @@ public class IndexManager implements DisposableBean {
         indexDirectory = FSDirectory.open(Paths.get(indexDir));
         fileIndexDirectory = FSDirectory.open(Paths.get(indexConfig.getFileIndexDirectory()));
         extractedLinkIndexDirectory = FSDirectory.open(Paths.get(indexConfig.getExtractedLinkIndexDirectory()));
+        pagetabDirectory = FSDirectory.open(Paths.get(indexConfig.getPageTabDirectory()));
         indexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
         indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         fileIndexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
         fileIndexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         extractedLinkIndexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
         extractedLinkIndexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+        pagetabIndexWriterConfig = new IndexWriterConfig(analyzerManager.getPerFieldAnalyzerWrapper());
+        pagetabIndexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         mainIndexSnapShot = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
         fileIndexSnapShot = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
         extractedLinkIndexSnapShot = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
+        pagetabIndexSnapShot = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
         indexWriterConfig.setIndexDeletionPolicy(mainIndexSnapShot);
         fileIndexWriterConfig.setIndexDeletionPolicy(fileIndexSnapShot);
         extractedLinkIndexWriterConfig.setIndexDeletionPolicy(extractedLinkIndexSnapShot);
+        pagetabIndexWriterConfig.setIndexDeletionPolicy(pagetabIndexSnapShot);
         if (indexWriter == null || indexWriter.isOpen() == false)
             indexWriter = new IndexWriter(getIndexDirectory(), getIndexWriterConfig());
         if (fileIndexWriter == null || fileIndexWriter.isOpen() == false)
             fileIndexWriter = new IndexWriter(fileIndexDirectory, fileIndexWriterConfig);
         if (extractedLinkIndexWriter == null || extractedLinkIndexWriter.isOpen() == false)
             extractedLinkIndexWriter = new IndexWriter(extractedLinkIndexDirectory, extractedLinkIndexWriterConfig);
+        if (pagetabIndexWriter == null || pagetabIndexWriter.isOpen() == false)
+            pagetabIndexWriter = new IndexWriter(pagetabDirectory, pagetabIndexWriterConfig);
         if (indexReader != null)
             indexReader.close();
         if (fileIndexReader != null)
             fileIndexReader.close();
         if (extractedLinkIndexReader != null)
             extractedLinkIndexReader.close();
+        if (pagetabIndexReader != null)
+            pagetabIndexReader.close();
         indexReader = DirectoryReader.open(indexWriter);
         fileIndexReader = DirectoryReader.open(fileIndexWriter);
         extractedLinkIndexReader = DirectoryReader.open(extractedLinkIndexWriter);
+        pagetabIndexReader = DirectoryReader.open(pagetabIndexWriter);
         indexSearcher = new IndexSearcher(indexReader);
         fileIndexSearcher = new IndexSearcher(fileIndexReader);
         extractedLinkIndexSearcher = new IndexSearcher(extractedLinkIndexReader);
+        pagetabIndexSearcher = new IndexSearcher(pagetabIndexReader);
     }
 
     public void openEfoIndex() throws Throwable {
@@ -296,12 +317,15 @@ public class IndexManager implements DisposableBean {
             indexReader.close();
             fileIndexReader.close();
             extractedLinkIndexReader.close();
+            pagetabIndexReader.close();
             indexReader = DirectoryReader.open(indexWriter);
             fileIndexReader = DirectoryReader.open(fileIndexWriter);
             extractedLinkIndexReader = DirectoryReader.open(extractedLinkIndexWriter);
+            pagetabIndexReader = DirectoryReader.open(pagetabIndexWriter);
             indexSearcher = new IndexSearcher(indexReader);
             fileIndexSearcher = new IndexSearcher(fileIndexReader);
             extractedLinkIndexSearcher = new IndexSearcher(extractedLinkIndexReader);
+            pagetabIndexSearcher = new IndexSearcher(pagetabIndexReader);
             drillSideways = new DrillSideways(indexSearcher, taxonomyManager.getFacetsConfig(), facetReader);
         } catch (Exception ex) {
             logger.error("Problem in refreshing index", ex);
@@ -479,6 +503,7 @@ public class IndexManager implements DisposableBean {
         return "0";
     }
 
+
     public IndexSearcher getFileIndexSearcher() {
         return fileIndexSearcher;
     }
@@ -501,5 +526,17 @@ public class IndexManager implements DisposableBean {
 
     public IndexReader getExtractedLinkIndexReader() {
         return extractedLinkIndexReader;
+    }
+
+    public IndexReader getPagetabIndexReader() {
+        return pagetabIndexReader;
+    }
+
+    public IndexSearcher getPagetabIndexSearcher() {
+        return pagetabIndexSearcher;
+    }
+
+    public IndexWriter getPagetabIndexWriter() {
+        return pagetabIndexWriter;
     }
 }

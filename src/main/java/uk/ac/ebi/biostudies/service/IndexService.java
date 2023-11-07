@@ -2,7 +2,6 @@ package uk.ac.ebi.biostudies.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.annotation.Async;
 
 import java.io.IOException;
@@ -24,6 +23,8 @@ public interface IndexService extends DisposableBean {
     void clearIndex(boolean commit) throws IOException;
 
     BlockingQueue<String> getIndexFileQueue();
+
+    void makePagetabIndex();
 
     void processFileForIndexing();
 

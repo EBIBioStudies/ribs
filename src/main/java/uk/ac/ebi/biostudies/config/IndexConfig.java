@@ -22,6 +22,8 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     public static CharArraySet STOP_WORDS;
     @Value("${index.directory}")
     private String indexDirectory;
+    @Value("${index.pagetab}")
+    private String pageTabDirectory;
     @Value("${index.fileIndexDirectory}")
     private String fileIndexDirectory;
     @Value("${index.extractedLinkIndexDirectory}")
@@ -164,5 +166,9 @@ public class IndexConfig implements InitializingBean, DisposableBean {
 
     public String getIndexSyncBackupFile() {
         return indexSyncBackupFile;
+    }
+
+    public String getPageTabDirectory() {
+        return pageTabDirectory;
     }
 }

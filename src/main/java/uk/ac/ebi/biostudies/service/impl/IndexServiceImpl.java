@@ -21,6 +21,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -154,7 +155,7 @@ public class IndexServiceImpl implements IndexService {
 
     @Scheduled(fixedDelayString = "${index.searcher.refresh.interval:60000}")
     public void scheduleFixedDelayTask() {
-        if(!INDEX_SEARCHER_NEED_REFRESH.get()) {
+        if (!INDEX_SEARCHER_NEED_REFRESH.get()) {
             return;
         }
         indexManager.refreshIndexSearcherAndReader();
@@ -163,6 +164,7 @@ public class IndexServiceImpl implements IndexService {
         INDEX_SEARCHER_NEED_REFRESH.set(false);
         logger.debug("index searchers are refreshed for searching on new received messages!");
     }
+
     @Override
     public void indexOne(JsonNode submission, boolean removeFileDocuments) throws IOException {
         //TODO: Remove executor service if not needed
@@ -287,6 +289,43 @@ public class IndexServiceImpl implements IndexService {
 
     public BlockingQueue<String> getIndexFileQueue() {
         return indexFileQueue;
+    }
+
+    public void makePagetabIndex() {
+        int numDocs = indexManager.getIndexReader().numDocs();
+        for (int docID = 0; docID < numDocs; docID++) {
+            try {
+                Document document = indexManager.getIndexReader().document(docID);
+                String accession = document.get(Constants.Fields.ACCESSION);
+                String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
+                String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
+                Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
+                InputStreamResource result;
+                byte[] pagetabContent;
+                try {
+                    result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, false, storageMode);
+                    pagetabContent = result.getInputStream().readAllBytes();
+                    Document pagetabDoc = new Document();
+                    pagetabDoc.add(new StringField(Constants.Fields.ACCESSION, accession, Field.Store.YES));
+                    pagetabDoc.add(new StoredField(Fields.CONTENT, pagetabContent));
+                    indexManager.getPagetabIndexWriter().addDocument(pagetabDoc);
+                    if (docID % 10000 == 0) {
+                        logger.info("{} docs pagetab loaded", docID);
+                        indexManager.getPagetabIndexWriter().commit();
+                    }
+                } catch (IOException e) {
+                    logger.error("problem in retrieving pagetab file for {}", accession, e);
+                }
+            } catch (Exception exception) {
+                logger.error("Problem in loading pagetab index", exception);
+            }
+        }
+        try {
+            indexManager.getPagetabIndexWriter().commit();
+        } catch (Exception exception) {
+            logger.error(exception);
+        }
+
     }
 
     public static class JsonDocumentIndexer implements Runnable {
