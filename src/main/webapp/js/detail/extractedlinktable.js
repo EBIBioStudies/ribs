@@ -18,12 +18,16 @@ var Extractedlinktable = (function (_self) {
                     url: contextPath + '/api/v1/' + acc + '/extractedlinks',
                     type: 'post',
                     dataSrc: function (response) {
-                        if (response && response.recordsTotal && response.recordsTotal > 0)
+                        if (response && response.recordsTotal && response.recordsTotal > 0) {
                             $('#extracted-links-container').show();
-                        else
+                            return response.data;
+                        } else {
                             $('#extracted-links-container').parent().hide();
-
-                        return response.data;
+                            return [];
+                        }
+                    },error: function (xhr, error, code) {
+                        $('#extracted-links-container').parent().hide();
+                        return [];
                     }
                 },
                 columns: [
