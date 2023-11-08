@@ -47,7 +47,7 @@ public class FileService {
             return;
         }
 
-        Path downloadFile = Paths.get(indexConfig.getFileRootDir(), fileMetaData.getRelativePath() + "/Files/" + fileMetaData.getUiRequestedPath());
+        Path downloadFile = Paths.get(indexConfig.getFileRootDir(), fileMetaData.getRelativePath() + (fileMetaData.isThumbnail() ? "/Thumbnails/" : "/Files/") + fileMetaData.getUiRequestedPath()+ (fileMetaData.isThumbnail() ? ".thumbnail.png" : ""));
 
         //TODO: Remove this bad^∞ hack
         //Hack start: override relative path if file is not found
