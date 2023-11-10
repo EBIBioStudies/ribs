@@ -329,19 +329,23 @@ ul#bs-orgs {
     background-color: #2BA35F;
     border: none !important;
 }
+.source-icon-http:before, .source-icon-http {
+    color: #FFFFFF !important;
+    background-color: #4E8191;
+    border: none !important;
+}
 .source-icon-ftp:before, .source-icon-ftp {
     color: #FFFFFF !important;
     background-color: #9E5F5F;
     border: none !important;
 }
-
 .source-icon-globus:before, .source-icon-globus {
     color: #FFFFFF !important;
     background-color: #335a95;
     border: none !important;
 }
 
-.source-icon-ftp .fa {
+.source-icon-ftp svg, .source-icon-http svg, .source-icon-globus svg {
     padding-right:2px;
 }
 

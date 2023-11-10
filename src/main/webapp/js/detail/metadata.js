@@ -222,7 +222,7 @@ var Metadata = (function (_self) {
 
      function createMainLinkTable() {
         //create external links for known link types
-        var typeIndex = $('thead tr th',$("#link-list")).map(function(i,v) {if ( $(v).text().toLowerCase()=='type') return i;}).filter(isFinite)[0];
+        var typeIndex = $('thead tr th',$("#link-list")).map(function(i,v) {if ( $(v).text().toLowerCase()==='type') return i;}).filter(isFinite)[0];
         $("tr",$("#link-list")).each( function (i,row) {
             if (i==0) return;
             var type =  $($('td',row)[typeIndex]).text().toLowerCase();
@@ -233,7 +233,7 @@ var Metadata = (function (_self) {
             } else {
                 $.getJSON( 'https://resolver.api.identifiers.org/'+type+':'+name , function (data) {
                     if (data && data.payload && data.payload.resolvedResources) {
-                        var ebiResources = data.payload.resolvedResources.filter(function(o){return o.providerCode=='ebi'});
+                        var ebiResources = data.payload.resolvedResources.filter(function(o){return o?.providerCode==='ebi'});
                         var url = (ebiResources.length ? ebiResources : data.payload.resolvedResources)[0].compactIdentifierResolvedUrl;
                         $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
                     }
