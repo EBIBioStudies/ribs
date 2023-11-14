@@ -90,6 +90,7 @@ public class FilePaginationServiceImpl implements FilePaginationService {
         String sectionsWithFiles = doc.get(Constants.Fields.SECTIONS_WITH_FILES);
         studyInfo.set("columns", fileColumnAttributes);
         studyInfo.put(Constants.Fields.FILES, Long.parseLong(doc.get(Constants.Fields.FILES)));
+        studyInfo.put("httpLink", indexConfig.getFtpDir().replaceAll("ftp://", "https://") + storageModeString.toLowerCase() + "/" + doc.get(Constants.Fields.RELATIVE_PATH));
         studyInfo.put("ftpLink", indexConfig.getFtpDir() + storageModeString.toLowerCase() + "/" + doc.get(Constants.Fields.RELATIVE_PATH));
         studyInfo.put("globusLink", indexConfig.getGlobusUrl() + storageModeString.toLowerCase() + "/" + doc.get(Constants.Fields.RELATIVE_PATH));
         studyInfo.put("isPublic", (" " + doc.get(Constants.Fields.ACCESS) + " ").toLowerCase().contains(" public "));
@@ -202,6 +203,7 @@ public class FilePaginationServiceImpl implements FilePaginationService {
                     }
                     docNode.put(Constants.File.PATH, doc.get(Constants.File.PATH) == null ? "" : doc.get(Constants.File.PATH));
                     docNode.put(Constants.File.TYPE, doc.get(Constants.File.IS_DIRECTORY) == null ? "file" : doc.get(Constants.File.IS_DIRECTORY).equalsIgnoreCase("true") ? "directory" : "file");
+                    docNode.put(Constants.File.SIZE.toLowerCase(), Long.parseLong(doc.get(Constants.File.SIZE)));
                     docs.add(docNode);
                 }
                 response.set(Constants.File.DATA, docs);
