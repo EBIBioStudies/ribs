@@ -11,6 +11,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.mlt.MoreLikeThis;
@@ -274,7 +277,7 @@ public class SearchServiceImpl implements SearchService {
         Exception codeIOException = null;
         if (fillPagetabIndex) {
             try {
-                inputStream = getPagetabFromPagetabIndex(accession);
+                inputStream = getPagetabFromPagetabIndex(accession.toLowerCase());
             } catch (Exception ex) {
                 codeIOException = ex;
                 logger.error("problem in searching pagetab index", ex);
@@ -288,6 +291,12 @@ public class SearchServiceImpl implements SearchService {
                         break;
                     default:
                         inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(), relativePath, accession + ".json").toFile());
+                }
+                if(inputStream!=null){//cache miss, we do not have this pagetab in index so we will add it
+                    byte []buffer = inputStream.readAllBytes();
+                    inputStream.close();
+                    addPagetabDocument(accession, buffer);
+                    inputStream = new ByteArrayInputStream(buffer);
                 }
             }
         } catch (Exception exception) {
@@ -315,6 +324,19 @@ public class SearchServiceImpl implements SearchService {
         }
 
         return new InputStreamResource(inputStream);
+    }
+
+    private void addPagetabDocument(String accession, byte[] pagetabContent) {
+        accession = accession.toLowerCase();
+        Document pagetabDoc = new Document();
+        pagetabDoc.add(new StringField(Constants.Fields.ACCESSION, accession, Field.Store.YES));
+        pagetabDoc.add(new StoredField(Fields.CONTENT, pagetabContent));
+        try {
+            indexManager.getPagetabIndexWriter().updateDocument(new Term(Fields.ACCESSION, accession), pagetabDoc);
+            indexManager.getPagetabIndexWriter().commit();
+        } catch (Exception exception) {
+            logger.error("Problem in adding pagetab to index", exception);
+        }
     }
 
     private InputStream getPagetabFromPagetabIndex(String accession) throws Exception {

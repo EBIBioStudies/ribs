@@ -362,7 +362,6 @@ public class IndexServiceImpl implements IndexService {
                 ReadContext jsonPathContext = JsonPath.parse(json.toString());
                 accession = parserManager.getParser(Fields.ACCESSION).parse(valueMap, json, jsonPathContext);
                 parserManager.getParser(Fields.SECRET_KEY).parse(valueMap, json, jsonPathContext);
-                addPagetabDocument(accession.toLowerCase(), json.binaryValue());
                 for (JsonNode fieldMetadataNode : indexManager.getIndexDetails().findValue(PUBLIC)) {//parsing common "public" facet and fields
                     AbstractParser abstractParser = parserManager.getParser(fieldMetadataNode.get("name").asText());
                     abstractParser.parse(valueMap, json, jsonPathContext);
@@ -412,17 +411,6 @@ public class IndexServiceImpl implements IndexService {
             StringBuilder content = new StringBuilder(valueMap.get(Fields.CONTENT).toString());
             content.append(" ").append(valueMap.get(FILE_ATT_KEY_VALUE).toString());
             valueMap.put(Fields.CONTENT, content.toString());
-        }
-
-        private void addPagetabDocument(String accession, byte[] pagetabContent) {
-            Document pagetabDoc = new Document();
-            pagetabDoc.add(new StringField(Constants.Fields.ACCESSION, accession, Field.Store.YES));
-            pagetabDoc.add(new StoredField(Fields.CONTENT, pagetabContent));
-            try {
-                indexManager.getPagetabIndexWriter().updateDocument(new Term(Fields.ACCESSION, accession), pagetabDoc);
-            } catch (Exception exception) {
-                logger.error("Problem in adding pagetab to index", exception);
-            }
         }
 
         private void addCollectionToHierarchy(Map<String, Object> valueMap, String accession) {
