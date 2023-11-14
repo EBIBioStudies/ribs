@@ -14,14 +14,25 @@ import java.io.IOException;
  */
 public interface SearchService {
     String search(String query, JsonNode selectedFacets, String prjName, int page, int pageSize, String sortBy, String sortOrder);
+
     String getFieldStats() throws Exception;
+
     void clearStatsCache();
+
     InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode) throws IOException;
+
+    InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean fillPagetabFromIndex) throws IOException;
+
     ObjectNode getSimilarStudies(String accession, String secretKey) throws Throwable;
+
     Document getDocumentByAccession(String accession, String secretKey) throws SubmissionNotAccessibleException;
+
     Document getDocumentByAccessionAndType(String accession, String secretKey, String type) throws SubmissionNotAccessibleException;
+
     boolean isDocumentPresent(String accession);
+
     String getLatestStudies() throws Exception;
+
     boolean isDocumentInCollection(Document submissionDoc, String collection);
 }
 

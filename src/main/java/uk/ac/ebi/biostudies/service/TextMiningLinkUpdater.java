@@ -45,7 +45,7 @@ public class TextMiningLinkUpdater {
             TopDocs resultDocs = indexManager.getIndexSearcher().search(documentQuery, 1);
             Document ownerDoc = null;
             if(resultDocs.totalHits.value>0){
-                ownerDoc = indexManager.getIndexReader().document(resultDocs.scoreDocs[0].doc);
+                ownerDoc = indexManager.getSearchIndexReader().document(resultDocs.scoreDocs[0].doc);
             }
             if(ownerDoc!=null){
                 List<ExtractedLink> allLinks = ExtractedLink.parseLinks(msg);
@@ -94,8 +94,8 @@ public class TextMiningLinkUpdater {
             document.add(new TextField(Constants.Fields.CONTENT, extractedLink.getValue().toLowerCase(), Field.Store.YES));
             document.add(new TextField(Constants.Fields.CONTENT, extractedLink.getType(), Field.Store.YES));
         }
-        indexManager.getIndexWriter().updateDocument(new Term(Constants.Fields.ACCESSION, document.get(Constants.Fields.ACCESSION).toLowerCase()), document);
-        indexManager.getIndexWriter().commit();
+        indexManager.getSearchIndexWriter().updateDocument(new Term(Constants.Fields.ACCESSION, document.get(Constants.Fields.ACCESSION).toLowerCase()), document);
+        indexManager.getSearchIndexWriter().commit();
 
     }
 

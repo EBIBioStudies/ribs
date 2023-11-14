@@ -28,11 +28,11 @@ import static uk.ac.ebi.biostudies.api.util.Constants.JSON_UNICODE_MEDIA_TYPE;
 @RequestMapping(value = "/api/v1")
 public class Study {
 
+    private final Logger logger = LogManager.getLogger(Study.class.getName());
     @Autowired
     SearchService searchService;
     @Autowired
     FilePaginationService paginationService;
-    private final Logger logger = LogManager.getLogger(Study.class.getName());
 
     @RequestMapping(value = "/collections/{accession:.+}", produces = {JSON_UNICODE_MEDIA_TYPE}, method = RequestMethod.GET)
     public ResponseEntity<String> getCollection(@PathVariable("accession") String accession, @RequestParam(value = "key", required = false) String seckey) {
@@ -92,7 +92,7 @@ public class Study {
 
     }
 
-    private ResponseEntity<String> prepareResponse(String accession, String seckey, String type){
+    private ResponseEntity<String> prepareResponse(String accession, String seckey, String type) {
         if ("null".equalsIgnoreCase(seckey)) {
             seckey = null;
         }
@@ -103,7 +103,7 @@ public class Study {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("{\"errorMessage\":\"Study not accessible\"}");
         }
-        if (document == null ) {
+        if (document == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .contentType(MediaType.APPLICATION_JSON).body("{\"errorMessage\":\"Study not found\"}");
         }

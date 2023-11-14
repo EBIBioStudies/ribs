@@ -21,6 +21,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -128,7 +129,7 @@ public class IndexServiceImpl implements IndexService {
 
             Map<String, String> commitData = new HashMap<>();
             commitData.put("updateTime", Long.toString(new Date().getTime()));
-            indexManager.getIndexWriter().setLiveCommitData(commitData.entrySet());
+            indexManager.getSearchIndexWriter().setLiveCommitData(commitData.entrySet());
 
             executorService.shutdown();
             executorService.awaitTermination(5, TimeUnit.HOURS);
@@ -136,7 +137,7 @@ public class IndexServiceImpl implements IndexService {
             FileIndexServiceImpl.FileListThreadPool.awaitTermination(5, TimeUnit.HOURS);
             FileIndexServiceImpl.renewFileThreadPool();
             indexManager.commitTaxonomy();
-            indexManager.getIndexWriter().commit();
+            indexManager.getSearchIndexWriter().commit();
             indexManager.getFileIndexWriter().commit();
             indexManager.refreshIndexSearcherAndReader();
             indexManager.refreshTaxonomyReader();
@@ -154,7 +155,7 @@ public class IndexServiceImpl implements IndexService {
 
     @Scheduled(fixedDelayString = "${index.searcher.refresh.interval:60000}")
     public void scheduleFixedDelayTask() {
-        if(!INDEX_SEARCHER_NEED_REFRESH.get()) {
+        if (!INDEX_SEARCHER_NEED_REFRESH.get()) {
             return;
         }
         indexManager.refreshIndexSearcherAndReader();
@@ -163,6 +164,7 @@ public class IndexServiceImpl implements IndexService {
         INDEX_SEARCHER_NEED_REFRESH.set(false);
         logger.debug("index searchers are refreshed for searching on new received messages!");
     }
+
     @Override
     public void indexOne(JsonNode submission, boolean removeFileDocuments) throws IOException {
         //TODO: Remove executor service if not needed
@@ -175,11 +177,11 @@ public class IndexServiceImpl implements IndexService {
         try {
             Map<String, String> commitData = new HashMap<>();
             commitData.put("updateTime", Long.toString(new Date().getTime()));
-            indexManager.getIndexWriter().setLiveCommitData(commitData.entrySet());
+            indexManager.getSearchIndexWriter().setLiveCommitData(commitData.entrySet());
 
             executorService.awaitTermination(5, TimeUnit.HOURS);
             indexManager.commitTaxonomy();
-            indexManager.getIndexWriter().commit();
+            indexManager.getSearchIndexWriter().commit();
             indexManager.getFileIndexWriter().commit();
             INDEX_SEARCHER_NEED_REFRESH.set(true);
         } catch (InterruptedException e) {
@@ -196,9 +198,9 @@ public class IndexServiceImpl implements IndexService {
         String strquery = Fields.ACCESSION + ":" + accession;
         parser.setSplitOnWhitespace(true);
         Query query = parser.parse(strquery);
-        indexManager.getIndexWriter().deleteDocuments(query);
+        indexManager.getSearchIndexWriter().deleteDocuments(query);
         FileIndexServiceImpl.removeFileDocuments(indexManager.getFileIndexWriter(), accession);
-        indexManager.getIndexWriter().commit();
+        indexManager.getSearchIndexWriter().commit();
         indexManager.getFileIndexWriter().commit();
         indexManager.refreshIndexSearcherAndReader();
         searchService.clearStatsCache();
@@ -206,12 +208,12 @@ public class IndexServiceImpl implements IndexService {
 
     @Override
     public void clearIndex(boolean commit) throws IOException {
-        indexManager.getIndexWriter().deleteAll();
+        indexManager.getSearchIndexWriter().deleteAll();
         indexManager.getFileIndexWriter().deleteAll();
-        indexManager.getIndexWriter().forceMergeDeletes();
+        indexManager.getSearchIndexWriter().forceMergeDeletes();
         indexManager.getFileIndexWriter().forceMergeDeletes();
         if (commit) {
-            indexManager.getIndexWriter().commit();
+            indexManager.getSearchIndexWriter().commit();
             indexManager.getFileIndexWriter().commit();
             indexManager.refreshIndexSearcherAndReader();
         }
@@ -249,7 +251,7 @@ public class IndexServiceImpl implements IndexService {
                 filename = indexFileQueue.take();
                 logger.log(Level.INFO, "Started indexing {}. {} files left in the queue.", filename, indexFileQueue.size());
                 boolean removeFileDocuments = true;
-                if (indexManager.getIndexWriter() == null || !indexManager.getIndexWriter().isOpen()) {
+                if (indexManager.getSearchIndexWriter() == null || !indexManager.getSearchIndexWriter().isOpen()) {
                     logger.log(Level.INFO, "IndexWriter was closed trying to construct a new IndexWriter");
                     indexManager.refreshIndexWriterAndWholeOtherIndices();
                     indexManager.openEfoIndex();
@@ -289,6 +291,48 @@ public class IndexServiceImpl implements IndexService {
         return indexFileQueue;
     }
 
+    public void makePagetabIndex() {
+        try {
+            indexManager.getPagetabIndexWriter().deleteAll();
+        } catch (Exception exception) {
+            logger.error("problem in deleting all pagetab documents", exception);
+        }
+        int numDocs = indexManager.getSearchIndexReader().numDocs();
+        for (int docID = 0; docID < numDocs; docID++) {
+            try {
+                Document document = indexManager.getSearchIndexReader().document(docID);
+                String accession = document.get(Constants.Fields.ACCESSION);
+                String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
+                String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
+                Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
+                InputStreamResource result;
+                byte[] pagetabContent;
+                try {
+                    result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, false, storageMode, false);
+                    pagetabContent = result.getInputStream().readAllBytes();
+                    Document pagetabDoc = new Document();
+                    pagetabDoc.add(new StringField(Constants.Fields.ACCESSION, accession, Field.Store.YES));
+                    pagetabDoc.add(new StoredField(Fields.CONTENT, pagetabContent));
+                    indexManager.getPagetabIndexWriter().addDocument(pagetabDoc);
+                    if (docID % 10000 == 0) {
+                        logger.info("{} docs pagetab loaded", docID);
+                        indexManager.getPagetabIndexWriter().commit();
+                    }
+                } catch (IOException e) {
+                    logger.error("problem in retrieving pagetab file for {}", accession, e);
+                }
+            } catch (Exception exception) {
+                logger.error("Problem in loading pagetab index", exception);
+            }
+        }
+        try {
+            indexManager.getPagetabIndexWriter().commit();
+        } catch (Exception exception) {
+            logger.error(exception);
+        }
+
+    }
+
     public static class JsonDocumentIndexer implements Runnable {
         private final Logger logger = LogManager.getLogger(JsonDocumentIndexer.class.getName());
 
@@ -301,7 +345,7 @@ public class IndexServiceImpl implements IndexService {
         private final ParserManager parserManager;
 
         public JsonDocumentIndexer(JsonNode json, TaxonomyManager taxonomyManager, IndexManager indexManager, FileIndexService fileIndexService, boolean removeFileDocuments, ParserManager parserManager) {
-            this.writer = indexManager.getIndexWriter();
+            this.writer = indexManager.getSearchIndexWriter();
             this.json = json;
             this.taxonomyManager = taxonomyManager;
             this.indexManager = indexManager;
@@ -318,7 +362,6 @@ public class IndexServiceImpl implements IndexService {
                 ReadContext jsonPathContext = JsonPath.parse(json.toString());
                 accession = parserManager.getParser(Fields.ACCESSION).parse(valueMap, json, jsonPathContext);
                 parserManager.getParser(Fields.SECRET_KEY).parse(valueMap, json, jsonPathContext);
-
                 for (JsonNode fieldMetadataNode : indexManager.getIndexDetails().findValue(PUBLIC)) {//parsing common "public" facet and fields
                     AbstractParser abstractParser = parserManager.getParser(fieldMetadataNode.get("name").asText());
                     abstractParser.parse(valueMap, json, jsonPathContext);
