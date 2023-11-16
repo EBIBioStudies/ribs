@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.*;
 import org.apache.lucene.facet.FacetField;
 import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
@@ -183,6 +182,7 @@ public class IndexServiceImpl implements IndexService {
             indexManager.commitTaxonomy();
             indexManager.getSearchIndexWriter().commit();
             indexManager.getFileIndexWriter().commit();
+            indexManager.getPagetabIndexWriter().commit();
             INDEX_SEARCHER_NEED_REFRESH.set(true);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -336,7 +336,6 @@ public class IndexServiceImpl implements IndexService {
     public static class JsonDocumentIndexer implements Runnable {
         private final Logger logger = LogManager.getLogger(JsonDocumentIndexer.class.getName());
 
-        private final IndexWriter writer;
         private final JsonNode json;
         private final TaxonomyManager taxonomyManager;
         private final IndexManager indexManager;
@@ -345,7 +344,6 @@ public class IndexServiceImpl implements IndexService {
         private final ParserManager parserManager;
 
         public JsonDocumentIndexer(JsonNode json, TaxonomyManager taxonomyManager, IndexManager indexManager, FileIndexService fileIndexService, boolean removeFileDocuments, ParserManager parserManager) {
-            this.writer = indexManager.getSearchIndexWriter();
             this.json = json;
             this.taxonomyManager = taxonomyManager;
             this.indexManager = indexManager;
@@ -471,7 +469,9 @@ public class IndexServiceImpl implements IndexService {
             }
 
             Document facetedDocument = taxonomyManager.getFacetsConfig().build(indexManager.getFacetWriter(), doc);
-            writer.updateDocument(new Term(Fields.ID, valueMap.get(Fields.ACCESSION).toString()), facetedDocument);
+
+            indexManager.getPagetabIndexWriter().deleteDocuments(new Term(Fields.ACCESSION, valueMap.get(Fields.ACCESSION).toString().toLowerCase()));
+            indexManager.getSearchIndexWriter().updateDocument(new Term(Fields.ID, valueMap.get(Fields.ACCESSION).toString()), facetedDocument);
 
         }
 
