@@ -200,6 +200,7 @@ public class IndexServiceImpl implements IndexService {
         Query query = parser.parse(strquery);
         indexManager.getSearchIndexWriter().deleteDocuments(query);
         FileIndexServiceImpl.removeFileDocuments(indexManager.getFileIndexWriter(), accession);
+        indexManager.getPagetabIndexWriter().deleteDocuments(query);
         indexManager.getSearchIndexWriter().commit();
         indexManager.getFileIndexWriter().commit();
         indexManager.refreshIndexSearcherAndReader();
