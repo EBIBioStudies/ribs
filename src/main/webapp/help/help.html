@@ -1,4 +1,4 @@
-<style>
+<style xmlns="http://www.w3.org/1999/html">
     p {
         text-align: justify;
     }
@@ -93,15 +93,60 @@
         padding: 1rem;
     }
 
+    #faqs-content h5 {
+        color: #267799;
+    }
+
 
 </style>
 
-<ul class="accordion" data-accordion data-allow-all-closed="true">
+<ul class="accordion" data-accordion data-deep-link="true" data-allow-all-closed="true">
+
+    <li class="accordion-item is-active" data-accordion-item>
+        <a href="#" class="accordion-title" id="faqs"><h3><i class="fa-solid fa-question-circle"></i> FAQs
+        </h3></a>
+        <div class="accordion-content" data-tab-content id="faqs-content">
+            <p>See <a href="submit">FAQs related to submissions here.</a></p>
+
+            <h5><i class="fa-solid fa-circle-question"></i> How do I access BioStudies?</h5>
+            <p class="justify">All publicly available data in BioStudies is available via
+                <a href="https://www.ebi.ac.uk/biostudies/studies">https://www.ebi.ac.uk/biostudies/studies</a>. Data
+                that is not yet public (e.g., with ‘hold until published’ status) can be accessed if you have the
+                correct login credentials, or via a link of the form <code>https://www.ebi.ac.uk/biostudies/studies/&lt;accession_number&gt;?key=&lt;access_key&gt;</code>
+            </p>
+
+            <h5><i class="fa-solid fa-circle-question"></i> Can I search by publication / accession / keyword?</h5>
+            <p class="justify">Yes, search by any metadata field is possible. Include multi-word phrases in double
+                quotes; see <a href="#how-to-search">the search tab</a> more information on search capabilities .
+            </p>
+
+            <h5><i class="fa-solid fa-circle-question"></i> How do I link to a dataset?</h5>
+            <p class="justify">Use <code>https://www.ebi.ac.uk/biostudies/studies/&lt;accession_number&gt;</code> to
+                link to a particular dataset in BioStudies, e.g. <a
+                        href="https://www.ebi.ac.uk/biostudies/studies/S-BSST1">https://www.ebi.ac.uk/biostudies/studies/S-BSST1</a>.
+            </p>
+
+            <h5><i class="fa-solid fa-circle-question"></i> What is the easiest way to download large data volumes from
+                BioStudies?</h5>
+            <p class="justify">For general help with downloading see here. Aspera transfers are supported, and are
+                particularly useful for large data volumes.
+            </p>
+
+            <h5><i class="fa-solid fa-circle-question"></i> Under what license(s) are datasets in BioStudies available?
+            </h5>
+            <p class="justify">Some datasets will have license info included in the metadata “License” field. Where no
+                license is stated, data are available under the <a href="https://www.ebi.ac.uk/about/terms-of-use/">EBI
+                    Terms of Use</a> which place no restrictions on use or redistribution.
+            </p>
+
+        </div>
+    </li>
+
 
     <li class="accordion-item" data-accordion-item>
-        <a href="#" class="accordion-title" id="how-to-search"><h3><i class="fa-solid fa-magnifying-glass"></i> Search
+        <a href="#" class="accordion-title"><h3><i class="fa-solid fa-magnifying-glass"></i> Search
         </h3></a>
-        <div class="accordion-content" data-tab-content>
+        <div class="accordion-content" data-tab-content id="how-to-search">
             <p>Use the Search box available in the top-right corner of every page. Enter any words that
                 describe studies
                 you are interested in. As you start typing, a drop-down list will appear suggesting terms that match.
@@ -301,7 +346,8 @@
                         id="globus-link" href="" title="Open Globus" class="source-icon source-icon-globus"
                         data-icon="="><img src="images/globus-logo.png"/>Globus</a> icon to open up the <a
                         href="https://app.globus.org/file-manager?origin_id=47772002-3e5b-4fd3-b97c-18cee38d6df2&origin_path=%2Fbiostudies%2F">
-                    EMBL-EBI Public Data collection</a> in the Globus File Manager app. You may want to install <a href="https://www.globus.org/globus-connect-personal">
+                    EMBL-EBI Public Data collection</a> in the Globus File Manager app. You may want to install <a
+                        href="https://www.globus.org/globus-connect-personal">
                     Globus Connect Personal</a> which creates a personal collection on your machine for <a
                         href="https://docs.globus.org/how-to/get-started/">transferring multiple files</a>. </p>
         </div>
@@ -678,10 +724,13 @@
                     corresponding data/entries in BioStudies are removed from the scientific record as well.</p>
                 <p>Any updates, including dataset deletion, are enabled while a <strong>dataset remains private</strong>.
                 </p>
-                <p>New datasets in BioStudies are released into the public domain under the terms of a <a href="https://creativecommons.org/publicdomain/zero/1.0/legalcode" target="_blank">
+                <p>New datasets in BioStudies are released into the public domain under the terms of a <a
+                        href="https://creativecommons.org/publicdomain/zero/1.0/legalcode" target="_blank">
                     Creative Commons Zero (CC0) waiver</a>.
-                    Some older studies have individual licenses - these are explicitly stated on the page for that accession.
-                    Where no license is stated, data are available under the <a href="https://www.ebi.ac.uk/about/terms-of-use/" target="_blank">
+                    Some older studies have individual licenses - these are explicitly stated on the page for that
+                    accession.
+                    Where no license is stated, data are available under the <a
+                            href="https://www.ebi.ac.uk/about/terms-of-use/" target="_blank">
                         EMBL-EBI Terms of Use</a>.
                 </p>
             </div>

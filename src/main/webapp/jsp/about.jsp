@@ -20,46 +20,40 @@
         <div id="static-text">
             <h3 class="icon icon-generic" data-icon="i">What is BioStudies?</h3>
 
-            <p class="justify">The BioStudies database holds descriptions of biological studies, links to data from
-                these studies in other databases at EMBL-EBI or outside, as well as data that do not fit in the
-                structured archives at EMBL-EBI. The database accepts submissions via an online tool, or in a simple
-                tab-delimited format.
-                It also enables authors to submit supplementary information and link to it from the publication.
+            <p class="justify">The mission of BioStudies is to provide access to all the data outputs of a life sciences
+                study from a single place, by organising links to data in other databases at EMBL-EBI or elsewhere, as
+                well as hosting data and metadata that do not fit anywhere else. The database accepts submissions via an
+                online tool, or in a simple tab-delimited format. BioStudies provides rich mechanisms for defining and
+                using metadata guidelines specific for a particular data source such as a project or a community, and
+                organises datasets in <a href="https://www.ebi.ac.uk/biostudies/collections">collections</a>.
             </p>
 
-            <h3 class="icon icon-generic" data-icon="P">Publications / How to cite</h3>
+            <h3 class="icon icon-generic" data-icon="P">Citing BioStudies</h3>
             <ul>
-                <li>Ugis Sarkans, Mikhail Gostev, Awais Athar, Ehsan Behrangi, Olga Melnichuk, Ahmed Ali, Jasmine
-                    Minguet, Juan Camillo Rada, Catherine Snow, Andrew Tikhonov, Alvis Brazma, Johanna McEntyre; <a
+                <li>Sarkans U, Gostev M, Athar A, Behrangi E, Melnichuk O, Ali A, Minguet J, Rada JC, Snow C, Tikhonov
+                    A, Brazma A, McEntyre J.; <a
                             href="https://doi.org/10.1093/nar/gkx965" target="_blank">The BioStudies database—one stop
-                        shop for all data supporting a life sciences study</a>, Nucleic Acids Research, 2017.
+                        shop for all data supporting a life sciences study</a>, <i>Nucleic Acids Res.</i> 2018
+                    Jan;46(D1) D1266-D1270. doi:10.1093/nar/gkx965. PMID: 29069414; PMCID: PMC5753238.
+                </li>
+            </ul>
+
+            <h3 class="icon"><i class="fa-solid fa-quote-left"></i> Citing a particular dataset in BioStudies </h3>
+            <ul>
+                <li>Please include your dataset accession number and the URL to the BioStudies home page, e.g.,
+                    “Supporting data are available in the BioStudies database (http://www.ebi.ac.uk/biostudies) under
+                    accession number S-BSST12345.”
                 </li>
             </ul>
 
 
             <h3 class="icon icon-generic" data-icon="}">The team behind BioStudies</h3>
 
-            <p class="justify">The BioStudies team is part of <a href="https://www.ebi.ac.uk/about/people/ugis-sarkans">Ugis
-                Sarkans'
-                team</a>.</p>
-            <p class="justify">The ArrayExpress collection and Annotare are maintained by <a
-                    href="https://www.ebi.ac.uk/about/people/irene-papatheodorou">Irene Papatheodorou's team</a>.</p>
+            <p class="justify">BioStudies is developed and run by the <a
+                    href="https://www.ebi.ac.uk/about/teams/biostudies/">BioStudies team</a>.</p>
+            <p class="justify">The ArrayExpress collection and Annotare are maintained by the <a
+                    href="https://www.ebi.ac.uk/about/teams/gene-expression/">Gene Expression team</a>.</p>
 
-
-            <h3 class="icon icon-generic" data-icon="I">Acknowledgments</h3>
-
-            <p>The BioStudies team would like to thank the following companies for their support through the offering
-                of free software licenses:</p>
-            <ul>
-                <li><a href="http://www.atlassian.com">Atlassian</a> for the <a
-                        href="http://www.atlassian.com/software/bamboo/overview" target="_blank">Bamboo</a> - Continuous
-                    Integration and Release Management tool.
-                </li>
-                <li><a href="https://sprymedia.co.uk/">SpryMedia</a> for the <a href="https://datatables.net/"
-                                                                                target="_blank">DataTables</a> jQuery
-                    plugin.
-                </li>
-            </ul>
         </div>
     </jsp:body>
 </t:generic>
