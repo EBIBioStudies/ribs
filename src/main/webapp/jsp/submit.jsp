@@ -48,14 +48,6 @@
     </jsp:attribute>
     <jsp:body>
         <div id="static-text">
-            <h3>BioStudies Submissions Overview</h3>
-            <p class="justify">
-                BioStudies is a new resource at EBI. We welcome any biological studies submissions that do not fit into
-                the traditional resources here at EBI. We welcome all feedback and enquires at <a
-                    href="mailto:biostudies@ebi.ac.uk">biostudies@ebi.ac.uk</a> so that we can continue to develop and
-                improve this service.
-            </p>
-
             <div class="submitlnk">
                 <h2>
                     <a href="submissions" title="Browse BioStudies">
@@ -86,8 +78,9 @@
                 resources etc. Several data upload methods are supported - via the submission tool, as well as using FTP
                 and Aspera protocols. Metadata can be provided by filling in a web form. Data in BioStudies is organised
                 into collections, and different collections will have different forms. A tab-delimited format described
-                here is an alternative submission method. If you feel that the tool does not fit your requirements
-                please contact us at <a href="mailto:biostudies@ebi.ac.uk">biostudies@ebi.ac.uk</a>.
+                <a href="https://www.ebi.ac.uk/biostudies/misc/SubmissionFormatV5a.pdf">here</a> is an alternative
+                submission method. If you feel that the tool does not fit your requirements please contact us at <a
+                    href="mailto:biostudies@ebi.ac.uk">biostudies@ebi.ac.uk</a>.
             </p>
 
             <h5><i class="fa-solid fa-circle-question"></i> Is there a cost to deposit data in BioStudies?</h5>
