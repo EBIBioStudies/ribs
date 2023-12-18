@@ -9,6 +9,7 @@ import org.apache.catalina.core.StandardHost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.config.annotation.*;
+import uk.ac.ebi.biostudies.auth.BotFilter;
 
 
 @Configuration
@@ -76,5 +78,13 @@ public class MvcConfig implements WebMvcConfigurer {
         return factory -> {
             factory.addContextCustomizers(MvcConfig::customize);
         };
+    }
+
+    @Bean
+    public FilterRegistrationBean<BotFilter> botFilter() {
+        FilterRegistrationBean<BotFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new BotFilter());
+        registrationBean.addUrlPatterns("/*"); // Apply filter to all paths
+        return registrationBean;
     }
 }
