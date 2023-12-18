@@ -19,7 +19,7 @@ public class BotFilter implements Filter {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
             String userAgent = httpRequest.getHeader("User-Agent");
 
-            if (userAgent != null && (userAgent.toLowerCase().contains("bot") || userAgent.toLowerCase().contains("python-requests"))) {
+            if (userAgent != null && (userAgent.toLowerCase().contains("python-requests"))) {
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
                 httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 httpResponse.getWriter().write("403 Forbidden - Access denied");
