@@ -20,7 +20,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.config.annotation.*;
-import uk.ac.ebi.biostudies.auth.BotFilter;
+import uk.ac.ebi.biostudies.auth.AgentFilter;
 
 
 @Configuration
@@ -32,6 +32,9 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Autowired
     ExternalServicesConfig externalServicesConfig;
+
+    @Autowired
+    AgentFilter agentFilter;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -81,9 +84,9 @@ public class MvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public FilterRegistrationBean<BotFilter> botFilter() {
-        FilterRegistrationBean<BotFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new BotFilter());
+    public FilterRegistrationBean<AgentFilter> botFilter() {
+        FilterRegistrationBean<AgentFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(agentFilter);
         registrationBean.addUrlPatterns("/*"); // Apply filter to all paths
         return registrationBean;
     }

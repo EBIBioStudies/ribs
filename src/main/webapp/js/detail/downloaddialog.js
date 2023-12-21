@@ -63,9 +63,8 @@ var DownloadDialog = (function (_self) {
         const acc = $('#accession').text().trim();
         const zip = new JSZip();
         for (let filename of filelist) {
-            const url =  window.contextPath + '/files/' + acc + '/' + unescape(encodeURIComponent(filename)).replaceAll('#', '%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
+            const url = window.contextPath + '/files/' + acc + '/' + unescape(encodeURIComponent(filename)).replaceAll('#', '%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
                     .replaceAll("[", "%5B").replaceAll("]", "%5D")
-                + (hasZippedFolders && !filename.toLowerCase().endsWith('.zip') ? '.zip' : '')
                 + (key ? '?key=' + key : '');
             $('#downloadMessage').text("Downloading " + filename + " (0%)");
             abortController = new AbortController();

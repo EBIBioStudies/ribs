@@ -1,16 +1,19 @@
 package uk.ac.ebi.biostudies.auth;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class BotFilter implements Filter {
+@Component
+public class AgentFilter implements Filter {
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        // Initialization code here (if needed)
-    }
+    @Value("${denied.agent}")
+    private String deniedAgent;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -19,7 +22,7 @@ public class BotFilter implements Filter {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
             String userAgent = httpRequest.getHeader("User-Agent");
 
-            if (userAgent != null && (userAgent.toLowerCase().contains("python-requests"))) {
+            if (userAgent != null && StringUtils.hasText(deniedAgent) && (userAgent.toLowerCase().contains(deniedAgent.toLowerCase()))) {
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
                 httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 httpResponse.getWriter().write("403 Forbidden - Access denied");
