@@ -13,6 +13,7 @@
             var thorURL = '${thorURL}';
         </script>
         <jwr:script src="/js/detail.min.js"/>
+        <script src="${contextPath}/js/compressed/jszip.min.js"/>
     </jsp:attribute>
     <jsp:attribute name="breadcrumbs">
         <ul class="breadcrumbs">
