@@ -72,10 +72,13 @@ var Metadata = (function (_self) {
             data.section.releaseDate = releaseDate;
             if (data.section ) {
                 if (!data.section.attributes) data.section.attributes = [];
-                if (!data.section.attributes.filter(function (v, i) {
-                    return v.name.trim() === 'Title';
-                }).length) {
+                if (!data.section.attributes.filter((v)=> v.name.trim() === 'Title').length) {
                     data.section.attributes.push({name: 'Title', value: title[0]?title[0].value:""});
+                }
+                // copy DOI
+                const dois = data.attributes.filter((v)=> v.name.trim() === 'DOI');
+                if (dois.length) {
+                    data.section.doi = dois[0].value;
                 }
                 data.section.isFromSubmissionTool = document.referrer.toLowerCase().indexOf("ebi.ac.uk/biostudies/submissions/")>0
                 && $('#logout-button') && $('#logout-button').text().trim().startsWith("Logout");
