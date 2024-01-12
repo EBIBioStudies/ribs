@@ -230,7 +230,7 @@ var DownloadDialog = (function (_self) {
             "paths": allPaths,
             "create_dir": true,
             "remote_host": "fasp.ebi.ac.uk",
-            "remote_user": "bsaspera",
+            "remote_user": "bsaspera_token",
             "token": token,
             "authentication": "token",
             "fasp_port": 33001,
