@@ -29,13 +29,18 @@ public class MageTabFilter implements FileChainFilter{
         if(fileName==null || fileName.isEmpty() || !fileMetaData.getHasKey())
             return false;
         byte[] content = {};
+        boolean filtered = false;
         if (fileName.matches(IDF_FILE_NAME_PATTERN)) {
             content = getIdfFilteredFile(fileMetaData.getInputStream());
+            filtered = true;
         } else if (fileName.matches(SDRF_FILE_NAME_PATTERN)) {
             content = getSdrfFilteredFile(fileMetaData.getInputStream());
+            filtered = true;
         }
-        IOUtils.copy( new ByteArrayInputStream(content), response.getOutputStream());
-        return true;
+        if (filtered) {
+            IOUtils.copy(new ByteArrayInputStream(content), response.getOutputStream());
+        }
+        return filtered;
     }
 
     public static InputStream applyFilter(String fileName, InputStream inputStream) throws IOException {
