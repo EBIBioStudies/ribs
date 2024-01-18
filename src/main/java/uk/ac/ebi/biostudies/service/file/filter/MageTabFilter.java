@@ -1,6 +1,7 @@
 package uk.ac.ebi.biostudies.service.file.filter;
 
 import au.com.bytecode.opencsv.CSVReader;
+import org.apache.commons.io.IOUtils;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,14 +28,14 @@ public class MageTabFilter implements FileChainFilter{
         String fileName = fileMetaData.getFileName();
         if(fileName==null || fileName.isEmpty() || !fileMetaData.getHasKey())
             return false;
+        byte[] content = {};
         if (fileName.matches(IDF_FILE_NAME_PATTERN)) {
-            fileMetaData.setInputStream(new ByteArrayInputStream(getIdfFilteredFile(fileMetaData.getInputStream())));
-//            filteredFileContents = new FilteredMageTabDownloadFile.IdfFilter(file).getFilteredFile();
+            content = getIdfFilteredFile(fileMetaData.getInputStream());
         } else if (fileName.matches(SDRF_FILE_NAME_PATTERN)) {
-            fileMetaData.setInputStream(new ByteArrayInputStream(getSdrfFilteredFile(fileMetaData.getInputStream())));
-//            filteredFileContents = new FilteredMageTabDownloadFile.SdrfFilter(file).getFilteredFile();
+            content = getSdrfFilteredFile(fileMetaData.getInputStream());
         }
-        return false;
+        IOUtils.copy( new ByteArrayInputStream(content), response.getOutputStream());
+        return true;
     }
 
     public static InputStream applyFilter(String fileName, InputStream inputStream) throws IOException {

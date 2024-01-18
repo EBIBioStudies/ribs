@@ -84,11 +84,17 @@ $(function() {
         var newOrder = order.filter(function (v) {
            return $.inArray(v, colsToMove)<0;
         });
-        if (params.full) {
+        if (params.full && params.full==='true') {
             $('div.dataTables_scrollBody th, div.dataTables_scrollBody td').css('white-space', 'nowrap');
             $('#toggleColumns').text(' Display summary');
             $('#toggleColumns').attr('Please click here to get a summary view of samples and data');
-            $('#toggleColumns').attr('href', location.href.substr(0,location.href.indexOf('?')) );
+            $('#toggleColumns').attr('href',
+                location.href.substr(0,location.href.indexOf('?'))
+                +(params.key ? '?key='+params.key : '') );
+        } else {
+            $('#toggleColumns').attr('href', location.href.substr(0,location.href.indexOf('?'))
+                +"?full=true"
+                +(params.key ? '&key='+params.key : '') );
         }
         sdrfTable.colReorder.order($.merge(newOrder, colsToMove)).draw();
 
