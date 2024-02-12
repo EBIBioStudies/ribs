@@ -70,7 +70,7 @@ public class Study {
             }
         } catch (SubmissionNotAccessibleException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("{\"errorMessage\":\"Study not accessible\"}");
+                    .body("{\"errorMessage\":\"Study is not accessible\"}");
         }
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON).body("{\"similarStudies\":[]}");
