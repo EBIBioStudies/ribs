@@ -133,21 +133,25 @@ function handleBioImagesUI() {
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-faq" role="menuitem">FAQs</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-search/" role="menuitem">Searching the archive</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-download/" role="menuitem">Downloading data</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/submit-annotations/" role="menuitem">Submit Annotations</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-file-list/" role="menuitem">Submission File List guide</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-link/" role="menuitem">Linking to other Archives</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-tools/" role="menuitem">Supporting Tools</a></li>\n' +
         '                            </ul>\n' +
         '                        </li>');
     helpmenu.replaceWith(newhelpmenu);
-    const rembimenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="REMBI Help" data-is-click="false">\n' +
-        '                            <a href="#" role="menuitem">REMBI Help</a>\n' +
+    const metadatamenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="Metadata Help" data-is-click="false">\n' +
+        '                            <a href="#" role="menuitem">Metadata Help</a>\n' +
         '                            <ul class="menu submenu is-dropdown-submenu first-sub vertical" data-submenu="" role="menubar" style="">\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-help-overview" role="menuitem">REMBI Overview</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-help-lab/" role="menuitem">REMBI Lab Guidance</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-help-examples/" role="menuitem">Study Component Guidance</a></li>\n' +
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/rembi-model-reference/" role="menuitem">REMBI Model Reference</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/mifa-overview/" role="menuitem">MIFA Overview</a></li>\n' +
+        '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/mifa-model-reference/" role="menuitem">MIFA model reference</a></li>\n' +
         '                            </ul>\n' +
         '                        </li>');
-    newhelpmenu.after(rembimenu);
+    newhelpmenu.after(metadatamenu);
 
     const policiesmenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="Policies" data-is-click="false">\n' +
         '                            <a href="#" role="menuitem">Policies</a>\n' +
@@ -156,7 +160,7 @@ function handleBioImagesUI() {
         '                                <li role="none" class="is-submenu-item is-dropdown-submenu-item"><a href="/bioimage-archive/help-images-at-ebi/" role="menuitem">Depositing image data to EBI resources</a></li>\n' +
         '                            </ul>\n' +
         '                        </li>');
-    rembimenu.after(policiesmenu);
+    metadatamenu.after(policiesmenu);
 
     const about = $('.menu.float-left li:contains("About")')
     const newaboutmenu = $('<li role="none" class="is-dropdown-submenu-parent opens-right" aria-haspopup="true" aria-label="About us" data-is-click="false">\n' +
