@@ -83,8 +83,8 @@ var Metadata = (function (_self) {
                 data.section.isFromSubmissionTool = document.referrer.toLowerCase().indexOf("ebi.ac.uk/biostudies/submissions/")>0
                 && $('#logout-button') && $('#logout-button').text().trim().startsWith("Logout");
             }
-
-            if (!data.attributes.find( attr=>  attr?.name?.toLowerCase()==='license')) {
+            if ( ['','bioimages','sourcedata'].indexOf(collection.toLowerCase())>=0
+                && !data.section.attributes.find( attr=>  attr?.name?.toLowerCase()==='license')) {
                 if (!data.section.attributes) data.section.attributes=[];
                 data.section?.attributes.push({
                     name : "License",
@@ -92,7 +92,7 @@ var Metadata = (function (_self) {
                         "resources use institutes Terms of Use (link) detailing our commitment to open science and " +
                         "defining expectations from data submitters and consumers. At the time of submission CC0 was " +
                         "not explicitly applied to this dataset. As the institute is gradually adopting the CC license " +
-                        "framework across all resources (link to https://www.ebi.ac.uk/licencing), we have applied CC0 " +
+                        "framework across all resources (https://www.ebi.ac.uk/licencing), we have applied CC0 " +
                         "to this dataset, being most in line with the spirit of EMBL-EBI’s Terms of Use. " +
                         "Contact biostudies@ebi.ac.uk for further clarifications.'>CC0 " +
                         "<i class='fa-solid fa-circle-info'></i></span>",
