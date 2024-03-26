@@ -89,7 +89,7 @@ var Metadata = (function (_self) {
                 data.section?.attributes.push({
                     name : "License",
                     value : "<span title='Historically the majority of EMBL-EBI data " +
-                        "resources use institutes Terms of Use (link) detailing our commitment to open science and " +
+                        "resources use institute&#39;s Terms of Use (see below) detailing our commitment to open science and " +
                         "defining expectations from data submitters and consumers. At the time of submission CC0 was " +
                         "not explicitly applied to this dataset. As the institute is gradually adopting the CC license " +
                         "framework across all resources (https://www.ebi.ac.uk/licencing), we have applied CC0 " +
