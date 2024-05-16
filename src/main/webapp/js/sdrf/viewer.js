@@ -11,17 +11,23 @@ $(function() {
         var html = '<table id="sdrf"  class="display" width="100%"><thead>';
         var rows = data.split('\n');
         var colsToMove = [];
+        var lastClass = null;
         var columnDefs = rows[0]
             .split('\t')
             .map(function (header, i) {
                 var col = {name:header, targets:[i]};
                 if (header.indexOf('Characteristics') === 0) {
                     col.className = 'sdrf-sample-attribute-column';
+                    lastClass = col.className;
                 } else if (header.indexOf('Factor Value') === 0) {
                     col.className = 'sdrf-variable-column';
+                    lastClass = col.className;
                 } else if ($.inArray(header,['Assay Name', 'Hybridization Name', 'Label'])>=0) {
                     col.className = 'sdrf-assay-column';
+                    lastClass = col.className;
                     colsToMove.push(i);
+                } else if (header.indexOf('Unit') === 0) {
+                    col.className = lastClass;
                 } else if (header.indexOf('Source Name') === 0) {
                     col.className = 'source-column';
                 } else if (header.indexOf('[ENA_RUN]') > 0) {
