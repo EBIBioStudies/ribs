@@ -84,6 +84,7 @@ public interface Constants {
         String MODIFICATION_YEAR_FACET = "facet.modification_year";
 
         String DELIMITER = "|";
+        String MATCH = "match";
     }
 
     interface Fields {
