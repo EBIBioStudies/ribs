@@ -50,6 +50,11 @@
     { "name": "facet.eutoxrisk.method_name", "title": "Method name", "fieldType": "facet"},
     { "name": "facet.eutoxrisk.project_part", "title": "Project part", "fieldType": "facet"}
   ],
+  "rh3r": [
+    { "name": "facet.rh3r.wrk_pckg", "title": "Project part \\(Work package\\)", "fieldType": "facet", "match": "^([a-zA-Z0-9.]+)"},
+    { "name": "facet.rh3r.case_study", "title": "Project part \\(Case study\\)", "fieldType": "facet", "match": "^([a-zA-Z0-9.]+)"},
+    { "name": "facet.rh3r.info_type", "title": "Type of information", "fieldType": "facet"}
+  ],
   "public": [
     { "name": "access", "title": "", "fieldType": "tokenized_string", "jsonPath": "$.accessTags[?(@ =~ /[^{].*/i)] OR $.accessTags[?(@.size() > 0)].name", "analyzer": "AccessFieldAnalyzer", "parser": "AccessParser", "toLowerCase": "true"},
     { "name": "accession", "title": "", "fieldType": "tokenized_string", "retrieved": true, "analyzer": "AttributeFieldAnalyzer", "jsonPath": "$.accno OR $.accNo"},

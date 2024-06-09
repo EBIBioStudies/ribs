@@ -9,6 +9,8 @@ import uk.ac.ebi.biostudies.api.util.Constants;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static uk.ac.ebi.biostudies.api.util.Constants.NA;
@@ -24,7 +26,15 @@ public class SimpleAttributeParser extends AbstractParser {
         try {
             String title = StringUtils.replace(indexEntry.get(Constants.Fields.TITLE).asText(), "/", "\\/");
             String newJPath = String.format(jpath, title);
-            List resultData = jsonPathContext.read(newJPath);
+            List <String> resultData = jsonPathContext.read(newJPath);
+            if(indexEntry.has(Constants.Facets.MATCH)) {
+                String match = indexEntry.get(Constants.Facets.MATCH).asText();
+                resultData = resultData.stream()
+                        .map(item -> {
+                            Matcher matcher = Pattern.compile(match).matcher(item);
+                            return matcher.find() ? matcher.group(1) : "";
+                        }).collect(Collectors.toList());
+            }
             switch (indexEntry.get(Constants.IndexEntryAttributes.FIELD_TYPE).asText()) {
                 case Constants.IndexEntryAttributes.FieldTypeValues.FACET:
                     result =  String.join(Constants.Facets.DELIMITER, resultData);
