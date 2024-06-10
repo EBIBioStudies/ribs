@@ -12,6 +12,7 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.util.BytesRef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.api.util.ExtractedLink;
@@ -20,6 +21,7 @@ import uk.ac.ebi.biostudies.config.IndexManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class TextMiningLinkUpdater {
@@ -31,7 +33,7 @@ public class TextMiningLinkUpdater {
     private static MessageDigest MESSAGE_DIGEST = null;
 
     private final Logger LOGGER = LogManager.getLogger(TextMiningLinkUpdater.class.getName());
-
+    private static AtomicBoolean SUBMITTED_LINK_IS_DIRTY = new AtomicBoolean(false);
     @Async
     public void receivedMessage(JsonNode msg) throws Exception {
         String accession = "";
@@ -95,7 +97,7 @@ public class TextMiningLinkUpdater {
             document.add(new TextField(Constants.Fields.CONTENT, extractedLink.getType(), Field.Store.YES));
         }
         indexManager.getSearchIndexWriter().updateDocument(new Term(Constants.Fields.ACCESSION, document.get(Constants.Fields.ACCESSION).toLowerCase()), document);
-        indexManager.getSearchIndexWriter().commit();
+//        indexManager.getSearchIndexWriter().commit();
 
     }
 
@@ -134,7 +136,24 @@ public class TextMiningLinkUpdater {
 
             indexManager.getExtractedLinkIndexWriter().addDocument(document);
         }
-        indexManager.getExtractedLinkIndexWriter().commit();
-        indexManager.refreshIndexSearcherAndReader();
+
+        if(!SUBMITTED_LINK_IS_DIRTY.get())
+            SUBMITTED_LINK_IS_DIRTY.set(true);
+    }
+
+    @Scheduled(fixedRate = 900000)
+    public void performCommitLuceneIndicesTask() {
+        if(!SUBMITTED_LINK_IS_DIRTY.get())
+            return;
+        else SUBMITTED_LINK_IS_DIRTY.set(false);
+        LOGGER.debug("Committing Lucene indices!");
+        try {
+            indexManager.getSearchIndexWriter().commit();
+            indexManager.getExtractedLinkIndexWriter().commit();
+            indexManager.refreshIndexSearcherAndReader();
+        }
+        catch (Exception exception){
+            LOGGER.debug(exception);
+        }
     }
 }
