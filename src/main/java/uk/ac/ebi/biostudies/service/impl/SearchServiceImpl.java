@@ -267,7 +267,7 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean isPublicStudy)
             throws IOException {
-        return getStudyAsStream(accession, relativePath, anonymise, storageMode, true);
+        return getStudyAsStream(accession, relativePath, anonymise, storageMode, true, isPublicStudy);
     }
 
     @Override
