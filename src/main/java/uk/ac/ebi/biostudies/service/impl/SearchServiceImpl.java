@@ -263,14 +263,15 @@ public class SearchServiceImpl implements SearchService {
         return response.toString();
     }
 
+
     @Override
-    public InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode)
+    public InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean isPublicStudy)
             throws IOException {
         return getStudyAsStream(accession, relativePath, anonymise, storageMode, true);
     }
 
     @Override
-    public InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean fillPagetabIndex)
+    public InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean fillPagetabIndex, boolean isPublicStudy)
             throws IOException {
 
         InputStream inputStream = null;
@@ -290,7 +291,7 @@ public class SearchServiceImpl implements SearchService {
                         inputStream = fireService.cloneFireS3ObjectStream(relativePath + "/" + accession + ".json");
                         break;
                     default:
-                        inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(), relativePath, accession + ".json").toFile());
+                        inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(isPublicStudy), relativePath, accession + ".json").toFile());
                 }
                 if(inputStream!=null){//cache miss, we do not have this pagetab in index so we will add it
                     byte []buffer = inputStream.readAllBytes();

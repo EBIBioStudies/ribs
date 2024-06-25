@@ -43,11 +43,11 @@ public class FileService {
             if (fileMetaData.getUiRequestedPath().equalsIgnoreCase(fileMetaData.getAccession() + ".tsv")) { // exception for fire file
                 fileMetaData.setUiRequestedPath(fileMetaData.getAccession()+ ".pagetab.tsv");
             }
-            fileMetaData.setPath(Paths.get(indexConfig.getFileRootDir(), fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath()));
+            fileMetaData.setPath(Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath()));
             return;
         }
 
-        Path downloadFile = Paths.get(indexConfig.getFileRootDir(), fileMetaData.getRelativePath() + (fileMetaData.isThumbnail() ? "/Thumbnails/" : "/Files/") + fileMetaData.getUiRequestedPath()+ (fileMetaData.isThumbnail() ? ".thumbnail.png" : ""));
+        Path downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + (fileMetaData.isThumbnail() ? "/Thumbnails/" : "/Files/") + fileMetaData.getUiRequestedPath()+ (fileMetaData.isThumbnail() ? ".thumbnail.png" : ""));
 
         //TODO: Remove this bad^∞ hack
         //Hack start: override relative path if file is not found
@@ -57,20 +57,20 @@ public class FileService {
             else
                 fileMetaData.setUiRequestedPath(fileMetaData.getUiRequestedPath().replaceAll(".tsv", ".pagetab.tsv"));
 
-            downloadFile = Paths.get(indexConfig.getFileRootDir(), fileMetaData.getRelativePath() + "/Files/" + fileMetaData.getUiRequestedPath());
+            downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + "/Files/" + fileMetaData.getUiRequestedPath());
         }
         if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS)) {
             logger.debug("{} not found ", downloadFile.toFile().getAbsolutePath());
-            downloadFile = Paths.get(indexConfig.getFileRootDir(), fileMetaData.getRelativePath() + "/Files/u/" + fileMetaData.getUiRequestedPath());
+            downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + "/Files/u/" + fileMetaData.getUiRequestedPath());
             logger.debug("Trying {}", downloadFile.toFile().getAbsolutePath());
         }
         if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS)) {
-            downloadFile = Paths.get(indexConfig.getFileRootDir(), fileMetaData.getUiRequestedPath() + "/Files/u/" + fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath());
+            downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getUiRequestedPath() + "/Files/u/" + fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath());
             logger.debug("Trying {}", downloadFile.toFile().getAbsolutePath());
         }
         if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS)) { // for file list
             logger.debug("{} not found ", downloadFile.toFile().getAbsolutePath());
-            downloadFile = Paths.get(indexConfig.getFileRootDir(), fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath());
+            downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath());
             logger.debug("Trying file list file {}", downloadFile.toFile().getAbsolutePath());
         }
         //Hack end

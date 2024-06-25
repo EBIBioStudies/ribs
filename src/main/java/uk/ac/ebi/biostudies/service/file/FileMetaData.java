@@ -44,12 +44,13 @@ public class FileMetaData {
         this.collection = collection;
     }
 
-    public FileMetaData(String accession, String uiRequestedPath, String fileName, String relativePath, Constants.File.StorageMode storageMode) {
+    public FileMetaData(String accession, String uiRequestedPath, String fileName, String relativePath, boolean isPublicStudy, Constants.File.StorageMode storageMode) {
         this.accession = accession;
         this.uiRequestedPath = uiRequestedPath;
         this.relativePath = relativePath;
         this.fileName = fileName;
         this.storageMode = storageMode;
+        this.isPublic = isPublicStudy;
     }
 
     public InputStream getInputStream() {

@@ -111,8 +111,11 @@ public class IndexConfig implements InitializingBean, DisposableBean {
         return thumbnailDir;
     }
 
-    public String getFileRootDir() {
-        return baseDirectory + submissionsDirectory;
+    public String getFileRootDir(boolean isPublicStudy) {
+        if(isPublicStudy)
+            return submissionsDirectory;
+        else
+            return submissionsDirectory+ (submissionsDirectory.endsWith("/")? ".private": "/.private");
     }
 
     public String getFtpDir() {

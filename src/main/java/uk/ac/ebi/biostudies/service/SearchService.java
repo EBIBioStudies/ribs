@@ -19,9 +19,9 @@ public interface SearchService {
 
     void clearStatsCache();
 
-    InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode) throws IOException;
+    InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean isPublicStudy) throws IOException;
 
-    InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean fillPagetabFromIndex) throws IOException;
+    InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean fillPagetabFromIndex, boolean isPublicStudy) throws IOException;
 
     ObjectNode getSimilarStudies(String accession, String secretKey) throws Throwable;
 

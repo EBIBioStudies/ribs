@@ -8,6 +8,7 @@ import org.apache.lucene.document.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.service.SearchService;
 import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
@@ -67,7 +68,7 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
 
         response.setContentType("application/zip");
         response.addHeader("Content-Disposition", "attachment; filename=" + accession + ".zip");
-        String rootFolder = indexConfig.getFileRootDir();
+        String rootFolder = indexConfig.getFileRootDir(StudyUtils.isPublicStudy(doc));
 
         try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(response.getOutputStream()))) {
             if (storageMode == Constants.File.StorageMode.FIRE)
@@ -86,7 +87,7 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
         InputStream zipInputStream = null;
         for (String fileEntry : files) {
             final String fileName = StringUtils.replace(fileEntry, "..", ".");
-            FileMetaData fireFile = new FileMetaData(accession, fileName, fileName, relativePath, Constants.File.StorageMode.FIRE);
+            FileMetaData fireFile = new FileMetaData(accession, fileName, fileName, relativePath, true, Constants.File.StorageMode.FIRE);
             try {
                 fileService.getDownloadFile(fireFile);
                 zipInputStream = fireFile.getInputStream();

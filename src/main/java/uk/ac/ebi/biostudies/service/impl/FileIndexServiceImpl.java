@@ -159,7 +159,7 @@ public class FileIndexServiceImpl implements FileIndexService {
         }
     }
 
-    public Map<String, Object> indexSubmissionFiles(String accession, String relativePath, JsonNode json, IndexWriter writer, Set<String> attributeColumns, boolean removeFileDocuments) throws IOException {
+    public Map<String, Object> indexSubmissionFiles(String accession, String relativePath, JsonNode json, IndexWriter writer, Set<String> attributeColumns, boolean removeFileDocuments, boolean isPublicStudy) throws IOException {
         Map<String, Object> valueMap = new HashMap<>();
         AtomicLong counter = new AtomicLong();
         List<String> columns = Collections.synchronizedList(new ArrayList<>());
@@ -204,6 +204,7 @@ public class FileIndexServiceImpl implements FileIndexService {
             FileMetaData fileList = new FileMetaData(accession);
             fileList.setUiRequestedPath(filename + (filename.toLowerCase().endsWith(".json") ? "" : ".json"));
             fileList.setRelativePath(relativePath);
+            fileList.setPublic(isPublicStudy);
             try {
                 Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(json.get(Constants.Fields.STORAGE_MODE).asText());
                 fileList.setStorageMode(storageMode);

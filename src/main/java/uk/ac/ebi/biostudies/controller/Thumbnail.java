@@ -76,7 +76,7 @@ public class Thumbnail {
             } catch (Exception exception) {
                 logger.error("problem in encoding thumbnail image name {}", name, exception);
             }
-            thumbnails.sendThumbnail(response, accession, relativePath, name, storageMode);
+            thumbnails.sendThumbnail(response, accession, relativePath, name, storageMode, StudyUtils.isPublicStudy(document));
         } catch (IOException e) {
             logger.error("problem in creating thumbnail ", e);
         }
