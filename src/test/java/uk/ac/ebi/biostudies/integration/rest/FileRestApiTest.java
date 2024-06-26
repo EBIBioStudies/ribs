@@ -210,7 +210,7 @@ public class FileRestApiTest {
         String pathToFile = getClass().getClassLoader().getResource(ACCESSION + ".json").getPath().replaceAll("/S-EPMC3372839.json", "");
         if ((pathToFile.charAt(0) == '\\' || pathToFile.charAt(0) == '/') && pathToFile.charAt(2) == ':')
             pathToFile = pathToFile.substring(1);
-        doReturn(pathToFile).when(indexConfigMock).getFileRootDir(true);
+        doReturn(pathToFile).when(indexConfigMock).getFileRootDir(Mockito.anyBoolean());
         Document privateLuceneDoc = new Document();
         privateLuceneDoc.add(new StringField(Constants.Fields.ACCESS, "test1", Field.Store.YES));
         privateLuceneDoc.add(new StringField(Constants.Fields.ACCESSION, ACCESSION, Field.Store.YES));
@@ -252,7 +252,7 @@ public class FileRestApiTest {
         String pathToFile = getClass().getClassLoader().getResource("updates/Files/A.txt").getPath().replaceAll("/updates/Files/A.txt", "");
         if ((pathToFile.charAt(0) == '\\' || pathToFile.charAt(0) == '/') && pathToFile.charAt(2) == ':')
             pathToFile = pathToFile.substring(1);
-        doReturn(pathToFile).when(indexConfigMock).getFileRootDir(true);
+        doReturn(pathToFile).when(indexConfigMock).getFileRootDir(Mockito.anyBoolean());
         Document privateLuceneDoc = new Document();
         privateLuceneDoc.add(new StringField(Constants.Fields.ACCESS, "test1", Field.Store.YES));
         privateLuceneDoc.add(new StringField(Constants.Fields.ACCESSION, ACCESSION, Field.Store.YES));
