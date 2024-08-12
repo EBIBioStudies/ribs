@@ -389,7 +389,7 @@ var FileTable = (function (_self) {
                 });
             }
         });
-        if (!sorting && !collection.toLowerCase() === 'bioimages') {
+        if (!sorting && collection.toLowerCase() !== 'bioimages') {
             FileTable.hideEmptyColumns();
         } else {
             sorting = false;
