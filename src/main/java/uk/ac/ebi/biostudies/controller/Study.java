@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.api.util.PublicRESTMethod;
 import uk.ac.ebi.biostudies.api.util.StudyUtils;
+import uk.ac.ebi.biostudies.auth.Session;
 import uk.ac.ebi.biostudies.service.FilePaginationService;
 import uk.ac.ebi.biostudies.service.SearchService;
 import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
@@ -112,6 +113,8 @@ public class Study {
         String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
         String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
+        if(Session.getCurrentUser()!=null && Session.getCurrentUser().isSuperUser())
+            seckey = document.get(Constants.Fields.SECRET_KEY);
         InputStreamResource result;
         try {
             result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, seckey != null, storageMode, StudyUtils.isPublicStudy(document), seckey);
