@@ -38,6 +38,8 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
     IndexConfig indexConfig;
     @Autowired
     FileService fileService;
+    @Autowired
+    StudyUtils studyUtils;
 
     @Override
     public void sendZip(HttpServletRequest request, HttpServletResponse response, String[] files, Constants.File.StorageMode storageMode) throws Exception {
@@ -60,15 +62,18 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
         }
         String accession = doc.get(Constants.Fields.ACCESSION);
         String relativePath = doc.get(Constants.Fields.RELATIVE_PATH);
-
+        String docKey = doc.get(Constants.Fields.SECRET_KEY);
+        boolean isPublicStudy = StudyUtils.isPublicStudy(doc);
         if (relativePath == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             throw new Exception("File does not exist or user does not have the rights to download it.");
         }
-
         response.setContentType("application/zip");
         response.addHeader("Content-Disposition", "attachment; filename=" + accession + ".zip");
-        String rootFolder = indexConfig.getFileRootDir(StudyUtils.isPublicStudy(doc));
+        if(!isPublicStudy) {
+            relativePath = studyUtils.modifyRelativePathForPrivateStudies(docKey, relativePath);
+        }
+        String rootFolder = indexConfig.getFileRootDir(isPublicStudy);
 
         try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(response.getOutputStream()))) {
             if (storageMode == Constants.File.StorageMode.FIRE)

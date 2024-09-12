@@ -38,6 +38,8 @@ public class Thumbnail {
     SearchService searchService;
     @Autowired
     FileDownloadService fileDownloadService;
+    @Autowired
+    StudyUtils studyUtils;
 
 
     /**
@@ -68,6 +70,10 @@ public class Thumbnail {
             String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
             String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
             Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
+            boolean isPublicStudy = StudyUtils.isPublicStudy(document);
+            if(!isPublicStudy && storageMode == Constants.File.StorageMode.NFS) {
+                relativePath = studyUtils.modifyRelativePathForPrivateStudies(document.get(Constants.Fields.SECRET_KEY), relativePath);
+            }
             try {
                 name = URLDecoder.decode(name, StandardCharsets.UTF_8.name());
                 if(storageMode == Constants.File.StorageMode.FIRE) {
@@ -76,7 +82,7 @@ public class Thumbnail {
             } catch (Exception exception) {
                 logger.error("problem in encoding thumbnail image name {}", name, exception);
             }
-            thumbnails.sendThumbnail(response, accession, relativePath, name, storageMode, StudyUtils.isPublicStudy(document));
+            thumbnails.sendThumbnail(response, accession, relativePath, name, storageMode, isPublicStudy);
         } catch (IOException e) {
             logger.error("problem in creating thumbnail ", e);
         }

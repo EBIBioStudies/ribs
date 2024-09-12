@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
+import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.auth.UserSecurityService;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.integration.utils.IntegrationTestProperties;
@@ -39,6 +40,8 @@ public class SearchTest  extends WebDriverTest {
     private SearchService searchServiceMock;
     @SpyBean
     private IndexConfig indexConfigMock;
+    @SpyBean
+    private StudyUtils studyUtils;
 
     @Test
     public void testPageStats() {

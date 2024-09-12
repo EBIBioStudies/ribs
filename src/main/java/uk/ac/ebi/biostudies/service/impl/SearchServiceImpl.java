@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.api.util.analyzer.AnalyzerManager;
 import uk.ac.ebi.biostudies.api.util.analyzer.AttributeFieldAnalyzer;
 import uk.ac.ebi.biostudies.auth.Session;
@@ -87,6 +88,8 @@ public class SearchServiceImpl implements SearchService {
     QueryService queryService;
     @Autowired
     FireService fireService;
+    @Autowired
+    StudyUtils studyUtils;
 
     @PostConstruct
     void init() {
@@ -265,13 +268,13 @@ public class SearchServiceImpl implements SearchService {
 
 
     @Override
-    public InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean isPublicStudy)
+    public InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean isPublicStudy, String secretKey)
             throws IOException {
-        return getStudyAsStream(accession, relativePath, anonymise, storageMode, true, isPublicStudy);
+        return getStudyAsStream(accession, relativePath, anonymise, storageMode, true, isPublicStudy, secretKey);
     }
 
     @Override
-    public InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean fillPagetabIndex, boolean isPublicStudy)
+    public InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean fillPagetabIndex, boolean isPublicStudy, String secretKey)
             throws IOException {
 
         InputStream inputStream = null;
@@ -291,6 +294,9 @@ public class SearchServiceImpl implements SearchService {
                         inputStream = fireService.cloneFireS3ObjectStream(relativePath + "/" + accession + ".json");
                         break;
                     default:
+                        if(!isPublicStudy) {
+                            relativePath = studyUtils.modifyRelativePathForPrivateStudies(secretKey, relativePath);
+                        }
                         inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(isPublicStudy), relativePath, accession + ".json").toFile());
                 }
                 if(inputStream!=null){//cache miss, we do not have this pagetab in index so we will add it

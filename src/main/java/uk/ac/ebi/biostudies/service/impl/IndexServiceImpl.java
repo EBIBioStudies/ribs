@@ -309,7 +309,7 @@ public class IndexServiceImpl implements IndexService {
                 InputStreamResource result;
                 byte[] pagetabContent;
                 try {
-                    result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, false, storageMode, false);
+                    result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, false, storageMode, true, document.get(Fields.SECRET_KEY));
                     pagetabContent = result.getInputStream().readAllBytes();
                     Document pagetabDoc = new Document();
                     pagetabDoc.add(new StringField(Constants.Fields.ACCESSION, accession, Field.Store.YES));

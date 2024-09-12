@@ -26,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.auth.UserSecurityService;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.integration.utils.IntegrationTestProperties;
@@ -34,7 +35,10 @@ import uk.ac.ebi.biostudies.service.SearchService;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -42,6 +46,9 @@ public class FileRestApiTest {
 
     @SpyBean
     private IndexConfig indexConfigMock;
+
+    @SpyBean
+    private StudyUtils studyUtils;
 
     @SpyBean
     UserSecurityService userSecurityServiceMock;
@@ -69,7 +76,7 @@ public class FileRestApiTest {
      */
     public void getStudyFromRestAPI() throws Exception {
         doReturn(new InputStreamResource(getClass().getClassLoader().getResource(ACCESSION + ".json").openStream()))
-                .when(searchServiceMock).getStudyAsStream(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.any(), Mockito.anyBoolean());
+                .when(searchServiceMock).getStudyAsStream(anyString(), anyString(), Mockito.anyBoolean(), any(), Mockito.anyBoolean(), any());
         String baseUrl = integrationTestProperties.getBaseUrl(randomPort);
         String result = testRestTemplate.getForObject(baseUrl + "api/v1/studies/" + ACCESSION, String.class);
         ObjectMapper mapper = new ObjectMapper();
@@ -94,7 +101,7 @@ public class FileRestApiTest {
         if ((pathToFile.charAt(0) == '\\' || pathToFile.charAt(0) == '/') && pathToFile.charAt(2) == ':')
             pathToFile = pathToFile.substring(1);
         doReturn(pathToFile).when(indexConfigMock).getFileRootDir(Mockito.anyBoolean());
-        InputStreamResource myFileStream = searchServiceImpl.getStudyAsStream(ACCESSION, "", true, Constants.File.StorageMode.NFS, true);
+        InputStreamResource myFileStream = searchServiceImpl.getStudyAsStream(ACCESSION, "", true, Constants.File.StorageMode.NFS, true, "");
         ReadContext jsonPathContext = JsonPath.parse(myFileStream.getInputStream());
         JSONArray authors = jsonPathContext.read("$.section.subsections[?(@.type==\"Author\")].attributes[?(@.name==\"Name\")].value");
         JSONArray organizations = jsonPathContext.read("$.section.subsections[?(@.type==\"Organization\")].attributes[?(@.name==\"Name\")].value");
@@ -108,7 +115,7 @@ public class FileRestApiTest {
      */
     public void getFileInfoRestApiPublicAccess() throws Exception {
         doReturn(new InputStreamResource(getClass().getClassLoader().getResource(ACCESSION + ".json").openStream()))
-                .when(searchServiceMock).getStudyAsStream(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.any(), Mockito.anyBoolean());
+                .when(searchServiceMock).getStudyAsStream(anyString(), anyString(), Mockito.anyBoolean(), any(), Mockito.anyBoolean(), anyString());
         String baseUrl = integrationTestProperties.getBaseUrl(randomPort);
         String result = testRestTemplate.getForObject(baseUrl + "api/v1/studies/" + ACCESSION + "/info", String.class);
         ObjectMapper mapper = new ObjectMapper();
@@ -183,6 +190,7 @@ public class FileRestApiTest {
      */
     public void fileGetDownloadRestApi() throws Exception {
         String baseUrl = integrationTestProperties.getBaseUrl(randomPort);
+        when(studyUtils.modifyRelativePathForPrivateStudies(anyString(), anyString())).thenReturn("");
         String pathToFile = getClass().getClassLoader().getResource(ACCESSION + ".json").getPath().replaceAll("/S-EPMC3372839.json", "");
         if ((pathToFile.charAt(0) == '\\' || pathToFile.charAt(0) == '/') && pathToFile.charAt(2) == ':')
             pathToFile = pathToFile.substring(1);
@@ -192,7 +200,7 @@ public class FileRestApiTest {
         privateLuceneDoc.add(new StringField(Constants.Fields.ACCESSION, ACCESSION, Field.Store.YES));
         privateLuceneDoc.add(new StringField(Constants.Fields.RELATIVE_PATH, "", Field.Store.YES));
         privateLuceneDoc.add(new StringField(Constants.Fields.SECRET_KEY, "test12345", Field.Store.YES));
-        doReturn(privateLuceneDoc).when(searchServiceMock).getDocumentByAccession(Mockito.anyString(), Mockito.any());
+        doReturn(privateLuceneDoc).when(searchServiceMock).getDocumentByAccession(anyString(), any());
 
         String result = testRestTemplate.getForObject(baseUrl + "files/" + ACCESSION + "/" + ACCESSION + ".json", String.class);
         assertNotNull(result);
@@ -216,7 +224,7 @@ public class FileRestApiTest {
         privateLuceneDoc.add(new StringField(Constants.Fields.ACCESSION, ACCESSION, Field.Store.YES));
         privateLuceneDoc.add(new StringField(Constants.Fields.RELATIVE_PATH, "", Field.Store.YES));
         privateLuceneDoc.add(new StringField(Constants.Fields.SECRET_KEY, "test12345", Field.Store.YES));
-        doReturn(privateLuceneDoc).when(searchServiceMock).getDocumentByAccession(Mockito.anyString(), Mockito.any());
+        doReturn(privateLuceneDoc).when(searchServiceMock).getDocumentByAccession(anyString(), any());
 
         String result = testRestTemplate.getForObject(baseUrl + "files/" + ACCESSION + "/" + ACCESSION + ".json?key=test12345", String.class);
         assertNotNull(result);
@@ -234,13 +242,13 @@ public class FileRestApiTest {
         if ((pathToFile.charAt(0) == '\\' || pathToFile.charAt(0) == '/') && pathToFile.charAt(2) == ':')
             pathToFile = pathToFile.substring(1);
         doReturn(pathToFile).when(indexConfigMock).getFileRootDir(Mockito.anyBoolean());
+        when(studyUtils.modifyRelativePathForPrivateStudies(anyString(), anyString())).thenReturn("");
         Document privateLuceneDoc = new Document();
         privateLuceneDoc.add(new StringField(Constants.Fields.ACCESS, "test1", Field.Store.YES));
         privateLuceneDoc.add(new StringField(Constants.Fields.ACCESSION, ACCESSION, Field.Store.YES));
         privateLuceneDoc.add(new StringField(Constants.Fields.RELATIVE_PATH, "", Field.Store.YES));
         privateLuceneDoc.add(new StringField(Constants.Fields.SECRET_KEY, "test12345", Field.Store.YES));
-        doReturn(privateLuceneDoc).when(searchServiceMock).getDocumentByAccession(Mockito.anyString(), Mockito.any());
-
+        doReturn(privateLuceneDoc).when(searchServiceMock).getDocumentByAccession(anyString(), any());
         String result = testRestTemplate.getForObject(baseUrl + "files/" + ACCESSION + "/test.properties?key=test12345", String.class);
         assertNotNull(result);
         assertTrue(result.contains("test"));
@@ -258,7 +266,7 @@ public class FileRestApiTest {
         privateLuceneDoc.add(new StringField(Constants.Fields.ACCESSION, ACCESSION, Field.Store.YES));
         privateLuceneDoc.add(new StringField(Constants.Fields.RELATIVE_PATH, "updates", Field.Store.YES));
         privateLuceneDoc.add(new StringField(Constants.Fields.SECRET_KEY, "test12345", Field.Store.YES));
-        doReturn(privateLuceneDoc).when(searchServiceMock).getDocumentByAccession(Mockito.anyString(), Mockito.any());
+        doReturn(privateLuceneDoc).when(searchServiceMock).getDocumentByAccession(anyString(), any());
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("type", "zip");
         map.add("files", "A.txt");

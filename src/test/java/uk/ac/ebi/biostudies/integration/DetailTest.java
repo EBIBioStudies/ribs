@@ -17,6 +17,8 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.test.context.junit4.SpringRunner;
+import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.auth.UserSecurityService;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.integration.utils.IntegrationTestProperties;
@@ -46,11 +48,13 @@ public class DetailTest extends WebDriverTest {
     private SearchService searchServiceMock;
     @SpyBean
     private IndexConfig indexConfigMock;
+    @SpyBean
+    private StudyUtils studyUtils;
 
     //@Test
     public void testFileCount() throws Exception {
         doReturn(new InputStreamResource(getClass().getClassLoader().getResource("S-EPMC3372839").openStream())).when(searchServiceMock)
-                .getStudyAsStream(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.any(), Mockito.anyBoolean());
+                .getStudyAsStream(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.any(Constants.File.StorageMode.class), Mockito.anyBoolean(), Mockito.any());
         String baseUrl = integrationTestProperties.getBaseUrl(randomPort);
         webDriver.get(baseUrl + "studies/S-EPMC3372839");
         int expectedFileCount = 1;
@@ -79,7 +83,7 @@ public class DetailTest extends WebDriverTest {
     //@Test
     public void testLinkCount() throws Throwable {
         doReturn(new InputStreamResource(getClass().getClassLoader().getResource("S-EPMC3372839").openStream())).when(searchServiceMock)
-                .getStudyAsStream(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.any(), Mockito.anyBoolean());
+                .getStudyAsStream(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.any(Constants.File.StorageMode.class), Mockito.anyBoolean(), Mockito.any());
         String baseUrl = integrationTestProperties.getBaseUrl(randomPort);
         webDriver.get(baseUrl + "studies/S-EPMC3372839");
         int expectedLinkCount = 1;
@@ -110,7 +114,7 @@ public class DetailTest extends WebDriverTest {
         String accession = "S-EPMC6160819";
         String file = accession + ".json";
         doReturn(new InputStreamResource(getClass().getClassLoader().getResource(file).openStream())).when(searchServiceMock)
-                .getStudyAsStream(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.any(), Mockito.anyBoolean());
+                .getStudyAsStream(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.any(Constants.File.StorageMode.class), Mockito.anyBoolean(), Mockito.any());
         String baseUrl = integrationTestProperties.getBaseUrl(randomPort);
         webDriver.get(baseUrl + "studies?query=" + accession);
         WebDriverWait wait = new WebDriverWait(webDriver, 20);
@@ -163,7 +167,8 @@ public class DetailTest extends WebDriverTest {
         String accession = "S-EPMC6160819";
         String file = accession + ".json";
         doReturn(new InputStreamResource(getClass().getClassLoader().getResource(file).openStream()))
-                .when(searchServiceMock).getStudyAsStream(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.any(), Mockito.anyBoolean());
+                .when(searchServiceMock).getStudyAsStream(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.any(Constants.File.StorageMode.class), Mockito.anyBoolean(), Mockito.any());
+
         String baseUrl = integrationTestProperties.getBaseUrl(randomPort);
         webDriver.get(baseUrl + "studies/" + accession);
         WebDriverWait wait = new WebDriverWait(webDriver, 50);

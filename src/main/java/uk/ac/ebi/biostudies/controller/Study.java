@@ -114,7 +114,7 @@ public class Study {
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
         InputStreamResource result;
         try {
-            result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, seckey != null, storageMode, StudyUtils.isPublicStudy(document));
+            result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, seckey != null, storageMode, StudyUtils.isPublicStudy(document), seckey);
         } catch (IOException e) {
             logger.error(e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
