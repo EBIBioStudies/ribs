@@ -113,7 +113,7 @@ public class Study {
         String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
         String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
-        if(Session.getCurrentUser()!=null && Session.getCurrentUser().isSuperUser())
+        if(Session.getCurrentUser()!=null)
             seckey = document.get(Constants.Fields.SECRET_KEY);
         InputStreamResource result;
         try {
