@@ -38,8 +38,7 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
     IndexConfig indexConfig;
     @Autowired
     FileService fileService;
-    @Autowired
-    StudyUtils studyUtils;
+
 
     @Override
     public void sendZip(HttpServletRequest request, HttpServletResponse response, String[] files, Constants.File.StorageMode storageMode) throws Exception {
@@ -71,7 +70,7 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
         response.setContentType("application/zip");
         response.addHeader("Content-Disposition", "attachment; filename=" + accession + ".zip");
         if(!isPublicStudy) {
-            relativePath = studyUtils.modifyRelativePathForPrivateStudies(docKey, relativePath);
+            relativePath = StudyUtils.modifyRelativePathForPrivateStudies(docKey, relativePath);
         }
         String rootFolder = indexConfig.getFileRootDir(isPublicStudy);
 

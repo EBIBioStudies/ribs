@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.service.file.FileMetaData;
 
 import java.util.Arrays;
 import java.util.List;
@@ -70,6 +71,7 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() {
         STOP_WORDS = new CharArraySet(Arrays.asList(stopwords.split(",")), false);
+        FileMetaData.BASE_FTP_URL = getFttpOverHttpUrl();
     }
 
 
@@ -120,6 +122,10 @@ public class IndexConfig implements InitializingBean, DisposableBean {
 
     public String getFtpDir() {
         return ftpDir;
+    }
+
+    public String getFttpOverHttpUrl() {
+        return ftpDir.replaceFirst("ftp://", "https://");
     }
 
     public String getGlobusUrl() {

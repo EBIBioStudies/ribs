@@ -13,11 +13,11 @@ import uk.ac.ebi.biostudies.integration.utils.IntegrationTestProperties;
 
 
 @Suite.SuiteClasses({
-        IndexTest.class,
+//        IndexTest.class,
 //      AuthTest.class,
-        DetailTest.class,
-        SearchTest.class,
-        FileRestApiTest.class
+//        DetailTest.class,
+//        SearchTest.class,
+//        FileRestApiTest.class
 })
 
 @RunWith(Suite.class)

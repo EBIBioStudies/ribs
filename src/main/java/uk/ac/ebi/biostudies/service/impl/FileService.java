@@ -6,11 +6,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.HttpTools;
 import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
 
 import java.io.FileNotFoundException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -39,43 +41,36 @@ public class FileService {
 
     private void resolveNfsPath(FileMetaData fileMetaData) throws FileNotFoundException {
 
-        if (StudyUtils.isPageTabFile(fileMetaData.getAccession(), fileMetaData.getUiRequestedPath())) {
-            if (fileMetaData.getUiRequestedPath().equalsIgnoreCase(fileMetaData.getAccession() + ".tsv")) { // exception for fire file
-                fileMetaData.setUiRequestedPath(fileMetaData.getAccession()+ ".pagetab.tsv");
-            }
-            fileMetaData.setPath(Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath()));
-            return;
-        }
+        String relativePath = "";
+        //TODO fix path for private studies
+        Path downloadFile = Paths.get( fileMetaData.getRelativePath() + (fileMetaData.isThumbnail() ? "/Thumbnails/" : "/Files/") + fileMetaData.getUiRequestedPath()+ (fileMetaData.isThumbnail() ? ".thumbnail.png" : ""));
 
-        Path downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + (fileMetaData.isThumbnail() ? "/Thumbnails/" : "/Files/") + fileMetaData.getUiRequestedPath()+ (fileMetaData.isThumbnail() ? ".thumbnail.png" : ""));
-
-        //TODO: Remove this bad^∞ hack
         //Hack start: override relative path if file is not found
-        if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS) && fileMetaData.getUiRequestedPath().endsWith(".tsv")) {
-            if (fileMetaData.getUiRequestedPath().endsWith(".pagetab.tsv"))
-                fileMetaData.setUiRequestedPath(fileMetaData.getUiRequestedPath().replaceAll(".pagetab.tsv", ".tsv"));
-            else
-                fileMetaData.setUiRequestedPath(fileMetaData.getUiRequestedPath().replaceAll(".tsv", ".pagetab.tsv"));
-
-            downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + "/Files/" + fileMetaData.getUiRequestedPath());
-        }
-        if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS)) {
-            logger.debug("{} not found ", downloadFile.toFile().getAbsolutePath());
-            downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + "/Files/u/" + fileMetaData.getUiRequestedPath());
-            logger.debug("Trying {}", downloadFile.toFile().getAbsolutePath());
-        }
-        if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS)) {
-            downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getUiRequestedPath() + "/Files/u/" + fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath());
-            logger.debug("Trying {}", downloadFile.toFile().getAbsolutePath());
-        }
-        if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS)) { // for file list
-            logger.debug("{} not found ", downloadFile.toFile().getAbsolutePath());
-            downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath());
-            logger.debug("Trying file list file {}", downloadFile.toFile().getAbsolutePath());
-        }
+//        if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS) && fileMetaData.getUiRequestedPath().endsWith(".tsv")) {
+//            if (fileMetaData.getUiRequestedPath().endsWith(".pagetab.tsv"))
+//                fileMetaData.setUiRequestedPath(fileMetaData.getUiRequestedPath().replaceAll(".pagetab.tsv", ".tsv"));
+//            else
+//                fileMetaData.setUiRequestedPath(fileMetaData.getUiRequestedPath().replaceAll(".tsv", ".pagetab.tsv"));
+//
+//            downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + "/Files/" + fileMetaData.getUiRequestedPath());
+//        }
+//        if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS)) {
+//            logger.debug("{} not found ", downloadFile.toFile().getAbsolutePath());
+//            downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + "/Files/u/" + fileMetaData.getUiRequestedPath());
+//            logger.debug("Trying {}", downloadFile.toFile().getAbsolutePath());
+//        }
+//        if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS)) {
+//            downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getUiRequestedPath() + "/Files/u/" + fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath());
+//            logger.debug("Trying {}", downloadFile.toFile().getAbsolutePath());
+//        }
+//        if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS)) { // for file list
+//            logger.debug("{} not found ", downloadFile.toFile().getAbsolutePath());
+//            downloadFile = Paths.get(indexConfig.getFileRootDir(fileMetaData.isPublic()), fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath());
+//            logger.debug("Trying file list file {}", downloadFile.toFile().getAbsolutePath());
+//        }
         //Hack end
-        if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS)) {
-            logger.error("Could not find {}", downloadFile.toFile().getAbsolutePath());
+        if (!HttpTools.isValidUrl(downloadFile)) {
+            logger.error("Could not find on FTP server {}", downloadFile);
             throw new FileNotFoundException();
         }
         fileMetaData.setPath(downloadFile);

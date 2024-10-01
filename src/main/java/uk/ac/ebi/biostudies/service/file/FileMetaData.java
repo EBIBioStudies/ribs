@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.HttpTools;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +29,7 @@ public class FileMetaData {
     private S3Object s3Object;
     private Constants.File.StorageMode storageMode;
     private InputStream inputStream;
+    public static String BASE_FTP_URL;
 
     public FileMetaData(String accession) {
         this.accession = accession;
@@ -58,11 +60,11 @@ public class FileMetaData {
             if (inputStream != null) return inputStream;
             if (s3Object != null) {
                 inputStream = s3Object.getObjectContent();
-            } else if (storageMode == Constants.File.StorageMode.NFS && path != null && Files.exists(path)) {
-                inputStream = Files.newInputStream(path);
+            } else if (storageMode == Constants.File.StorageMode.NFS && path != null && HttpTools.isValidUrl(path)) {
+                inputStream = HttpTools.fetchLargeFileStream(BASE_FTP_URL+path.toString());
             }
         } catch (Exception exception) {
-            LOGGER.error("problem in sending inputstream {}", fileName, exception);
+            LOGGER.error("problem in sending ftp inputstream {}", fileName, exception);
         }
         return inputStream;
     }

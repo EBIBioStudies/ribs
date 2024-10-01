@@ -23,14 +23,18 @@ var CollectionsPage = (function (_self) {
         $("div[data-type='collection']").each( function() {
             var $prj = $(this), accession = $(this).data('accession');
             $('a',$prj).attr('href',contextPath+'/'+accession+'/studies');
-            $.getJSON(contextPath+ '/api/v1/collections/'+accession, function (data) {
-                var path = data.section.files.path;
-                if (!path && data.section.files[0]) path =data.section.files[0].path;
-                if (!path && data.section.files[0][0]) path = data.section.files[0][0].path;
-                if (path) {
-                    $prj.prepend('<div><a class="collection-logo" href="' + contextPath + '/' + accession + '/studies">' +
-                        '<img src="' + contextPath + '/files/' + accession + '/' + path + '" alt="'+ accession +'"/>'
-                        + '</a></div>');
+            $.getJSON(contextPath+ '/api/v1/collections/'+accession, function (linkData) {
+                if(linkData.link) {
+                    $.getJSON(linkData.link + accession + ".json", function (data) {
+                        var path = data.section.files.path;
+                        if (!path && data.section.files[0]) path = data.section.files[0].path;
+                        if (!path && data.section.files[0][0]) path = data.section.files[0][0].path;
+                        if (path) {
+                            $prj.prepend('<div><a class="collection-logo" href="' + contextPath + '/' + accession + '/studies">' +
+                                '<img src="' + linkData.link +  '/Files/' + path + '" alt="' + accession + '"/>'
+                                + '</a></div>');
+                        }
+                    })
                 }
             })
         });

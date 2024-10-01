@@ -33,7 +33,7 @@ var DownloadDialog = (function (_self) {
 
         $("#zip-dl-button").on('click', function () {
             $('#zip-dl-button').attr('disabled', 'disabled');
-            downloadZip(key, filelist, hasZippedFolders).then(() => $("#zip-dl-button").removeAttr('disabled'));
+            downloadZip(key, filelist, hasZippedFolders, relativePath).then(() => $("#zip-dl-button").removeAttr('disabled'));
         });
 
         $("#ftp-dl-button").on('click', function () {
@@ -58,18 +58,17 @@ var DownloadDialog = (function (_self) {
         });
     }
 
-    async function downloadZip(key, filelist, hasZippedFolders) {
+    async function downloadZip(key, filelist, hasZippedFolders, relativePath) {
         const httpBaseUrl = $('#http-link').attr('href');
         const acc = $('#accession').text().trim();
         const zip = new JSZip();
         for (let filename of filelist) {
-            const url = window.contextPath + '/files/' + acc + '/' + unescape(encodeURIComponent(filename)).replaceAll('#', '%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
+            const url = ftpURL + "Files/"  + unescape(encodeURIComponent(filename)).replaceAll('#', '%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
                     .replaceAll("[", "%5B").replaceAll("]", "%5D")
-                + (key ? '?key=' + key : '');
+                // + (key ? '?key=' + key : '');
             $('#downloadMessage').text("Downloading " + filename + " (0%)");
             abortController = new AbortController();
             const response = await fetch(url, {signal: abortController.signal}).catch(function (err) {
-                debugger
                 console.error(` Err: ${err}`);
             });
             const contentLength = +response?.headers?.get('Content-Length');

@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="${contextPath}/css/detail.css" type="text/css">
         <script>
             var thorURL = '${thorURL}';
+            var ftpURL = '';
         </script>
         <jwr:script src="/js/detail.min.js"/>
     </jsp:attribute>

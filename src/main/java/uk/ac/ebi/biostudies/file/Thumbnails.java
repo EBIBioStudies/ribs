@@ -28,6 +28,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.HttpTools;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.file.thumbnails.*;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
@@ -184,10 +185,9 @@ public class Thumbnails implements InitializingBean, DisposableBean {
     }
 
     public boolean hasThumbnailsFolder(String accession, String relativePath, Constants.File.StorageMode storageMode, boolean isPublicStudy) {
-        boolean thumbnailFolderExists = false;
+        boolean thumbnailFolderExists;
         if (storageMode == Constants.File.StorageMode.NFS) {
-            File file = new File(indexConfig.getFileRootDir(isPublicStudy) + "/" + relativePath + "/Thumbnails/");
-            thumbnailFolderExists = file.exists();
+            thumbnailFolderExists = HttpTools.isValidUrl(indexConfig.getFileRootDir(isPublicStudy) + "/" + relativePath + "/Thumbnails/");
         } else {
             thumbnailFolderExists = fireService.isValidFolder(relativePath + "/Thumbnails/");
         }

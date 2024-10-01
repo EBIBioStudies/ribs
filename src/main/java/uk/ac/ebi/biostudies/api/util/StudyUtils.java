@@ -9,7 +9,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-@Component
 public class StudyUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(StudyUtils.class.getName());
@@ -61,7 +60,7 @@ public class StudyUtils {
         return true;
     }
 
-    public String modifyRelativePathForPrivateStudies(String secretKey, String relativePath){
+    public static String modifyRelativePathForPrivateStudies(String secretKey, String relativePath){
         if(secretKey==null || secretKey.isEmpty() || secretKey.length()<2)
             return relativePath;
         return secretKey.substring(0, 2)+"/"+secretKey.substring(2)+"/"+relativePath;
