@@ -296,7 +296,7 @@ public class SearchServiceImpl implements SearchService {
                         if(!isPublicStudy) {
                             relativePath = StudyUtils.modifyRelativePathForPrivateStudies(secretKey, relativePath);
                         }
-                        inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(isPublicStudy), relativePath, accession + ".json").toFile());
+                        inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(), relativePath, accession + ".json").toFile());
                 }
                 if(inputStream!=null){//cache miss, we do not have this pagetab in index so we will add it
                     byte []buffer = inputStream.readAllBytes();

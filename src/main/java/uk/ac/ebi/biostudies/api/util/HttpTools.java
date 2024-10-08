@@ -83,7 +83,7 @@ public class HttpTools {
         }
     }
     public static boolean isValidUrl(Path url) {
-        String urlString = FileMetaData.BASE_FTP_URL + url.toString();
+        String urlString = FileMetaData.BASE_FTP_NFS_URL + "/" + url.toString().replaceAll("\\\\", "/");
         return isValidUrl(urlString);
     }
 

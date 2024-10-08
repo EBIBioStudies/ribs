@@ -57,11 +57,13 @@ public class FilePaginationServiceImpl implements FilePaginationService {
         Document doc = searchService.getDocumentByAccession(accession, secretKey);
         if (doc == null) return studyInfo;
         accession = doc.get(Constants.Fields.ACCESSION);
+        boolean isPublicStudy = StudyUtils.isPublicStudy(doc);
         String relativePath = doc.get(Constants.Fields.RELATIVE_PATH);
         String attFiles = doc.get(Constants.File.FILE_ATTS);
         String storageModeString = doc.get(Constants.Fields.STORAGE_MODE);
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
-
+        if(storageMode == Constants.File.StorageMode.NFS && !isPublicStudy)
+            relativePath = StudyUtils.modifyRelativePathForPrivateStudies(secretKey, relativePath);
         if (attFiles == null) return studyInfo;
         String[] allAtts = attFiles.split("\\|");
         Set<String> headerSet = new HashSet<>(Arrays.asList(orderedArray));
@@ -82,7 +84,7 @@ public class FilePaginationServiceImpl implements FilePaginationService {
             node.put("data", att.replaceAll("[\\[\\]\\(\\)\\s]", "_").replaceAll("\\.","\\\\."));
             node.put("defaultContent", "");
             fileColumnAttributes.add(node);
-            if (counter++ == 1 && thumbnails.hasThumbnailsFolder(accession, relativePath, storageMode, StudyUtils.isPublicStudy(doc))) {
+            if (counter++ == 1 && thumbnails.hasThumbnailsFolder(accession, relativePath, storageMode)) {
                 fileColumnAttributes.add(getThumbnailHeader(mapper));
             }
         }
@@ -90,9 +92,9 @@ public class FilePaginationServiceImpl implements FilePaginationService {
         String sectionsWithFiles = doc.get(Constants.Fields.SECTIONS_WITH_FILES);
         studyInfo.set("columns", fileColumnAttributes);
         studyInfo.put(Constants.Fields.FILES, Long.parseLong(doc.get(Constants.Fields.FILES)));
-        studyInfo.put("httpLink", indexConfig.getFtpDir().replaceAll("ftp://", "https://") + storageModeString.toLowerCase() + "/" + doc.get(Constants.Fields.RELATIVE_PATH));
-        studyInfo.put("ftpLink", indexConfig.getFtpDir() + storageModeString.toLowerCase() + "/" + doc.get(Constants.Fields.RELATIVE_PATH));
-        studyInfo.put("globusLink", indexConfig.getGlobusUrl() + storageModeString.toLowerCase() + "/" + doc.get(Constants.Fields.RELATIVE_PATH));
+        studyInfo.put("httpLink", indexConfig.getFtpDir().replaceAll("ftp://", "https://") + storageModeString.toLowerCase() + "/" + relativePath);
+        studyInfo.put("ftpLink", indexConfig.getFtpDir() + storageModeString.toLowerCase() + "/" + relativePath);
+        studyInfo.put("globusLink", indexConfig.getGlobusUrl() + storageModeString.toLowerCase() + "/" + relativePath);
         studyInfo.put("isPublic", (" " + doc.get(Constants.Fields.ACCESS) + " ").toLowerCase().contains(" public "));
         studyInfo.put(Constants.Fields.RELATIVE_PATH, relativePath);
         studyInfo.put("hasZippedFolders",storageMode == Constants.File.StorageMode.FIRE);

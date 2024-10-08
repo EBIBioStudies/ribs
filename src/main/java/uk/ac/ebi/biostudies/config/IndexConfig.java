@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
 
 import java.util.Arrays;
@@ -67,11 +68,19 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     private String indexSyncCommand;
     @Value("${index.api.enabled}")
     private boolean apiEnabled;
+    @Value("${files.nfsFtpHttpUrl}")
+    private String nfsFtpHttpUrl;
+    @Value("${files.fireFtpHttpUrl}")
+    private String fireFtpHttpUrl;
+    @Value("${files.isMigratedNfsPrivateDirectory}")
+    private boolean isMigratedNfsPrivateDirectory;
 
     @Override
     public void afterPropertiesSet() {
         STOP_WORDS = new CharArraySet(Arrays.asList(stopwords.split(",")), false);
-        FileMetaData.BASE_FTP_URL = getFttpOverHttpUrl();
+        FileMetaData.BASE_FTP_NFS_URL = nfsFtpHttpUrl;
+        FileMetaData.BASE_FTP_FIRE_URL = fireFtpHttpUrl;
+        StudyUtils.IS_MIGRATED_NFS_DIRECTORY = isMigratedNfsPrivateDirectory;
     }
 
 
@@ -113,19 +122,16 @@ public class IndexConfig implements InitializingBean, DisposableBean {
         return thumbnailDir;
     }
 
-    public String getFileRootDir(boolean isPublicStudy) {
-        if(isPublicStudy)
-            return submissionsDirectory;
-        else
-            return submissionsDirectory+ (submissionsDirectory.endsWith("/")? ".private": "/.private");
+    public String getFileRootDir() {
+        return submissionsDirectory;
     }
 
     public String getFtpDir() {
         return ftpDir;
     }
 
-    public String getFttpOverHttpUrl() {
-        return ftpDir.replaceFirst("ftp://", "https://");
+    public String getFtpOverHttpUrl(Constants.File.StorageMode storageMode) {
+        return storageMode== Constants.File.StorageMode.FIRE ? fireFtpHttpUrl : nfsFtpHttpUrl;
     }
 
     public String getGlobusUrl() {
@@ -179,5 +185,9 @@ public class IndexConfig implements InitializingBean, DisposableBean {
 
     public String getPageTabDirectory() {
         return pageTabDirectory;
+    }
+
+    public boolean isMigratedNfsPrivateDirectory() {
+        return isMigratedNfsPrivateDirectory;
     }
 }

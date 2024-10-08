@@ -29,10 +29,16 @@ public class FileMetaData {
     private S3Object s3Object;
     private Constants.File.StorageMode storageMode;
     private InputStream inputStream;
-    public static String BASE_FTP_URL;
+    public static String BASE_FTP_FIRE_URL;
+    public static String BASE_FTP_NFS_URL;
+
 
     public FileMetaData(String accession) {
         this.accession = accession;
+    }
+
+    public String getBaseFtpUrl(){
+        return storageMode == Constants.File.StorageMode.FIRE ? BASE_FTP_FIRE_URL : BASE_FTP_NFS_URL;
     }
 
     public FileMetaData(String accession, String uiRequestedPath, String fileName, String relativePath, Constants.File.StorageMode storageMode, boolean isPublicStudy, boolean secretKey, String collection) {
@@ -61,7 +67,7 @@ public class FileMetaData {
             if (s3Object != null) {
                 inputStream = s3Object.getObjectContent();
             } else if (storageMode == Constants.File.StorageMode.NFS && path != null && HttpTools.isValidUrl(path)) {
-                inputStream = HttpTools.fetchLargeFileStream(BASE_FTP_URL+path.toString());
+                inputStream = HttpTools.fetchLargeFileStream(BASE_FTP_FIRE_URL+path.toString());
             }
         } catch (Exception exception) {
             LOGGER.error("problem in sending ftp inputstream {}", fileName, exception);

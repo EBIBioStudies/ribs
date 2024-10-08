@@ -3,7 +3,6 @@ package uk.ac.ebi.biostudies.api.util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
-import org.springframework.stereotype.Component;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -13,6 +12,7 @@ public class StudyUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(StudyUtils.class.getName());
     private static ScriptEngine jsEngine = new ScriptEngineManager().getEngineByName("nashorn");
+    public static boolean IS_MIGRATED_NFS_DIRECTORY = false;
 
     public static String escape(String s) {
         StringBuilder sb = new StringBuilder();
@@ -61,8 +61,8 @@ public class StudyUtils {
     }
 
     public static String modifyRelativePathForPrivateStudies(String secretKey, String relativePath){
-        if(secretKey==null || secretKey.isEmpty() || secretKey.length()<2)
+        if(!IS_MIGRATED_NFS_DIRECTORY || secretKey==null || secretKey.isEmpty() || secretKey.length()<2 || relativePath.contains(".private"))
             return relativePath;
-        return secretKey.substring(0, 2)+"/"+secretKey.substring(2)+"/"+relativePath;
+        return ".private/"+secretKey.substring(0, 2)+"/"+secretKey.substring(2)+"/"+relativePath;
     }
 }

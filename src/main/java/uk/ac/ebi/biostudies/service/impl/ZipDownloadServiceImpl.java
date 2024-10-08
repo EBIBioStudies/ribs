@@ -69,10 +69,10 @@ public class ZipDownloadServiceImpl implements ZipDownloadService {
         }
         response.setContentType("application/zip");
         response.addHeader("Content-Disposition", "attachment; filename=" + accession + ".zip");
-        if(!isPublicStudy) {
+        if(!isPublicStudy && storageMode == Constants.File.StorageMode.NFS) {
             relativePath = StudyUtils.modifyRelativePathForPrivateStudies(docKey, relativePath);
         }
-        String rootFolder = indexConfig.getFileRootDir(isPublicStudy);
+        String rootFolder = indexConfig.getFileRootDir();
 
         try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(response.getOutputStream()))) {
             if (storageMode == Constants.File.StorageMode.FIRE)

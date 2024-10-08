@@ -12,6 +12,7 @@
         <script>
             var thorURL = '${thorURL}';
             var ftpURL = '';
+            var loadByServer = false;
         </script>
         <jwr:script src="/js/detail.min.js"/>
     </jsp:attribute>

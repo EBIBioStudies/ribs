@@ -272,7 +272,7 @@ var FileTable = (function (_self) {
                             + '"' + (row.md5 ? (' data-md5="' + row.md5 + '"') : '')
                             + ' title="' + data
                             + '" href="'
-                            + ftpURL + 'Files/' + unescape(encodeURIComponent(row.path)).replaceAll('#', '%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
+                            + (loadByServer? (window.contextPath + '/files/' + acc + '/') : (ftpURL + 'Files/')) + unescape(encodeURIComponent(row.path)).replaceAll('#', '%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
                                 .replaceAll("[", "%5B").replaceAll("]", "%5D")
                             + (row.type === 'directory' && hasZippedFolders && !row.path.toLowerCase().endsWith('.zip') ? '.zip' : '')
                             + (params.key ? '?key=' + params.key : '')

@@ -18,28 +18,39 @@ var CollectionsPage = (function (_self) {
         });
     }
 
-    function postRender(data, params) {
-        // get collection logo
-        $("div[data-type='collection']").each( function() {
-            var $prj = $(this), accession = $(this).data('accession');
-            $('a',$prj).attr('href',contextPath+'/'+accession+'/studies');
-            $.getJSON(contextPath+ '/api/v1/collections/'+accession, function (linkData) {
-                if(linkData.link) {
-                    $.getJSON(linkData.link + accession + ".json", function (data) {
-                        var path = data.section.files.path;
-                        if (!path && data.section.files[0]) path = data.section.files[0].path;
-                        if (!path && data.section.files[0][0]) path = data.section.files[0][0].path;
-                        if (path) {
-                            $prj.prepend('<div><a class="collection-logo" href="' + contextPath + '/' + accession + '/studies">' +
-                                '<img src="' + linkData.link +  '/Files/' + path + '" alt="' + accession + '"/>'
-                                + '</a></div>');
-                        }
-                    })
-                }
-            })
-        });
-
+    function getPath(files) {
+        return files.path || (files[0] && files[0].path) || (files[0][0] && files[0][0].path);
     }
+
+    function addLogo($prj, accession, baseLink, path) {
+        if (path) {
+            $prj.prepend(`<div><a class="collection-logo" href="${contextPath}/${accession}/studies">
+            <img src="${baseLink}/Files/${path}" alt="${accession}"/></a></div>`);
+        }
+    }
+
+    function postRender(data, params) {
+        // Get collection logo
+        $("div[data-type='collection']").each(function () {
+            var $prj = $(this),
+                accession = $(this).data('accession');
+
+            $('a', $prj).attr('href', contextPath + '/' + accession + '/studies');
+            $.getJSON(contextPath + '/api/v1/collections/' + accession, function (linkData) {
+                var path = '';
+                if (linkData.ftpHttp_link) {
+                    $.getJSON(linkData.ftpHttp_link + accession + ".json", function (data) {
+                        path = getPath(data.section.files);
+                        addLogo($prj, accession, linkData.ftpHttp_link, path);
+                    });
+                } else {
+                    path = getPath(linkData.section.files);
+                    addLogo($prj, accession, contextPath + '/files/' + accession, path);
+                }
+            });
+        });
+    }
+
 
     return _self;
 })(CollectionsPage || {});

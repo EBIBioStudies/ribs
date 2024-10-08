@@ -103,7 +103,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
             Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
             String docKey = document.get(Constants.Fields.SECRET_KEY); // Just private studies have secret key?  Just NFS studies has .private folder in their path?
-            if(!StudyUtils.isPublicStudy(document))
+            if(!StudyUtils.isPublicStudy(document) && storageMode==Constants.File.StorageMode.NFS)
                 relativePath = StudyUtils.modifyRelativePathForPrivateStudies(docKey, relativePath);
 
             fileMetaData = new FileMetaData(accession, requestedFilePath, requestedFilePath, relativePath,

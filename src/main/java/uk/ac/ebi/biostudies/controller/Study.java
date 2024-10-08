@@ -115,17 +115,35 @@ public class Study {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .contentType(MediaType.APPLICATION_JSON).body("{\"errorMessage\":\"Study not found\"}");
         }
+        accession = document.get(Constants.Fields.ACCESSION);
+        boolean isPublicStudy = StudyUtils.isPublicStudy(document);
         String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
         String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
         storageModeString = storageModeString.isEmpty()? "fire":storageModeString;
+        Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
         if(Session.getCurrentUser()!=null)
             seckey = document.get(Constants.Fields.SECRET_KEY);
+        if(!isPublicStudy && storageMode == Constants.File.StorageMode.FIRE){
+            return sendFireResponse(accession, relativePath, seckey, storageMode, isPublicStudy);
+        }
+
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode studyFtpLink = mapper.createObjectNode();
-        if(!StudyUtils.isPublicStudy(document))
+        if(!isPublicStudy) {
             relativePath = StudyUtils.modifyRelativePathForPrivateStudies(seckey, relativePath);
-        studyFtpLink.put("link", indexConfig.getFttpOverHttpUrl() + storageModeString.toLowerCase() + "/" + relativePath+"/");//+(type.trim().equalsIgnoreCase("study")?"":accession.toUpperCase()+".json"));
+        }
+        studyFtpLink.put("ftpHttp_link", indexConfig.getFtpOverHttpUrl(storageMode) + "/" + relativePath+"/");//+(type.trim().equalsIgnoreCase("study")?"":accession.toUpperCase()+".json"));
 
         return new ResponseEntity(studyFtpLink, HttpStatus.OK);
     }
+
+    private ResponseEntity sendFireResponse(String accession, String relativePath, String seckey, Constants.File.StorageMode storageMode,boolean isPublicStudy) {InputStreamResource result;
+        try {
+            result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, seckey != null, storageMode, isPublicStudy, seckey);
+        } catch (IOException e) {
+            logger.error(e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON).body("{\"errorMessage\":\"Study not found\"}");
+        }
+        return new ResponseEntity(result, HttpStatus.OK);}
 }

@@ -17,7 +17,7 @@ $(function() {
         var template = Handlebars.compile(templateSource);
         var collectionObj={};
         try {
-            collectionObj = {accno : data.accno , logo: logoBaseUrl + 'Files/' + data.section.files[0][0].path};
+            collectionObj = {accno : data.accno , logo: (logoBaseUrl ? (logoBaseUrl + 'Files/') : ( contextPath + '/files/' + data.accno + '/'))  + data.section.files[0][0].path};
         } catch(e){}
         $(data.section.attributes).each(function () {
             collectionObj[this.name.toLowerCase()] = this.value
@@ -70,23 +70,29 @@ $(function() {
         $('#user-field').attr('value', login);
         $('#pass-field').focus();
     }*/
+    function handleServerResponse(data, url) {
+        if (!data || !data.section || !data.section.type ||
+            (data.section.type.toLowerCase() != 'collection' && data.section.type.toLowerCase() != 'project')) {
+            return;
+        }
+        var collectionObj = showCollectionBanner(data, url);
+        updateMenuForCollection(collectionObj);
+    }
+
+    function callServerUrl(url, collection){
+        $.getJSON(url+collection, function (data) {
+           handleServerResponse(data, url)
+        });
+
+    }
+
     if (collection && collection!=='collections') {
         if(DetailPage.linkTypeMap[collection]){
             collection = DetailPage.linkTypeMap[collection]
         }
         // display collection banner
         $.getJSON(contextPath + "/api/v1/collections/" + collection, function (linkAddress) {
-            if (linkAddress.link) {
-                $.getJSON(linkAddress.link + collection + ".json", function (data) {
-                    if (!data || !data.section || !data.section.type ||
-                        (data.section.type.toLowerCase() != 'collection' && data.section.type.toLowerCase() != 'project'))
-                        return;
-                    var collectionObj = showCollectionBanner(data, linkAddress.link);
-                    updateMenuForCollection(collectionObj);
-                }).fail(function (error) {
-                    //showError(error);
-                })
-            }
+            linkAddress.ftpHttp_link ? callServerUrl(linkAddress.ftpHttp_link , collection + ".json") : handleServerResponse(data=linkAddress)
         }).fail(function (error) {});
     }
 

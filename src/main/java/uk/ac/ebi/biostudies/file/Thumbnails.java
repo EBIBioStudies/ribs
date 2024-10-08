@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.api.util.HttpTools;
+import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.file.thumbnails.*;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
@@ -100,7 +101,7 @@ public class Thumbnails implements InitializingBean, DisposableBean {
                 if (!cachedThumbnail.exists()) {
                     // create thumbnail in cache
 
-                    if (hasThumbnailsFolder(accession, relativePath, storageMode, isPublicStudy)) {
+                    if (hasThumbnailsFolder(accession, relativePath, storageMode)) {
                         // send a transparent gif to cache if there's no pre-generated thumbnail
                         byte[] transparentPNG = {(byte) 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
                                 0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x04, 0x00,
@@ -184,10 +185,10 @@ public class Thumbnails implements InitializingBean, DisposableBean {
         }
     }
 
-    public boolean hasThumbnailsFolder(String accession, String relativePath, Constants.File.StorageMode storageMode, boolean isPublicStudy) {
+    public boolean hasThumbnailsFolder(String accession, String relativePath, Constants.File.StorageMode storageMode) {
         boolean thumbnailFolderExists;
         if (storageMode == Constants.File.StorageMode.NFS) {
-            thumbnailFolderExists = HttpTools.isValidUrl(indexConfig.getFileRootDir(isPublicStudy) + "/" + relativePath + "/Thumbnails/");
+            thumbnailFolderExists = HttpTools.isValidUrl(indexConfig.getFileRootDir() + "/" + relativePath + "/Thumbnails/");
         } else {
             thumbnailFolderExists = fireService.isValidFolder(relativePath + "/Thumbnails/");
         }
