@@ -63,12 +63,12 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     FtpRedirectFilter ftpRedirectFilter;
     @Autowired
     NfsFilter nfsFilter;
-    @Autowired
-    StudyUtils studyUtils;
+
 
     @PostConstruct
     public void init() {
-        fileChainFilters = List.of(ftpRedirectFilter, nfsFilter, new MageTabFilter(), new SendFileFilter());
+        fileChainFilters = List.of(ftpRedirectFilter, nfsFilter, new SendFileFilter());
+        //        fileChainFilters = List.of(ftpRedirectFilter, nfsFilter, new MageTabFilter(), new SendFileFilter()); nfs and pagetab are deprecated
     }
 
     public void sendFile(String collection, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -103,8 +103,8 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
             Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
             String docKey = document.get(Constants.Fields.SECRET_KEY); // Just private studies have secret key?  Just NFS studies has .private folder in their path?
-            if(!StudyUtils.isPublicStudy(document))
-                relativePath = studyUtils.modifyRelativePathForPrivateStudies(docKey, relativePath);
+            if(!StudyUtils.isPublicStudy(document) && storageMode==Constants.File.StorageMode.NFS)
+                relativePath = StudyUtils.modifyRelativePathForPrivateStudies(docKey, relativePath);
 
             fileMetaData = new FileMetaData(accession, requestedFilePath, requestedFilePath, relativePath,
                     storageMode, (" " + document.get(Constants.Fields.ACCESS) + " ").toLowerCase().contains(" public "

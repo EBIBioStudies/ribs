@@ -69,7 +69,8 @@ var DetailPage = (function (_self) {
         '^www.ebi.ac.uk/gxa/sc/experiments/(.*)': 'gxa-sc',
         '^idr.openmicroscopy.org/search/?query=Name:(.*)': 'idr',
         '^www.ebi.ac.uk/pdbe/emdb/empiar/entry/(.*)': 'empiar',
-        '^www.ebi.ac.uk/empiar/(.*)': 'empiar'
+        '^www.ebi.ac.uk/empiar/(.*)': 'empiar',
+        '^www.sourcedata.embo.org/(.*)' : 'SourceData'
     };
 
     _self.linkTypeMap = { //sync with normalised-text
@@ -88,6 +89,7 @@ var DetailPage = (function (_self) {
         'ensembl': 'Ensembl',
         'doi': 'DOI',
         'intact': 'IntAct',
+        'sourcedata': 'SourceData',
         'chebi': 'ChEBI',
         'ega': 'EGA',
         '': 'External',

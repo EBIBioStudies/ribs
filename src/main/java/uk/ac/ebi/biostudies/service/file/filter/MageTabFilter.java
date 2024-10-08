@@ -11,6 +11,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated
+/**
+ * magetab does not contain sensitive data anymore
+ */
 public class MageTabFilter implements FileChainFilter{
     public final static String IDF_FILE_NAME_PATTERN = "^.+[.]idf[.]txt$";
     public final static String SDRF_FILE_NAME_PATTERN = "^.+[.]sdrf[.]txt$";

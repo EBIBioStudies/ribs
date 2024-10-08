@@ -19,6 +19,7 @@ package uk.ac.ebi.biostudies.api.util;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import uk.ac.ebi.biostudies.service.file.FileMetaData;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -29,7 +30,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.nio.file.Path;
+import java.util.concurrent.Executors;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public class HttpTools {
 
@@ -39,6 +46,46 @@ public class HttpTools {
     public static final String AUTH_MESSAGE_COOKIE = "BioStudiesMessage";
     public static final String REFERER_HEADER = "Referer";
     public static final Integer MAX_AGE = 31557600;
+    private static HttpClient client = HttpClient.newBuilder()
+            .executor(Executors.newFixedThreadPool(20)) // Thread pool size for concurrent requests
+            .version(HttpClient.Version.HTTP_2)
+            .build();;
+
+
+    public static InputStream fetchLargeFileStream(String url) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
+
+        // Handle the response as an InputStream
+        HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+
+        if (response.statusCode() != 200) {
+            throw new Exception("Failed to retrieve file. HTTP response code: " + response.statusCode());
+        }
+
+        return response.body(); // Returning InputStream for external consumption
+    }
+
+    public static boolean isValidUrl(String url) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .build();
+
+            // Handle the response as an InputStream
+            HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            return response.statusCode() == 200 ? true : false;
+        }catch (Throwable throwable){
+            return false;
+        }
+    }
+    public static boolean isValidUrl(Path url) {
+        String urlString = FileMetaData.BASE_FTP_NFS_URL + "/" + url.toString().replaceAll("\\\\", "/");
+        return isValidUrl(urlString);
+    }
 
     public static void removeTokenCookie(HttpServletResponse response) {
         try {

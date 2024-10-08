@@ -1,5 +1,7 @@
 package uk.ac.ebi.biostudies.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +16,7 @@ import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.api.util.PublicRESTMethod;
 import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.auth.Session;
+import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.service.FilePaginationService;
 import uk.ac.ebi.biostudies.service.SearchService;
 import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
@@ -35,6 +38,9 @@ public class Study {
     SearchService searchService;
     @Autowired
     FilePaginationService paginationService;
+    @Autowired
+    IndexConfig indexConfig;
+
 
     @RequestMapping(value = "/collections/{accession:.+}", produces = {JSON_UNICODE_MEDIA_TYPE}, method = RequestMethod.GET)
     public ResponseEntity<String> getCollection(@PathVariable("accession") String accession, @RequestParam(value = "key", required = false) String seckey) {
@@ -110,21 +116,34 @@ public class Study {
                     .contentType(MediaType.APPLICATION_JSON).body("{\"errorMessage\":\"Study not found\"}");
         }
         accession = document.get(Constants.Fields.ACCESSION);
+        boolean isPublicStudy = StudyUtils.isPublicStudy(document);
         String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
         String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
+        storageModeString = storageModeString.isEmpty()? "fire":storageModeString;
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
         if(Session.getCurrentUser()!=null)
             seckey = document.get(Constants.Fields.SECRET_KEY);
-        InputStreamResource result;
+        if(!isPublicStudy && storageMode == Constants.File.StorageMode.FIRE){
+            return sendFireResponse(accession, relativePath, seckey, storageMode, isPublicStudy);
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode studyFtpLink = mapper.createObjectNode();
+        if(!isPublicStudy) {
+            relativePath = StudyUtils.modifyRelativePathForPrivateStudies(seckey, relativePath);
+        }
+        studyFtpLink.put("ftpHttp_link", indexConfig.getFtpOverHttpUrl(storageMode) + "/" + relativePath+"/");//+(type.trim().equalsIgnoreCase("study")?"":accession.toUpperCase()+".json"));
+
+        return new ResponseEntity(studyFtpLink, HttpStatus.OK);
+    }
+
+    private ResponseEntity sendFireResponse(String accession, String relativePath, String seckey, Constants.File.StorageMode storageMode,boolean isPublicStudy) {InputStreamResource result;
         try {
-            result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, seckey != null, storageMode, StudyUtils.isPublicStudy(document), seckey);
+            result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, seckey != null, storageMode, isPublicStudy, seckey);
         } catch (IOException e) {
             logger.error(e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .contentType(MediaType.APPLICATION_JSON).body("{\"errorMessage\":\"Study not found\"}");
         }
-        return new ResponseEntity(result, HttpStatus.OK);
-    }
-
-
+        return new ResponseEntity(result, HttpStatus.OK);}
 }

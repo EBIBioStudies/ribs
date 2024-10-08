@@ -63,13 +63,12 @@ var DownloadDialog = (function (_self) {
         const acc = $('#accession').text().trim();
         const zip = new JSZip();
         for (let filename of filelist) {
-            const url = window.contextPath + '/files/' + acc + '/' + unescape(encodeURIComponent(filename)).replaceAll('#', '%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
+            const url = (loadByServer ? (window.contextPath + '/files/' + acc + '/') : (ftpURL + "Files/"))   + unescape(encodeURIComponent(filename)).replaceAll('#', '%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
                     .replaceAll("[", "%5B").replaceAll("]", "%5D")
-                + (key ? '?key=' + key : '');
+                // + (key ? '?key=' + key : '');
             $('#downloadMessage').text("Downloading " + filename + " (0%)");
             abortController = new AbortController();
             const response = await fetch(url, {signal: abortController.signal}).catch(function (err) {
-                debugger
                 console.error(` Err: ${err}`);
             });
             const contentLength = +response?.headers?.get('Content-Length');

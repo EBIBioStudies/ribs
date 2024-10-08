@@ -88,8 +88,7 @@ public class SearchServiceImpl implements SearchService {
     QueryService queryService;
     @Autowired
     FireService fireService;
-    @Autowired
-    StudyUtils studyUtils;
+
 
     @PostConstruct
     void init() {
@@ -295,9 +294,9 @@ public class SearchServiceImpl implements SearchService {
                         break;
                     default:
                         if(!isPublicStudy) {
-                            relativePath = studyUtils.modifyRelativePathForPrivateStudies(secretKey, relativePath);
+                            relativePath = StudyUtils.modifyRelativePathForPrivateStudies(secretKey, relativePath);
                         }
-                        inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(isPublicStudy), relativePath, accession + ".json").toFile());
+                        inputStream = new FileInputStream(Paths.get(indexConfig.getFileRootDir(), relativePath, accession + ".json").toFile());
                 }
                 if(inputStream!=null){//cache miss, we do not have this pagetab in index so we will add it
                     byte []buffer = inputStream.readAllBytes();

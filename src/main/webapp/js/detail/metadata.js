@@ -7,107 +7,127 @@ var Metadata = (function (_self) {
     var generatedID = 0;
     var sectionLinkCount = {};
 
+
+    function handlePageData(pageData, params, accession, template) {
+
+        if (!pageData.accno && pageData.submissions) pageData = pageData.submissions[0]; // for v0, when everything was a submission
+
+        // Redirect to collection page if accession is a collection
+        if (pageData.section.type.toLowerCase() === 'collection' || pageData.section.type.toLowerCase() === 'project') {
+            location.href = contextPath + '/' + pageData.accno + '/studies' + (params.key ? '?key=' + params.key : '');
+            return;
+        }
+
+        if (params.key) {
+            pageData.section.keyString = '?key=' + params.key;
+        }
+
+        // Set accession
+        if (pageData.accNo && !pageData.accno) pageData.accno = pageData.accNo; // copy accession attribute
+        $('#accession').text(pageData.accno);
+        pageData.section.accno = pageData.accno;
+        pageData.section.accessTags = pageData.accessTags;
+
+        var title = pageData.accno, releaseDate = '';
+        var isCollectionCorrect = false;
+        var lastCollection;
+
+        if (pageData.attributes) { //v1
+            pageData.attributes.forEach(function(v, i) {
+                if (v.name.trim() === 'AttachTo') {
+                    if (v.value.toLowerCase() === collection.toLowerCase())
+                        isCollectionCorrect = true;
+                    lastCollection = v.value;
+                }
+            });
+            // Redirect if collection of study does not match collection in URL
+            if (!isCollectionCorrect && lastCollection && !accession.startsWith('C-') && !accession[0].startsWith('A-')) {
+                location.href = contextPath + '/' + lastCollection.toLowerCase() + '/studies/' + accession + (params.key ? '?key=' + params.key : '');
+                return;
+            } else if (collection && collection !== '' && !lastCollection) {
+                location.href = contextPath + '/studies/' + accession + (params.key ? '?key=' + params.key : '');
+                return;
+            }
+
+            if (location.href.toLowerCase().indexOf(collection.toLowerCase()) < 0)
+                handleProjectSpecificUI();
+            title = pageData.attributes.filter(function(v, i) {
+                return v.name.trim() === 'Title';
+            });
+            pageData.attributes.forEach(function(v, i) {
+                if (v.name.trim() === 'ReleaseDate') {
+                    releaseDate = v.value;
+                }
+            });
+        } else { //extended json
+            if (pageData.releaseTime) {
+                releaseDate = pageData.releaseTime.substr(0, 10);
+            }
+        }
+        pageData.section.releaseDate = releaseDate;
+
+        if (pageData.section) {
+            if (!pageData.section.attributes) pageData.section.attributes = [];
+            if (!pageData.section.attributes.filter((v) => v.name.trim() === 'Title').length) {
+                pageData.section.attributes.push({ name: 'Title', value: title[0] ? title[0].value : "" });
+            }
+            // Copy DOI
+            const dois = pageData.attributes.filter((v) => v.name.trim() === 'DOI');
+            if (dois.length) {
+                pageData.section.doi = dois[0].value;
+            }
+            pageData.section.isFromSubmissionTool = document.referrer.toLowerCase().indexOf("ebi.ac.uk/biostudies/submissions/") > 0
+                && $('#logout-button') && $('#logout-button').text().trim().startsWith("Logout");
+        }
+
+        if (['', 'bioimages', 'sourcedata'].indexOf(collection.toLowerCase()) >= 0
+            && !pageData.section.attributes.find(attr => attr?.name?.toLowerCase() === 'license')) {
+            if (!pageData.section.attributes) pageData.section.attributes = [];
+            pageData.section?.attributes.push({
+                name: "License",
+                value: "<span title='Historically the majority of EMBL-EBI data " +
+                    "resources use institute&#39;s Terms of Use (see below) detailing our commitment to open science and " +
+                    "defining expectations from data submitters and consumers. At the time of submission CC0 was " +
+                    "not explicitly applied to this dataset. As the institute is gradually adopting the CC license " +
+                    "framework across all resources (https://www.ebi.ac.uk/licencing), we have applied CC0 " +
+                    "to this dataset, being most in line with the spirit of EMBL-EBI’s Terms of Use. " +
+                    "Contact biostudies@ebi.ac.uk for further clarifications.'>CC0 " +
+                    "<i class='fa-solid fa-circle-info'></i></span>",
+                valqual: [{
+                    name: "display", value: "html"
+                }]
+            });
+        }
+
+        $('#renderedContent').html(template(pageData.section));
+        postRender(params, pageData.section);
+    }
     _self.render = function() {
         this.registerHelpers();
 
         // Prepare template
         var templateSource = $('script#study-template').html();
         var template = Handlebars.compile(templateSource);
-        var slashOffset = window.location.pathname[window.location.pathname.length-1]==='/';
-        var parts =  window.location.pathname.split('/');
+        var slashOffset = window.location.pathname[window.location.pathname.length - 1] === '/';
+        var parts = window.location.pathname.split('/');
         var accession = parts[parts.length - 1 - slashOffset].toUpperCase();
-        var url = contextPath + '/api/v1/'+(accession.startsWith("A-")?'arrays/':accession.startsWith("C-")?'compounds/':'studies/') + accession;
+        var url = contextPath + '/api/v1/' + (accession.startsWith("A-") ? 'arrays/' : accession.startsWith("C-") ? 'compounds/' : 'studies/') + accession;
         var params = getParams();
-        $.getJSON(url, params, function (data) {
-            if (!data.accno && data.submissions) data = data.submissions[0]; // for v0, when everything was a submission
-            // redirect to collection page if accession is a collection
-            if (data.section.type.toLowerCase()==='collection' || data.section.type.toLowerCase()==='project') {
-                location.href= contextPath + '/'+ accession + '/studies' + (params.key ? '?key='+params.key : '');
-                return;
-            }
-            if (params.key) {
-                data.section.keyString = '?key='+params.key;
-            }
-            // set accession
-            if (data.accNo && !data.accno) data.accno = data.accNo; // copy accession attribute
-            $('#accession').text(data.accno);
-            data.section.accno = data.accno;
-            data.section.accessTags = data.accessTags;
-            var title = data.accno, releaseDate = '';
-            var isCollectionCorrect = false;
-            var lastCollection;
 
-            if (data.attributes) { //v1
-                data.attributes.forEach(function (v, i) {
-                    if(v.name.trim() === 'AttachTo') {
-                        if (v.value.toLowerCase() === collection.toLowerCase())
-                            isCollectionCorrect = true;
-                        lastCollection = v.value;
-                    }
-                })
-                // redirect if collection of study does not match collection in url
-                if (!isCollectionCorrect && lastCollection && !accession.startsWith('C-') && !accession[0].startsWith('A-')) {
-                    location.href= contextPath + '/'+lastCollection.toLowerCase() +'/studies/' + accession + (params.key ? '?key='+params.key : '');
-                    return;
-                } else if (collection && collection !=='' && !lastCollection) {
-                    location.href= contextPath + '/studies/' + accession + (params.key ? '?key='+params.key : '');
-                    return;
-                }
-
-                if (location.href.toLowerCase().indexOf(collection.toLowerCase())<0)
-                    handleProjectSpecificUI();
-                title = data.attributes.filter(function (v, i) {
-                    return v.name.trim() === 'Title';
-                });
-                data.attributes.forEach(function (v, i) {
-                    if (v.name.trim() === 'ReleaseDate') {
-                        releaseDate = v.value;
-                    }
-                });
-            } else { //extended json
-                if (data.releaseTime) {
-                    releaseDate = data.releaseTime.substr(0,10);
-                }
+        $.getJSON(url, params, function(ftpLinkData) {
+            if (ftpLinkData.ftpHttp_link) {
+                loadByServer = false;
+                ftpURL = ftpLinkData.ftpHttp_link;
+                // If ftpHttp_link exists, make a second call
+                $.getJSON(ftpLinkData.ftpHttp_link + accession + ".json", params, function(pageData) {
+                    handlePageData(pageData, params, accession, template);
+                }).fail(showError);
+            } else if(ftpLinkData){
+                // Process the first response directly
+                loadByServer = true;
+                handlePageData(ftpLinkData, params, accession, template);
             }
-            data.section.releaseDate = releaseDate;
-            if (data.section ) {
-                if (!data.section.attributes) data.section.attributes = [];
-                if (!data.section.attributes.filter((v)=> v.name.trim() === 'Title').length) {
-                    data.section.attributes.push({name: 'Title', value: title[0]?title[0].value:""});
-                }
-                // copy DOI
-                const dois = data.attributes.filter((v)=> v.name.trim() === 'DOI');
-                if (dois.length) {
-                    data.section.doi = dois[0].value;
-                }
-                data.section.isFromSubmissionTool = document.referrer.toLowerCase().indexOf("ebi.ac.uk/biostudies/submissions/")>0
-                && $('#logout-button') && $('#logout-button').text().trim().startsWith("Logout");
-            }
-            if ( ['','bioimages','sourcedata'].indexOf(collection.toLowerCase())>=0
-                && !data.section.attributes.find( attr=>  attr?.name?.toLowerCase()==='license')) {
-                if (!data.section.attributes) data.section.attributes=[];
-                data.section?.attributes.push({
-                    name : "License",
-                    value : "<span title='Historically the majority of EMBL-EBI data " +
-                        "resources use institute&#39;s Terms of Use (see below) detailing our commitment to open science and " +
-                        "defining expectations from data submitters and consumers. At the time of submission CC0 was " +
-                        "not explicitly applied to this dataset. As the institute is gradually adopting the CC license " +
-                        "framework across all resources (https://www.ebi.ac.uk/licencing), we have applied CC0 " +
-                        "to this dataset, being most in line with the spirit of EMBL-EBI’s Terms of Use. " +
-                        "Contact biostudies@ebi.ac.uk for further clarifications.'>CC0 " +
-                        "<i class='fa-solid fa-circle-info'></i></span>",
-                    valqual : [ {
-                      name: "display", value: "html"
-                    } ]
-                })
-            }
-
-            $('#renderedContent').html(template(data.section));
-            postRender(params, data.section);
-        }).fail(function (error) {
-            showError(error);
-        });
-
+        }).fail(showError);
     };
 
     _self.getSectionTables = function () {

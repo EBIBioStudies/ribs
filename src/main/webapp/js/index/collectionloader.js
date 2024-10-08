@@ -1,5 +1,15 @@
 Home.CollectionLoader = (function () {
     var _self ={};
+
+    function handlePrjData(data, $prj, accession){
+        var path = (data.section && data.section.files) ? data.section.files.path : null;
+        if (!path && data.section && data.section.files && data.section.files[0]) path =data.section.files[0].path;
+        if (!path && data.section.files && data.section.files[0] && data.section.files[0][0]) path = data.section.files[0][0].path;
+        if (path) {
+            $prj.prepend('<img src="' + contextPath + '/files/' + accession + '/' + path + '" alt="'+accession+'" />');
+        }
+
+    }
     _self.render = function () {
         if ($('#collections').length===0) {
             $('#CollectionLoader').slideDown();
@@ -20,13 +30,14 @@ Home.CollectionLoader = (function () {
                     var $prj = $(this), accession = $(this).data('accession');
                     $(this).attr('href',contextPath+'/'+accession+'/studies');
                     $.getJSON(contextPath+ '/api/v1/collections/'+accession, function (data) {
-                        var path = (data.section && data.section.files) ? data.section.files.path : null;
-                        if (!path && data.section && data.section.files && data.section.files[0]) path =data.section.files[0].path;
-                        if (!path && data.section.files && data.section.files[0] && data.section.files[0][0]) path = data.section.files[0][0].path;
-                        if (path) {
-                            $prj.prepend('<img src="' + contextPath + '/files/' + accession + '/' + path + '" alt="'+accession+'" />');
+                        if(data.ftpHttp_link){
+                            $.getJSON(data.ftpHttp_link+accession+'.json', function (local_data){
+                                handlePrjData(local_data, $prj, accession)
+                            });
                         }
-                    })});
+                        else handlePrjData(data, $prj);
+                    });
+                    ;});
             }
         });
     };

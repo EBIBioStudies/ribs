@@ -57,11 +57,11 @@ public class FileDownload {
         String accession = submissionDoc.get(Constants.Fields.ACCESSION);
         String storageModeString = submissionDoc.get(Constants.Fields.STORAGE_MODE);
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
-
         if (!searchService.isDocumentInCollection(submissionDoc, collection)) {
             throw new SubmissionNotAccessibleException();        }
 
-
+        if(storageMode == Constants.File.StorageMode.NFS && !StudyUtils.isPublicStudy(submissionDoc))
+            relativeBaseDir = StudyUtils.modifyRelativePathForPrivateStudies(submissionDoc.get(Constants.Fields.SECRET_KEY), relativeBaseDir);
         dlType = dlType.replaceFirst("/", "");
         String fileExtension = dlType.equalsIgnoreCase("aspera") ? getFileExtension(os): "txt";
         String[] files = request.getParameterMap().get("files");

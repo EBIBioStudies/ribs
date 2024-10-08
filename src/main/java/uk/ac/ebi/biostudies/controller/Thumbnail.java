@@ -38,8 +38,7 @@ public class Thumbnail {
     SearchService searchService;
     @Autowired
     FileDownloadService fileDownloadService;
-    @Autowired
-    StudyUtils studyUtils;
+
 
 
     /**
@@ -72,7 +71,7 @@ public class Thumbnail {
             Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
             boolean isPublicStudy = StudyUtils.isPublicStudy(document);
             if(!isPublicStudy && storageMode == Constants.File.StorageMode.NFS) {
-                relativePath = studyUtils.modifyRelativePathForPrivateStudies(document.get(Constants.Fields.SECRET_KEY), relativePath);
+                relativePath = StudyUtils.modifyRelativePathForPrivateStudies(document.get(Constants.Fields.SECRET_KEY), relativePath);
             }
             try {
                 name = URLDecoder.decode(name, StandardCharsets.UTF_8.name());
