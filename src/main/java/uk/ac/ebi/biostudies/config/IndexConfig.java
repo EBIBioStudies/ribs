@@ -74,6 +74,8 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     private String fireFtpHttpUrl;
     @Value("${files.isMigratedNfsPrivateDirectory}")
     private boolean isMigratedNfsPrivateDirectory;
+    @Value("${files.migratingNotCompleted}")
+    private boolean migratingNotCompleted;
 
     @Override
     public void afterPropertiesSet() {
@@ -189,5 +191,9 @@ public class IndexConfig implements InitializingBean, DisposableBean {
 
     public boolean isMigratedNfsPrivateDirectory() {
         return isMigratedNfsPrivateDirectory;
+    }
+
+    public boolean isMigratingNotCompleted() {
+        return migratingNotCompleted;
     }
 }

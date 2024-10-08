@@ -123,7 +123,7 @@ public class Study {
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
         if(Session.getCurrentUser()!=null)
             seckey = document.get(Constants.Fields.SECRET_KEY);
-        if(!isPublicStudy && storageMode == Constants.File.StorageMode.FIRE){
+        if((!isPublicStudy || indexConfig.isMigratingNotCompleted()) && storageMode == Constants.File.StorageMode.FIRE){
             return sendFireResponse(accession, relativePath, seckey, storageMode, isPublicStudy);
         }
 

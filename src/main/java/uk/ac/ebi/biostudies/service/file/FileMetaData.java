@@ -67,7 +67,7 @@ public class FileMetaData {
             if (s3Object != null) {
                 inputStream = s3Object.getObjectContent();
             } else if (storageMode == Constants.File.StorageMode.NFS && path != null && HttpTools.isValidUrl(path)) {
-                inputStream = HttpTools.fetchLargeFileStream(BASE_FTP_FIRE_URL+path.toString());
+                inputStream = HttpTools.fetchLargeFileStream(BASE_FTP_NFS_URL+path.toString());
             }
         } catch (Exception exception) {
             LOGGER.error("problem in sending ftp inputstream {}", fileName, exception);
