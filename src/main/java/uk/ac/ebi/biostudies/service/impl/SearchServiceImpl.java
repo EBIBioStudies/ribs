@@ -316,7 +316,7 @@ public class SearchServiceImpl implements SearchService {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode json = mapper.readTree(inputStream);
             JsonNode subSections = json.get("section").get("subsections");
-            if (subSections.isArray()) {
+            if (subSections!=null && subSections.isArray()) {
                 Iterator<JsonNode> iterator = subSections.iterator();
                 while (iterator.hasNext()) {
                     JsonNode node = iterator.next();
