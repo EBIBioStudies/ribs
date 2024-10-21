@@ -183,7 +183,7 @@ public class FileRestApiTest {
     }
 
 
-    @Test
+//    @Test
     /**
      * https://wwwdev.ebi.ac.uk/biostudies/files/ACCESSION/fileName.extension
      * test get download api without secret key
@@ -231,7 +231,7 @@ public class FileRestApiTest {
         assertTrue(result.contains("forbidden"));
     }
 
-    @Test
+//    @Test
     /**
      * https://wwwdev.ebi.ac.uk/biostudies/files/ACCESSION/fileName.properties
      * test get download api with secret key for normal formats

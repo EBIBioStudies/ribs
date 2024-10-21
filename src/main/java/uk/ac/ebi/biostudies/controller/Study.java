@@ -119,7 +119,7 @@ public class Study {
         boolean isPublicStudy = StudyUtils.isPublicStudy(document);
         String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
         String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
-        storageModeString = storageModeString.isEmpty()? "fire":storageModeString;
+        storageModeString = storageModeString.isEmpty()? "FIRE":storageModeString;
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
         if(Session.getCurrentUser()!=null)
             seckey = document.get(Constants.Fields.SECRET_KEY);
