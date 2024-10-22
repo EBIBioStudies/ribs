@@ -14,7 +14,7 @@ public class WebDriverTest {
 
     @BeforeClass
     public static void setup() {
-        System.setProperty("webdriver.chrome.driver", new File("chromedriver.exe").getAbsolutePath());
+        System.setProperty("webdriver.chrome.driver", new File("chromedriver").getAbsolutePath());
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         options.addArguments("--start-maximized");
