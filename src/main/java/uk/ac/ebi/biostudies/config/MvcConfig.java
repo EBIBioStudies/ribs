@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -23,12 +24,19 @@ import org.springframework.web.servlet.config.annotation.*;
 import uk.ac.ebi.biostudies.auth.AgentFilter;
 
 
+
 @Configuration
 @EnableAsync
 @EnableScheduling
 @ComponentScan(basePackages = "uk.ac.ebi.biostudies")
 @PropertySource("classpath:scheduler.properties")
+@PropertySource("classpath:fire.properties")
 public class MvcConfig implements WebMvcConfigurer {
+
+    @Value("${fire.local.isactive:false}")
+    private boolean localFire;
+    @Value("${fire.local.path:}")
+    private String firePath;
 
     @Autowired
     ExternalServicesConfig externalServicesConfig;
@@ -74,6 +82,13 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/images/**").addResourceLocations("/images/").setCachePeriod(6000);
         registry.addResourceHandler("/misc/**").addResourceLocations("/misc/").setCachePeriod(6000);
         registry.addResourceHandler("/fonts/**").addResourceLocations("/fonts/").setCachePeriod(6000);
+
+        // Conditionally add storage route based on the LOCAL_FIRE flag
+        if (localFire) {
+            registry.addResourceHandler("/storage/**")
+                    .addResourceLocations(firePath)
+                    .setCachePeriod(6000);
+        }
     }
 
     @Bean
