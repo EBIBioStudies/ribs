@@ -65,6 +65,12 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**");
         registry.addMapping("/files/**").allowedOrigins(externalServicesConfig.getAccessControlAllowOrigin().split(","))
                 .allowedMethods("GET", "POST");
+        if (localFire){
+            registry.addMapping("/storage/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET")
+                .allowedHeaders("*");
+        }
     }
 
     @Override
