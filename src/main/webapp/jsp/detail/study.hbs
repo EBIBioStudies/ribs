@@ -13,10 +13,10 @@
             <span class="meta-data" id="release-date">Release Date: <span id="orcid-publication-year">{{formatDateString releaseDate}}</span></span>
             <span class="meta-data" id="modification-date"></span>
             <div id="download-source"><a
-                href="${contextPath}/files/{{accno}}/{{accno}}.json{{keyString}}" target="_blank"
+                href="{{#if ftpURL}}{{ftpURL}}{{accno}}.json{{keyString}}{{else}} ${contextPath}/files/{{accno}}/{{accno}}.json{{keyString}}{{/if}}" target="_blank"
                    title="Download Study as JSON" class="source-icon source-icon-json"
                    data-icon="=">{JSON}</a><a
-                href="${contextPath}/files/{{accno}}/{{accno}}.tsv{{keyString}}" target="_blank"
+                href="{{#if ftpURL}}{{ftpURL}}{{accno}}.tsv{{keyString}}{{else}}${contextPath}/files/{{accno}}/{{accno}}.tsv{{keyString}}{{/if}}           " target="_blank"
                    title="Download Study as PageTab" class="source-icon source-icon-pagetab"
                    data-icon="=">&rarr;PageTab&#8626;</a><a id="http-link" href="#" target="_blank" style="display:none"
                     title="Open HTTP Folder" class="source-icon source-icon-http" data-icon="="><i

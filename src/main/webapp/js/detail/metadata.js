@@ -98,7 +98,8 @@ var Metadata = (function (_self) {
                 }]
             });
         }
-
+        if(ftpURL)
+            pageData.section.ftpURL = ftpURL
         $('#renderedContent').html(template(pageData.section));
         postRender(params, pageData.section);
     }

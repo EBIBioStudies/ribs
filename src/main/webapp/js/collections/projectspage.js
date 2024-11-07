@@ -25,7 +25,7 @@ var CollectionsPage = (function (_self) {
     function addLogo($prj, accession, baseLink, path) {
         if (path) {
             $prj.prepend(`<div><a class="collection-logo" href="${contextPath}/${accession}/studies">
-            <img src="${baseLink}/Files/${path}" alt="${accession}"/></a></div>`);
+            <img src="${baseLink}${path.startsWith('/') ? '/Files' : '/Files/'}${path}" alt="${accession}"/></a></div>`);
         }
     }
 

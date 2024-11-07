@@ -67,7 +67,11 @@ public class FileMetaData {
             if (s3Object != null) {
                 inputStream = s3Object.getObjectContent();
             } else if (storageMode == Constants.File.StorageMode.NFS && path != null && HttpTools.isValidUrl(path)) {
-                inputStream = HttpTools.fetchLargeFileStream(BASE_FTP_NFS_URL+path.toString());
+                String pathStr = path.toString().replace('\\', '/');
+                String fullPath = BASE_FTP_NFS_URL.endsWith("/") || pathStr.startsWith("/")
+                        ? BASE_FTP_NFS_URL + pathStr
+                        : BASE_FTP_NFS_URL + "/" + pathStr;
+                inputStream = HttpTools.fetchLargeFileStream(fullPath);
             }
         } catch (Exception exception) {
             LOGGER.error("problem in sending ftp inputstream {}", fileName, exception);
