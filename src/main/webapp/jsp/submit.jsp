@@ -98,15 +98,15 @@
             <p class="justify">Yes, they are automatically assigned after submission.</p>
 
             <h5><i class="fa-solid fa-circle-question"></i> How are names handled for DOIs?</h5>
-            <p class="justify">The BioStudies DOIs are assigned by <a href="https://www.crossref.org/">Crossref</a>. We
-                attempt to populate the Crossref
-                <a href="https://www.crossref.org/documentation/schema-library/required-recommended-elements/">metadata
-                schema elements</a>. In that schema, if a dataset Contributor is specified, the "Surname" field is
-                required, and "given_name" is optional. In the BioStudies system we register a user name as a single
-                string. For the purposes of Crossref metadata we try to split that string into two parts by looking for
-                the first space character and treating everything that comes after that as a surname. If there are no
-                spaces in the user name, then we do not record the "Contributor" at all. Please contact us if this
-                approach creates a Crossref DOI record that you are not happy with.</p>
+            <p class="justify">BioStudies DOIs are assigned by <a href="https://www.crossref.org/">Crossref</a>. We
+                populate the Crossref
+                <a href="https://www.crossref.org/documentation/schema-library/required-recommended-elements/"> metadata
+                 schema</a>, where the "Surname" field is required if a dataset Contributor is specified, and
+                "given_name" is optional. User names in the BioStudies system are registered as single strings. For
+                Crossref, we split the string at the first space, treating everything after it as the surname. If there
+                are no spaces in the user name, then the user name will be used as "Surname" and "given_name" will be
+                left blank. Please <a href="mailto:biostudies@ebi.ac.uk">Contact us</a> if this approach results in an
+                unsatisfactory Crossref DOI record.</p>
 
             <h5><i class="fa-solid fa-circle-question"></i> Can I keep my dataset private (e.g. until publication)?</h5>
             <p class="justify">Yes. When you submit your data, you can choose a release date. Until that date, your data
