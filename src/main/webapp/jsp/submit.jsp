@@ -97,6 +97,17 @@
             <h5><i class="fa-solid fa-circle-question"></i> Do you assign Digital Object Identifiers (DOIs)?</h5>
             <p class="justify">Yes, they are automatically assigned after submission.</p>
 
+            <h5><i class="fa-solid fa-circle-question"></i> How are names handled for DOIs?</h5>
+            <p class="justify">BioStudies DOIs are assigned by <a href="https://www.crossref.org/">Crossref</a>. We
+                populate the Crossref
+                <a href="https://www.crossref.org/documentation/schema-library/required-recommended-elements/"> metadata
+                 schema</a>, where the "Surname" field is required if a dataset Contributor is specified, and
+                "given_name" is optional. User names in the BioStudies system are registered as single strings. For
+                Crossref, we split the string at the first space, treating everything after it as the surname. If there
+                are no spaces in the user name, then the user name will be used as "Surname" and "given_name" will be
+                left blank. Please <a href="mailto:biostudies@ebi.ac.uk">Contact us</a> if this approach results in an
+                unsatisfactory Crossref DOI record.</p>
+
             <h5><i class="fa-solid fa-circle-question"></i> Can I keep my dataset private (e.g. until publication)?</h5>
             <p class="justify">Yes. When you submit your data, you can choose a release date. Until that date, your data
                 will not be publicly visible. You can choose to share your data with specific people (e.g. editors of
