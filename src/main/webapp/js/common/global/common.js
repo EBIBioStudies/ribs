@@ -1,5 +1,5 @@
 $(function() {
-    const specialCollections = ['bioimages', 'arrayexpress'];
+    const specialCollections = ['bioimages', 'arrayexpress', 'biomodels'];
 
     function updateMenuForCollection(data) {
         if ($.inArray(collection.toLowerCase(), specialCollections)<0 &&
@@ -121,7 +121,14 @@ function handleProjectSpecificUI(){
         handleBioImagesUI();
     } else if (collection && collection.toLowerCase()=='arrayexpress') {
         handleArrayExpressUI();
+    }else if (collection && collection.toLowerCase()=='biomodels') {
+        handleBioModelsUI();
     }
+}
+
+function handleBioModelsUI(){
+    $('#local-title').html('<h1><img src="' + contextPath + '/images/collections/biomodels/logo.png"></img></h1>');
+    $('#masthead').css("background-image","url("+contextPath +"/images/collections/biomodels/background.png)");
 }
 
 function handleBioImagesUI() {
