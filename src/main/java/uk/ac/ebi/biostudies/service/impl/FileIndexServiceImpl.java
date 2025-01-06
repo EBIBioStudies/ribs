@@ -180,12 +180,12 @@ public class FileIndexServiceImpl implements FileIndexService {
 
         //find file lists
         List<JsonNode> subSections = json.findParents("attributes");
-        Map<String, JsonNode> parents = new LinkedHashMap<>();
+        Map<String, List<JsonNode>> parents = new HashMap<>();
         for (JsonNode subSection : subSections) {
             ArrayNode attributes = (ArrayNode) subSection.get("attributes");
             for (JsonNode attribute : attributes) {
                 if (attribute.get("name").textValue().equalsIgnoreCase("file list")) {
-                    parents.put(attribute.get("value").textValue(), subSection);
+                    parents.computeIfAbsent(attribute.get("value").textValue(), k -> new ArrayList<>()).add(subSection);
                 }
             }
         }
@@ -194,38 +194,46 @@ public class FileIndexServiceImpl implements FileIndexService {
         for (JsonNode subSection : subSections) {
             JsonNode fileList = subSection.get("fileList");
             if (fileList != null && fileList.has("fileName")) {
-                parents.put(fileList.get("fileName").textValue(), subSection);
+                parents.computeIfAbsent(fileList.get("fileName").textValue(), k -> new ArrayList<>()).add(subSection);
             }
         }
 
 
-        parents.forEach((filename, jsonNode) -> {
-            if (jsonNode == null) return;
-            FileMetaData fileList = new FileMetaData(accession);
-            fileList.setUiRequestedPath(filename + (filename.toLowerCase().endsWith(".json") ? "" : ".json"));
-            fileList.setRelativePath(relativePath);
-            fileList.setPublic(isPublicStudy);
-            try {
-                Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(json.get(Constants.Fields.STORAGE_MODE).asText());
-                fileList.setStorageMode(storageMode);
-                fileService.getDownloadFile(fileList);
-                if (fileList.getInputStream() == null) {
-                    fileList.setUiRequestedPath("Files/" + filename + (filename.toLowerCase().endsWith(".json") ? "" : ".json"));
-                    fileService.getDownloadFile(fileList);
-                }
-                indexLibraryFile(accession, writer, counter, columns, sectionsWithFiles, fileKeyValuePureTextForSearch, jsonNode, fileList);
+        parents.forEach((filename, jsonNodes) -> {
+            if (jsonNodes == null) return;
 
-            } catch (Exception e) {
-                LOGGER.error("problem in parsing attached files", e);
-            }
-            finally {
+            jsonNodes.forEach(jsonNode -> {
+                if (jsonNode == null) return;
+
+                FileMetaData fileList = new FileMetaData(accession);
+                fileList.setUiRequestedPath(filename + (filename.toLowerCase().endsWith(".json") ? "" : ".json"));
+                fileList.setRelativePath(relativePath);
+                fileList.setPublic(isPublicStudy);
+
                 try {
-                    if (fileList != null)
-                        fileList.close();
-                }catch (Exception exception){
-                    LOGGER.debug("problem in closing file", exception);
+                    Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(json.get(Constants.Fields.STORAGE_MODE).asText());
+                    fileList.setStorageMode(storageMode);
+                    fileService.getDownloadFile(fileList);
+
+                    if (fileList.getInputStream() == null) {
+                        fileList.setUiRequestedPath("Files/" + filename + (filename.toLowerCase().endsWith(".json") ? "" : ".json"));
+                        fileService.getDownloadFile(fileList);
+                    }
+
+                    indexLibraryFile(accession, writer, counter, columns, sectionsWithFiles, fileKeyValuePureTextForSearch, jsonNode, fileList);
+
+                } catch (Exception e) {
+                    LOGGER.error("Problem in parsing attached files", e);
+                } finally {
+                    try {
+                        if (fileList != null) {
+                            fileList.close();
+                        }
+                    } catch (Exception exception) {
+                        LOGGER.debug("Problem in closing file", exception);
+                    }
                 }
-            }
+            });
         });
 
         //put Section as the first column. Name and size would be prepended later
