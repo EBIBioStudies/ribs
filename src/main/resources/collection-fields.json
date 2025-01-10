@@ -37,6 +37,18 @@
     { "name": "facet.processed", "title": "Processed Data Available", "fieldType": "facet", "facetType": "boolean", "multiValued": false, "jsonPath": "$..subsections[?(@.type==\"MINSEQE Score\")]..attributes[?(@.name==\"Processed\" && @.value=='*')].concat(\"true\") OR $..sections[?(@.type==\"MINSEQE Score\")]..attributes[?(@.name==\"Processed\" && @.value=='*')].concat(\"true\") OR $..subsections[?(@.type==\"MIAME Score\")]..attributes[?(@.name==\"Processed\" && @.value=='*')].concat(\"true\") OR $..sections[?(@.type==\"MIAME Score\")]..attributes[?(@.name==\"Processed\" && @.value=='*')].concat(\"true\")", "sortable": true},
     { "name": "facet.gxa", "title": "In Expression Atlas", "fieldType": "facet", "facetType": "boolean", "multiValued": false, "jsonPath": "$..links..attributes[?(@.name=='Type' && @.value=='Expression Atlas')].concat(\"true\")", "sortable": true}
   ],
+  "biomodels": [
+    {"name": "domain", "title": "Model Domain", "fieldType": "tokenized_string"},
+    {"name": "curation_status", "title": "Curation Status", "fieldType": "tokenized_string"},
+    {"name": "model_format", "title": "Model Format", "fieldType": "tokenized_string"},
+    {"name": "modelling_approach", "title": "Modelling Approach", "fieldType": "tokenized_string"},
+    {"name": "model_tag", "title": "Model Tag", "fieldType": "tokenized_string"},
+    {"name": "facet.domain", "title": "Model Domain", "fieldType": "facet"},
+    {"name": "facet.curation_status", "title": "Curation Status", "fieldType": "facet"},
+    {"name": "facet.model_format", "title": "Model Format", "fieldType": "facet"},
+    {"name": "facet.model_tag", "title": "Model Tag", "fieldType": "facet"},
+    {"name": "facet.organism", "title": "Organism", "fieldType": "facet"}
+  ],
   "europepmc": [
     { "name": "facet.europepmc.funding_agency", "title": "Funding Agency", "fieldType": "facet", "jsonPath": "$..subsections[?(@.type==\"Funding\")].attributes[?(@.name==\"Agency\")].value OR $..sections[?(@.type==\"Funding\")].attributes[?(@.name==\"Agency\")].value OR $..sections[?(@.type==\"Funding\")].attributes[?(@.name==\"Agency\")].value OR $..sections[?(@.type==\"Funding\")].attributes[?(@.name==\"Agency\")].value"}
   ],
