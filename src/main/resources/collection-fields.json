@@ -46,6 +46,7 @@
     {"name": "facet.domain", "title": "Domain", "fieldType": "facet"},
     {"name": "facet.curation_status", "title": "Curation Status", "fieldType": "facet"},
     {"name": "facet.model_format", "title": "Model Format", "fieldType": "facet"},
+    {"name": "facet.modelling_approach", "title": "Modelling Approach", "fieldType": "facet"},
     {"name": "facet.model_tags", "title": "Model Tags", "fieldType": "facet"},
     {"name": "facet.organism", "title": "Organism", "fieldType": "facet"}
   ],
