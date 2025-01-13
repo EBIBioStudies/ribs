@@ -38,15 +38,15 @@
     { "name": "facet.gxa", "title": "In Expression Atlas", "fieldType": "facet", "facetType": "boolean", "multiValued": false, "jsonPath": "$..links..attributes[?(@.name=='Type' && @.value=='Expression Atlas')].concat(\"true\")", "sortable": true}
   ],
   "biomodels": [
-    {"name": "domain", "title": "Model Domain", "fieldType": "tokenized_string"},
+    {"name": "domain", "title": "Domain", "fieldType": "tokenized_string"},
     {"name": "curation_status", "title": "Curation Status", "fieldType": "tokenized_string"},
     {"name": "model_format", "title": "Model Format", "fieldType": "tokenized_string"},
     {"name": "modelling_approach", "title": "Modelling Approach", "fieldType": "tokenized_string"},
-    {"name": "model_tag", "title": "Model Tag", "fieldType": "tokenized_string"},
-    {"name": "facet.domain", "title": "Model Domain", "fieldType": "facet"},
+    {"name": "model_tags", "title": "Model Tags", "fieldType": "tokenized_string"},
+    {"name": "facet.domain", "title": "Domain", "fieldType": "facet"},
     {"name": "facet.curation_status", "title": "Curation Status", "fieldType": "facet"},
     {"name": "facet.model_format", "title": "Model Format", "fieldType": "facet"},
-    {"name": "facet.model_tag", "title": "Model Tag", "fieldType": "facet"},
+    {"name": "facet.model_tags", "title": "Model Tags", "fieldType": "facet"},
     {"name": "facet.organism", "title": "Organism", "fieldType": "facet"}
   ],
   "europepmc": [
