@@ -290,6 +290,11 @@ var Metadata = (function (_self) {
                             const url = ebiResources.length ? ebiResources : id_org_url;
                             $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
                         }
+                    }).done(() => {
+                        console.log(`Fetched successfully: ${url}`);
+                    }).fail(() => {
+                        console.log("namespaceEmbeddedInLui: ", embedded, "URL: ", url, ". This resource might not" +
+                            " use the attribute namespaceEmbeddedInLui");
                     })
                 });
             }
