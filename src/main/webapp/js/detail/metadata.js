@@ -287,7 +287,7 @@ var Metadata = (function (_self) {
                             const ebiResources = data.payload.resolvedResources.filter(function(o){return o?.providerCode==='ebi'});
                             let id_org_url = "https://identifiers.org/" + (embedded ? name : type+":"+name);
                             // fallback: id_org_url = (data.payload.resolvedResources)[0].compactIdentifierResolvedUrl;
-                            const url = ebiResources.length ? ebiResources : id_org_url;
+                            url = ebiResources.length ? ebiResources[0]["compactIdentifierResolvedUrl"] : id_org_url;
                             $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
                         }
                     }).done(() => {
