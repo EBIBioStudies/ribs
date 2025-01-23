@@ -265,22 +265,33 @@ var Metadata = (function (_self) {
 
      function createMainLinkTable() {
         //create external links for known link types
-        var typeIndex = $('thead tr th',$("#link-list")).map(function(i,v) {if ( $(v).text().toLowerCase()==='type') return i;}).filter(isFinite)[0];
+        const typeIndex = $('thead tr th',$("#link-list")).map(function(i,v) {if ( $(v).text().toLowerCase()==='type') return i;}).filter(isFinite)[0];
         $("tr",$("#link-list")).each( function (i,row) {
-            if (i==0) return;
-            var type =  $($('td',row)[typeIndex]).text().toLowerCase();
-            var name = $($('td',row)[0]).text();
-            var url = getURL(name, type);
+            if (i === 0) return;
+            const type =  $($('td', row)[typeIndex]).text().toLowerCase();
+            const name = $($('td', row)[0]).text();
+            let url = getURL(name, type);
             if (url) {
-                $($('td',row)[0]).wrapInner('<a href="'+ url.url +'" target="_blank">');
+                $($('td', row)[0]).wrapInner('<a href="'+ url.url +'" target="_blank">');
             } else {
-                $.getJSON( 'https://resolver.api.identifiers.org/'+type+':'+name , function (data) {
-                    if (data && data.payload && data.payload.resolvedResources) {
-                        var ebiResources = data.payload.resolvedResources.filter(function(o){return o?.providerCode==='ebi'});
-                        var url = (ebiResources.length ? ebiResources : data.payload.resolvedResources)[0].compactIdentifierResolvedUrl;
-                        $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
-                    }
-                })
+                url = 'https://resolver.api.identifiers.org/' + type + ':' + name;
+                const nsURL = 'https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=' + type;
+                $.getJSON(nsURL, (data) => {
+                   let embedded = false;
+                   if (data["namespaceEmbeddedInLui"]) {
+                       url = 'https://resolver.api.identifiers.org/' + name;
+                       embedded = true;
+                   }
+                    $.getJSON(url, function (data) {
+                        if (data && data.payload && data.payload.resolvedResources) {
+                            const ebiResources = data.payload.resolvedResources.filter(function(o){return o?.providerCode==='ebi'});
+                            let id_org_url = "https://identifiers.org/" + (embedded ? name : type+":"+name);
+                            // fallback: id_org_url = (data.payload.resolvedResources)[0].compactIdentifierResolvedUrl;
+                            const url = ebiResources.length ? ebiResources : id_org_url;
+                            $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
+                        }
+                    })
+                });
             }
             $($('td',row)[0]).addClass("overflow-name-column");
         });
