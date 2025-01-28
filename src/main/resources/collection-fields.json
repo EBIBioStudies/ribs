@@ -38,17 +38,18 @@
     { "name": "facet.gxa", "title": "In Expression Atlas", "fieldType": "facet", "facetType": "boolean", "multiValued": false, "jsonPath": "$..links..attributes[?(@.name=='Type' && @.value=='Expression Atlas')].concat(\"true\")", "sortable": true}
   ],
   "biomodels": [
-    {"name": "domain", "title": "Domain", "fieldType": "tokenized_string"},
-    {"name": "curation_status", "title": "Curation Status", "fieldType": "tokenized_string"},
-    {"name": "model_format", "title": "Model Format", "fieldType": "tokenized_string"},
-    {"name": "modelling_approach", "title": "Modelling Approach", "fieldType": "tokenized_string"},
-    {"name": "model_tags", "title": "Model Tags", "fieldType": "tokenized_string"},
-    {"name": "facet.domain", "title": "Domain", "fieldType": "facet"},
-    {"name": "facet.curation_status", "title": "Curation Status", "fieldType": "facet"},
-    {"name": "facet.model_format", "title": "Model Format", "fieldType": "facet"},
-    {"name": "facet.modelling_approach", "title": "Modelling Approach", "fieldType": "facet"},
-    {"name": "facet.model_tags", "title": "Model Tags", "fieldType": "facet"},
-    {"name": "facet.organism", "title": "Organism", "fieldType": "facet"}
+    {"name": "biomodels.domain", "title": "Domain", "fieldType": "tokenized_string"},
+    {"name": "biomodels.curation_status", "title": "Curation Status", "fieldType": "tokenized_string"},
+    {"name": "biomodels.modelling_approach", "title": "Modelling Approach", "fieldType": "tokenized_string"},
+    {"name": "biomodels.model_format", "title": "Model Format", "fieldType": "tokenized_string"},
+    {"name": "biomodels.model_tags", "title": "Model Tags", "fieldType": "tokenized_string"},
+    {"name": "biomodels.organism", "title": "Organism", "fieldType": "tokenized_string"},
+    {"name": "facet.biomodels.domain", "title": "Domain", "fieldType": "facet"},
+    {"name": "facet.biomodels.curation_status", "title": "Curation Status", "fieldType": "facet"},
+    {"name": "facet.biomodels.modelling_approach", "title": "Modelling Approach", "fieldType": "facet"},
+    {"name": "facet.biomodels.model_format", "title": "Model Format", "fieldType": "facet"},
+    {"name": "facet.biomodels.model_tags", "title": "Model Tags", "fieldType": "facet"},
+    {"name": "facet.biomodels.organism", "title": "Organism", "fieldType": "facet"}
   ],
   "europepmc": [
     { "name": "facet.europepmc.funding_agency", "title": "Funding Agency", "fieldType": "facet", "jsonPath": "$..subsections[?(@.type==\"Funding\")].attributes[?(@.name==\"Agency\")].value OR $..sections[?(@.type==\"Funding\")].attributes[?(@.name==\"Agency\")].value OR $..sections[?(@.type==\"Funding\")].attributes[?(@.name==\"Agency\")].value OR $..sections[?(@.type==\"Funding\")].attributes[?(@.name==\"Agency\")].value"}
