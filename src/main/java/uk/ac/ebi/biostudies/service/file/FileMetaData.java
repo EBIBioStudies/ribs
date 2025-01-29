@@ -17,6 +17,7 @@ public class FileMetaData {
     private String accession;
     private String fileName;
     private String uiRequestedPath;
+    private String unDecodedRequestedPath;
     private String collection;
     private String relativePath;
 
@@ -44,6 +45,17 @@ public class FileMetaData {
     public FileMetaData(String accession, String uiRequestedPath, String fileName, String relativePath, Constants.File.StorageMode storageMode, boolean isPublicStudy, boolean secretKey, String collection) {
         this.accession = accession;
         this.uiRequestedPath = uiRequestedPath;
+        this.fileName = fileName;
+        this.relativePath = relativePath;
+        this.storageMode = storageMode;
+        this.isPublic = isPublicStudy;
+        this.hasKey = secretKey;
+        this.collection = collection;
+    }
+    public FileMetaData(String accession, String uiRequestedPath, String unDecodedRequestedPath, String fileName, String relativePath, Constants.File.StorageMode storageMode, boolean isPublicStudy, boolean secretKey, String collection) {
+        this.accession = accession;
+        this.uiRequestedPath = uiRequestedPath;
+        this.unDecodedRequestedPath = unDecodedRequestedPath;
         this.fileName = fileName;
         this.relativePath = relativePath;
         this.storageMode = storageMode;
@@ -203,5 +215,9 @@ public class FileMetaData {
         } catch (Exception exception) {
             LOGGER.error("problem in closing stream", exception);
         }
+    }
+
+    public String getUnDecodedRequestedPath() {
+        return unDecodedRequestedPath;
     }
 }

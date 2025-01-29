@@ -78,7 +78,8 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             String uriParts = request.getRequestURI().replaceAll(request.getContextPath() + (StringUtils.isEmpty(collection) ? "" : "/" + collection) + "/files/", "");
             List<String> requestArgs = new ArrayList<>(Arrays.asList(uriParts.split("/")));
             String accession = requestArgs.remove(0);
-            String requestedFilePath = URLDecoder.decode(StringUtils.replace(StringUtils.join(requestArgs, '/'), "..", ""), StandardCharsets.UTF_8);
+            String unDecodedRequestedPath = StringUtils.replace(StringUtils.join(requestArgs, '/'), "..", "");
+            String requestedFilePath = URLDecoder.decode(unDecodedRequestedPath, StandardCharsets.UTF_8);
             String key = request.getParameter("key");
             if ("null".equalsIgnoreCase(key)) {
                 key = null;
@@ -106,7 +107,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             if(!StudyUtils.isPublicStudy(document) && storageMode==Constants.File.StorageMode.NFS)
                 relativePath = StudyUtils.modifyRelativePathForPrivateStudies(docKey, relativePath);
 
-            fileMetaData = new FileMetaData(accession, requestedFilePath, requestedFilePath, relativePath,
+            fileMetaData = new FileMetaData(accession, requestedFilePath, unDecodedRequestedPath, requestedFilePath, relativePath,
                     storageMode, (" " + document.get(Constants.Fields.ACCESS) + " ").toLowerCase().contains(" public "
             ), (key != null && !key.isEmpty()), collection);
 
