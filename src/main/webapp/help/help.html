@@ -178,7 +178,12 @@
                     { } [ ] ^ " ~ * ? : \ /</span> ) are part of the query syntax and need to be either escaped or
                 quoted if entered as a part of your query, e.g., query for eeg/fmri should be entered as either
                 eeg\/fmri or "eeg/fmri". Similarly, queries for a DOI should be entered in double quotes as well, e.g.,
-                "10.1371/journal.pone.0127346". </p></div>
+                "10.1371/journal.pone.0127346". </p>
+            <p>Queries or parts of queries can also be in the <a href="https://lucene.apache.org/core/2_9_4/queryparsersyntax.html">Lucene</a> query form like <span class="mono">attribute_name:attribute_value</span>.
+                For example, <span class="mono">author:smith AND title:bacteria </span> will return fewer hits
+                than <span class="mono">smith AND bacteria </span>. See below, in the /api/v1/search section, for a <a href="#rest-search">full list of attributes</a>
+            </p>
+        </div>
     </li>
 
     <li class="accordion-item" data-accordion-item>
@@ -311,7 +316,7 @@
     <li class="accordion-item" data-accordion-item>
         <a href="#" class="accordion-title" id="rest-api-docs" name="rest-api-docs"><h3><i class="fa-solid fa-gear"></i>
             API</h3></a>
-        <div class="accordion-content" data-tab-content>
+        <div class="accordion-content" id="rest-search" data-tab-content>
             <details>
                 <summary id="api-search"><code class="endpoint">/api/v1/search</code> Returns a list of studies
                     according to the search criteria
