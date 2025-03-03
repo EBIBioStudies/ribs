@@ -31,10 +31,17 @@ public class ViewCountLoader {
     }
 
     public void loadViewCountFile() {
+        String accession = "";
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(indexConfig.getViewCountInputFile()))) {
             for (String line; (line = bufferedReader.readLine()) != null; ) {
-                String[] tokens = line.split(",");
-                ACCESSION_VIEW_COUNT_MAP.put(tokens[0], Long.valueOf(tokens[1]));
+                try{
+                    String[] tokens = line.split(",");
+                    Long count = Long.valueOf(tokens[1]);
+                    accession = tokens[0];
+                    ACCESSION_VIEW_COUNT_MAP.put(tokens[0], count);
+                }catch (Exception exception){
+                   LOGGER.error("Problem in parsing view stats for accession: {}", accession);
+                }
             }
         } catch (Exception exception) {
             LOGGER.error("problem in parsing view count file: {} ", Constants.VIEW_COUNT_CSV, exception);
