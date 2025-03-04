@@ -30,6 +30,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -46,10 +48,20 @@ public class HttpTools {
     public static final String AUTH_MESSAGE_COOKIE = "BioStudiesMessage";
     public static final String REFERER_HEADER = "Referer";
     public static final Integer MAX_AGE = 31557600;
+    public static String PROXY_HOST;
+    public static Integer PROXY_PORT;
     private static HttpClient client = HttpClient.newBuilder()
             .executor(Executors.newFixedThreadPool(20)) // Thread pool size for concurrent requests
             .version(HttpClient.Version.HTTP_2)
-            .build();;
+            .proxy(getProxySelector())  // Apply proxy settings
+            .build();
+
+    // Method to determine if proxy should be used
+    private static ProxySelector getProxySelector() {
+        return (PROXY_HOST != null && !PROXY_HOST.isEmpty() && PROXY_PORT != null)
+                ? ProxySelector.of(new InetSocketAddress(PROXY_HOST, PROXY_PORT))
+                : ProxySelector.getDefault();
+    }
 
 
     public static InputStream fetchLargeFileStream(String url) throws Exception {
