@@ -93,7 +93,13 @@ public class HttpTools {
 
             // Handle the response as an InputStream
             HttpResponse<InputStream> response = makeConnection().send(request, HttpResponse.BodyHandlers.ofInputStream());
-            return response.statusCode() == 200 ? true : false;
+            try (InputStream responseBody = response.body()) {
+                return response.statusCode() == 200;
+            }
+            catch (Exception exception){
+                LOGGER.error("Problem in closing connection", exception);
+                return false;
+            }
         }catch (Throwable throwable){
             return false;
         }
