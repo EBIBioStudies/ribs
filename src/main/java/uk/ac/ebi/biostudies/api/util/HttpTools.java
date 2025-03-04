@@ -36,6 +36,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -50,11 +51,14 @@ public class HttpTools {
     public static final Integer MAX_AGE = 31557600;
     public static String PROXY_HOST;
     public static Integer PROXY_PORT;
-    private static HttpClient client = HttpClient.newBuilder()
-            .executor(Executors.newFixedThreadPool(20)) // Thread pool size for concurrent requests
-            .version(HttpClient.Version.HTTP_2)
-            .proxy(getProxySelector())  // Apply proxy settings
-            .build();
+    private static HttpClient makeConnection(){
+        return HttpClient.newBuilder()
+//            .executor(Executors.newFixedThreadPool(20)) // ftp over http server has problem with pooled connections and drop them
+                .version(HttpClient.Version.HTTP_2)
+                .proxy(getProxySelector())  // Apply proxy settings
+                .connectTimeout(Duration.ofSeconds(5))
+                .build();
+    }
 
     // Method to determine if proxy should be used
     private static ProxySelector getProxySelector() {
@@ -71,7 +75,7 @@ public class HttpTools {
                 .build();
 
         // Handle the response as an InputStream
-        HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+        HttpResponse<InputStream> response = makeConnection().send(request, HttpResponse.BodyHandlers.ofInputStream());
 
         if (response.statusCode() != 200) {
             throw new Exception("Failed to retrieve file. HTTP response code: " + response.statusCode());
@@ -88,7 +92,7 @@ public class HttpTools {
                     .build();
 
             // Handle the response as an InputStream
-            HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            HttpResponse<InputStream> response = makeConnection().send(request, HttpResponse.BodyHandlers.ofInputStream());
             return response.statusCode() == 200 ? true : false;
         }catch (Throwable throwable){
             return false;

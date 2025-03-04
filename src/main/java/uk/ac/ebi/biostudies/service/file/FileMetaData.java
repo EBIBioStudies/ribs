@@ -78,7 +78,8 @@ public class FileMetaData {
             if (inputStream != null) return inputStream;
             if (s3Object != null) {
                 inputStream = s3Object.getObjectContent();
-            } else if (storageMode == Constants.File.StorageMode.NFS && path != null && HttpTools.isValidUrl(path)) {
+            } else if (storageMode == Constants.File.StorageMode.NFS && path != null
+            /** && HttpTools.isValidUrl(path) validation will cause performance degradation without a pool**/) {
                 String pathStr = path.toString().replace('\\', '/');
                 String fullPath = BASE_FTP_NFS_URL.endsWith("/") || pathStr.startsWith("/")
                         ? BASE_FTP_NFS_URL + pathStr
