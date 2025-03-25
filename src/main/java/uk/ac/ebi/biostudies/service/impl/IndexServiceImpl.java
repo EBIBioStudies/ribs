@@ -509,6 +509,8 @@ public class IndexServiceImpl implements IndexService {
                     value = NA;
             }
             for (String subVal : org.apache.commons.lang3.StringUtils.split(value, Facets.DELIMITER)) {
+                if(subVal==null || subVal.isEmpty())
+                    continue;
                 if (subVal.equalsIgnoreCase(NA) && facetConfig.has(IndexEntryAttributes.DEFAULT_VALUE)) {
                     subVal = facetConfig.get(IndexEntryAttributes.DEFAULT_VALUE).textValue();
                 }
