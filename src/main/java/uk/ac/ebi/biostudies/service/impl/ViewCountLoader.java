@@ -36,11 +36,11 @@ public class ViewCountLoader {
             for (String line; (line = bufferedReader.readLine()) != null; ) {
                 try{
                     String[] tokens = line.split(",");
-                    Long count = Long.valueOf(tokens[1]);
                     accession = tokens[0];
+                    Long count = Long.valueOf(tokens[1]);
                     ACCESSION_VIEW_COUNT_MAP.put(tokens[0], count);
                 }catch (Exception exception){
-                   LOGGER.error("Problem in parsing view stats for accession: {}", accession);
+                   LOGGER.debug("Problem in parsing view stats for accession: {}", accession);
                 }
             }
         } catch (Exception exception) {
