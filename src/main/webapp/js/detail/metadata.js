@@ -280,7 +280,7 @@ var Metadata = (function (_self) {
             const LS_KEY = type + ":" + name;
             if (url === null) {
                 // check this type and name in the cache
-                url = localStorage.getItem(LS_KEY);
+                url = sessionStorage.getItem(LS_KEY);
                 if (!url) {
                     url = ID_ORG_RESOLVER + type + ':' + name;
                     const nsURL = ID_ORG_REGISTRY + 'restApi/namespaces/search/findByPrefix?prefix=' + type;
@@ -300,11 +300,13 @@ var Metadata = (function (_self) {
                                 let id_org_url = ID_ORG + (embedded ? name : (type + ":" + name));
                                 // fallback: id_org_url = (data.payload.resolvedResources)[0].compactIdentifierResolvedUrl;
                                 url = ebiResources.length ? ebiResources[0]["compactIdentifierResolvedUrl"] : id_org_url;
-                                localStorage.setItem(LS_KEY, url);
                                 $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
                             }
                         }).done(() => {
                             // console.log(`Fetched successfully: ${url}`);
+                            if (url) {
+                                sessionStorage.setItem(LS_KEY, url);
+                            }
                         }).fail(() => {
                             // console.log("This resource " + url + " is unresolvable");
                         })
@@ -318,7 +320,8 @@ var Metadata = (function (_self) {
                 url = url.url;
             }
             if (url) {
-                localStorage.setItem(LS_KEY, url);
+                // sessionStorage.setItem(LS_KEY, url);
+                console.log(url);
                 $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
             }
             $($('td',row)[0]).addClass("overflow-name-column");
