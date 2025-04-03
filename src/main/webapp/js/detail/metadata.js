@@ -265,22 +265,28 @@ var Metadata = (function (_self) {
 
      function createMainLinkTable() {
         //create external links for known link types
+         const ID_ORG_RESOLVER = "https://resolver.api.identifiers.org/";
+         const ID_ORG_REGISTRY = "https://registry.api.identifiers.org/";
         const typeIndex = $('thead tr th',$("#link-list")).map(function(i,v) {if ( $(v).text().toLowerCase()==='type') return i;}).filter(isFinite)[0];
         $("tr",$("#link-list")).each( function (i,row) {
             if (i === 0) return;
-            const type =  $($('td', row)[typeIndex]).text().toLowerCase();
-            const name = $($('td', row)[0]).text();
+            const type =  $($('td', row)[typeIndex]).text().toLowerCase().trim();
+            const name = $($('td', row)[0]).text().trim();
             let url = getURL(name, type);
             if (url) {
                 $($('td', row)[0]).wrapInner('<a href="'+ url.url +'" target="_blank">');
             } else {
-                url = 'https://resolver.api.identifiers.org/' + type + ':' + name;
-                const nsURL = 'https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=' + type;
+                url = ID_ORG_RESOLVER + type + ':' + name;
+                // e.g., https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=taxonomy
+                const nsURL = ID_ORG_REGISTRY + 'restApi/namespaces/search/findByPrefix?prefix=' + type;
                 $.getJSON(nsURL, (data) => {
                    let embedded = false;
                    if (data["namespaceEmbeddedInLui"]) {
-                       url = 'https://resolver.api.identifiers.org/' + name;
+                       url = ID_ORG_RESOLVER + name;
                        embedded = true;
+                   } else {
+                       url = ID_ORG_RESOLVER + type + "/" + name;
+                       console.log(url);
                    }
                     $.getJSON(url, function (data) {
                         if (data && data.payload && data.payload.resolvedResources) {
