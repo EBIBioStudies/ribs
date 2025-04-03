@@ -30,10 +30,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -46,10 +49,23 @@ public class HttpTools {
     public static final String AUTH_MESSAGE_COOKIE = "BioStudiesMessage";
     public static final String REFERER_HEADER = "Referer";
     public static final Integer MAX_AGE = 31557600;
-    private static HttpClient client = HttpClient.newBuilder()
-            .executor(Executors.newFixedThreadPool(20)) // Thread pool size for concurrent requests
-            .version(HttpClient.Version.HTTP_2)
-            .build();;
+    public static String PROXY_HOST;
+    public static Integer PROXY_PORT;
+    private static HttpClient makeConnection(){
+        return HttpClient.newBuilder()
+//            .executor(Executors.newFixedThreadPool(20)) // ftp over http server has problem with pooled connections and drop them
+                .version(HttpClient.Version.HTTP_2)
+                .proxy(getProxySelector())  // Apply proxy settings
+                .connectTimeout(Duration.ofSeconds(5))
+                .build();
+    }
+
+    // Method to determine if proxy should be used
+    private static ProxySelector getProxySelector() {
+        return (PROXY_HOST != null && !PROXY_HOST.isEmpty() && PROXY_PORT != null)
+                ? ProxySelector.of(new InetSocketAddress(PROXY_HOST, PROXY_PORT))
+                : ProxySelector.getDefault();
+    }
 
 
     public static InputStream fetchLargeFileStream(String url) throws Exception {
@@ -59,7 +75,7 @@ public class HttpTools {
                 .build();
 
         // Handle the response as an InputStream
-        HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+        HttpResponse<InputStream> response = makeConnection().send(request, HttpResponse.BodyHandlers.ofInputStream());
 
         if (response.statusCode() != 200) {
             throw new Exception("Failed to retrieve file. HTTP response code: " + response.statusCode());
@@ -76,8 +92,14 @@ public class HttpTools {
                     .build();
 
             // Handle the response as an InputStream
-            HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
-            return response.statusCode() == 200 ? true : false;
+            HttpResponse<InputStream> response = makeConnection().send(request, HttpResponse.BodyHandlers.ofInputStream());
+            try (InputStream responseBody = response.body()) {
+                return response.statusCode() == 200;
+            }
+            catch (Exception exception){
+                LOGGER.error("Problem in closing connection", exception);
+                return false;
+            }
         }catch (Throwable throwable){
             return false;
         }
