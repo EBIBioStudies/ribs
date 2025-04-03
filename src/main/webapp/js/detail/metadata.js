@@ -265,75 +265,32 @@ var Metadata = (function (_self) {
 
      function createMainLinkTable() {
         //create external links for known link types
-         const ID_ORG = "https://identifiers.org/";
-         const ID_ORG_RESOLVER = "https://resolver.api.identifiers.org/";
-         const ID_ORG_REGISTRY = "https://registry.api.identifiers.org/";
-         const $linkList = $("#link-list");
-         const typeIndex = $('thead tr th', $linkList).map(function(i,v) {
-             if ( $(v).text().toLowerCase()==='type') return i;
-         }).filter(isFinite)[0];
-         $("tr", $linkList).each( function (i,row) {
-            if (i === 0) return;
-            const type =  $($('td', row)[typeIndex]).text().toLowerCase().trim();
-            const name = $($('td', row)[0]).text().trim();
-            let url = getURL(name, type);
-            const LS_KEY = type + ":" + name;
-            if (url === null) {
-                // check this type and name in the cache
-                url = sessionStorage.getItem(LS_KEY);
-                if (!url) {
-                    url = ID_ORG_RESOLVER + type + ':' + name;
-                    const nsURL = ID_ORG_REGISTRY + 'restApi/namespaces/search/findByPrefix?prefix=' + type;
-                    $.getJSON(nsURL, (data) => {
-                        let embedded = false;
-                        if (data["namespaceEmbeddedInLui"]) {
-                            url = ID_ORG_RESOLVER + name;
-                            embedded = true;
-                        } else {
-                            url = ID_ORG_RESOLVER + type + "/" + name;
-                        }
-                        $.getJSON(url, function (data) {
-                            if (data && data.payload && data.payload.resolvedResources) {
-                                const ebiResources = data.payload.resolvedResources.filter(function (o) {
-                                    return o?.providerCode === 'ebi'
-                                });
-                                let id_org_url = ID_ORG + (embedded ? name : (type + ":" + name));
-                                // fallback: id_org_url = (data.payload.resolvedResources)[0].compactIdentifierResolvedUrl;
-                                url = ebiResources.length ? ebiResources[0]["compactIdentifierResolvedUrl"] : id_org_url;
-                                $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
-                            }
-                        }).done(() => {
-                            // console.log(`Fetched successfully: ${url}`);
-                            if (url) {
-                                sessionStorage.setItem(LS_KEY, url);
-                            }
-                        }).fail(() => {
-                            // console.log("This resource " + url + " is unresolvable");
-                        })
-                    }).done(() => {
-                        // console.log("The URL after all processes: " + url);
-                    });
-                } else {
-                    // console.log("Retrieved from the local cache: " + url);
-                }
-            } else {
-                url = url.url;
-            }
+        var typeIndex = $('thead tr th',$("#link-list")).map(function(i,v) {if ( $(v).text().toLowerCase()==='type') return i;}).filter(isFinite)[0];
+        $("tr",$("#link-list")).each( function (i,row) {
+            if (i==0) return;
+            var type =  $($('td',row)[typeIndex]).text().toLowerCase();
+            var name = $($('td',row)[0]).text();
+            var url = getURL(name, type);
             if (url) {
-                // sessionStorage.setItem(LS_KEY, url);
-                console.log(url);
-                $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
+                $($('td',row)[0]).wrapInner('<a href="'+ url.url +'" target="_blank">');
+            } else {
+                $.getJSON( 'https://resolver.api.identifiers.org/'+type+':'+name , function (data) {
+                    if (data && data.payload && data.payload.resolvedResources) {
+                        var ebiResources = data.payload.resolvedResources.filter(function(o){return o?.providerCode==='ebi'});
+                        var url = (ebiResources.length ? ebiResources : data.payload.resolvedResources)[0].compactIdentifierResolvedUrl;
+                        $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
+                    }
+                })
             }
             $($('td',row)[0]).addClass("overflow-name-column");
         });
 
         //format the right column tables
-        linksTable = $linkList.DataTable({
+        linksTable = $("#link-list").DataTable({
             "lengthMenu": [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
             "dom": "rlftpi",
             "infoCallback": function( settings, start, end, max, total, out ) {
-                return (total === max) ? out : out +' <a class="section-button" id="clear-filter"' +
-                    ' onclick="clearLinkFilter();return false;">' +
+                return (total== max) ? out : out +' <a class="section-button" id="clear-filter" onclick="clearLinkFilter();return false;">' +
                     '<span class="fa-layers fa-fw">'
                     +'<i class="fas fa-filter"></i>'
                     +'<span class="fa-layers-text" data-fa-transform="shrink-2 down-4 right-6">×</span>'
