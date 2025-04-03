@@ -17,6 +17,7 @@ public class FileMetaData {
     private String accession;
     private String fileName;
     private String uiRequestedPath;
+    private String unDecodedRequestedPath;
     private String collection;
     private String relativePath;
 
@@ -51,6 +52,17 @@ public class FileMetaData {
         this.hasKey = secretKey;
         this.collection = collection;
     }
+    public FileMetaData(String accession, String uiRequestedPath, String unDecodedRequestedPath, String fileName, String relativePath, Constants.File.StorageMode storageMode, boolean isPublicStudy, boolean secretKey, String collection) {
+        this.accession = accession;
+        this.uiRequestedPath = uiRequestedPath;
+        this.unDecodedRequestedPath = unDecodedRequestedPath;
+        this.fileName = fileName;
+        this.relativePath = relativePath;
+        this.storageMode = storageMode;
+        this.isPublic = isPublicStudy;
+        this.hasKey = secretKey;
+        this.collection = collection;
+    }
 
     public FileMetaData(String accession, String uiRequestedPath, String fileName, String relativePath, boolean isPublicStudy, Constants.File.StorageMode storageMode) {
         this.accession = accession;
@@ -66,7 +78,8 @@ public class FileMetaData {
             if (inputStream != null) return inputStream;
             if (s3Object != null) {
                 inputStream = s3Object.getObjectContent();
-            } else if (storageMode == Constants.File.StorageMode.NFS && path != null && HttpTools.isValidUrl(path)) {
+            } else if (storageMode == Constants.File.StorageMode.NFS && path != null
+            /** && HttpTools.isValidUrl(path) validation will cause performance degradation without a pool**/) {
                 String pathStr = path.toString().replace('\\', '/');
                 String fullPath = BASE_FTP_NFS_URL.endsWith("/") || pathStr.startsWith("/")
                         ? BASE_FTP_NFS_URL + pathStr
@@ -203,5 +216,9 @@ public class FileMetaData {
         } catch (Exception exception) {
             LOGGER.error("problem in closing stream", exception);
         }
+    }
+
+    public String getUnDecodedRequestedPath() {
+        return unDecodedRequestedPath;
     }
 }

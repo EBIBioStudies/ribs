@@ -1,0 +1,346 @@
+<style>
+    h3 {
+        margin-top: 25px;
+        background-color: #72F1A5;
+    }
+    p {
+        text-align: justify;
+    }
+
+    .opt {
+        font-style: italic;
+        color: #aaaaaa;
+    }
+
+    .api {
+        font-family: Consolas, monospace, 'Courier New';
+        font-size: 10pt;
+    }
+
+    details {
+        padding: 10pt;
+    }
+
+    summary {
+        cursor: pointer;
+        padding: 10pt;
+        background-color: #efefef;
+    }
+
+    dl dt {
+        font-weight: bold;
+        font-size: 100%;
+    }
+
+    dt:before {
+        font-family: 'EBI-Generic';
+        content: 'i';
+        margin-right: 10pt;
+    }
+
+    td {
+        word-wrap: break-word;
+    }
+
+    .section-divider {
+        color: #335a95;
+    }
+</style>
+
+<ul>
+    <li><a href="#submit-data">How to submit data to the BioModels collection</a></li>
+<!--    <li><a href="#access-private-data">How to access private data</a></li>-->
+    <li><a href="#use-rest-api">How to use REST API of BioStudies to mine the BioModels collection</a></li>
+<!--    <li><a href="#biomodels-data">Learn more about the data in the BioModels collection</a></li>-->
+</ul>
+
+<h3 id="submit-data" class="topic-heading">How to submit data to the BioModels collection</h3>
+<div id="how-to-submit-data">
+    <p>You cannot submit your data (also called models) to the BioModels collection directly. You have to submit your
+        models to  <a href="https://www.ebi.ac.uk/biomodels/submit" target="_blank">BioModels repository
+    </a>  then they will be propagated back to the BioModels collection as the secondary data resource. </p>
+
+</div>
+
+<!--
+<h3 id="access-private-data" class="topic-heading">How to access private data</h3>
+<div id="how-to-access-private-data">
+<h4 id="activate">First time users: Activate your BioStudies account</h4>
+<p>At the time of submission, the submitter nominates one email address as the data owner
+    in BioStudies (contact role "submitter") in whose name we have created an account
+    for the BioStudies website and <a href="/biostudies/submissions">submission tool</a>.
+    Once the experiment has been loaded into the database, this person will receive an email
+    with an activation link. With that account, the data owner can: </p>
+<ul>
+    <li>view and share studies in the database before public release</li>
+    <li>make post-submission updates, such as changing the release date or adding a publication reference</li>
+</ul>
+
+<details>
+    <summary>How to activate your BioStudies account</summary>
+    <p>If your data has been loaded into ArrayExpress before the migration to BioStudies,
+        we have created an account for you that you can activate following the steps below.</p>
+
+    <p><i class="icon icon-generic" data-icon="l"></i> You must use the same email address
+        that you currently use as ArrayExpress login,
+        which may differ from your Annotare login. If this email address is no longer active,
+        please <a href="mailto:annotare@ebi.ac.uk?subject=New email address for BioStudies account">contact us</a>
+        to update the email address.
+
+    <p><strong>Step 1: Identify the email address to use</strong></p>
+    <p>When your experiment was first loaded, a curator sent an email to the Annotare submitter
+        containing the ArrayExpress access account details. This email account will be your BioStudies account.
+        If you don't have this email any more, don't worry, there are a few more ways to find out
+        which email address to use:</p>
+    <ul>
+        <li>The email account you have used to log in to the old ArrayExpress website or access control tool.</li>
+        <li>The email account to which we have sent regular reminders about upcoming releases,
+            with the subject: <i>"E-MTAB-1234: ArrayExpress release in 60/30/7 days time"</i>.
+        </li>
+        <li>The email account that is named as "submitter" in the IDF metadata file or the "Contacts"
+            list in the Annotare submission form.
+        </li>
+    </ul>
+    <p><strong>Step 2: Set a password</strong></p>
+    <ul>
+        <li> Go to "BioStudies Home > Submit > Submit a Study" to access the
+            <a href="/biostudies/submissions" target=_blank>BioStudies submission tool</a></li>
+        <li>Click on <a href="/biostudies/submissions/password_reset_request" target=_blank>Forgot your password</a>
+        </li>
+        <li>Enter your ArrayExpress access account email (from Step 1) and press "Get reset link".</li>
+        <li>Check your emails and follow the activation link to set a password to your account.</li>
+        <li><a href="/biostudies/submissions" target=_blank>Log in</a> to view/manage your studies.</li>
+    </ul>
+</details>
+
+<h4 id="manage">Manage your archived data</h4>
+
+<p>
+    The following changes can be made to a dataset once it is loaded in the BioStudies database:
+<ul>
+    <li>Release date</li>
+    <li>Publication reference</li>
+    <li>Contact details</li>
+</ul>
+These post-submission modifications are done via the <a href="https://www.ebi.ac.uk/biostudies/submissions/">BioStudies
+    submission
+    tool</a>. Log in to the tool with your BioStudies account (see above), and you should be able to see your ArrayExpress submissions.
+</p>
+<p>
+    <img src="../images/collections/biomodels/update.png" alt="Edit button marked on submission list"></img>
+</p>
+<p>
+    Select the accession to update and click on the pencil icon to edit. Modify the relevant fields in the form and
+    press "Re-submit". The changes will be visible in BioStudies on the following morning.
+
+</p>
+
+<h4 id="reviewer">Get access for reviewers</h4>
+<p>If you are a submitter, you can find a "secret link" to your experiment on the study page.
+    For this you must be logged in to the BioStudies website (<a href="#access-private-data">see above</a>).
+    Once you are logged in, search for your accession number and navigate to the study page
+    you want to share. You will find a "Share" icon at the top right.
+    <br/>
+    <img src="../images/collections/biomodels/share_study.png" alt="Share button marked on the study page"/>
+</p>
+<p>If you are a reviewer, you should have been provided with a "secret link"
+    that will give you direct access to the private study page. If you do not
+    have the link to access private data connected to a publication, please contact
+    the data submitter, via the journal, to request this information.
+    We cannot provide access to private data without first getting authorisation
+    from the submitter.</p>
+</div>
+-->
+<h3 id="use-rest-api" class="topic-heading">How to use REST API of BioStudies to mine the BioModels collection</h3>
+<div id="how-to-use-rest-api">
+<p>The data can be downloaded via FTP or Aspera. The users are recommended to read through the general instructions
+    for <a href="https://www.ebi.ac.uk/biostudies/help#download">BioStudies data download</a>.
+    The <a href="https://www.ebi.ac.uk/biostudies/help#rest-api-docs">BioStudies REST API</a> can be used to
+    programmatically search and access all data in the BioModels collection.</p>
+
+<h4 id="rest-api-migration-guide">BioModels to BioStudies API migration instructions</h4>
+<p>As BioModels data are backed up on BioStudies as a collection, there have been the following changes in the API
+    support for BioModels.</p>
+<dl>
+    <dt>XML <i class="fas fa-arrow-right"></i> JSON</dt>
+    <dd>XML API responses are being deprecated in favour of JSON. We encourage you to shift to the new JSON schema which
+        should have all the information available in the current BioModels.
+    </dd>
+
+    <dt>Response bundling</dt>
+    <dd>Search API will return a paged response containing only the metadata about the experiments. Results would not be
+        bundled, and you will have to iterate through the set and request each experiment individually.
+    </dd>
+
+    <dt>Endpoint changes</dt>
+    <dd>The endpoint (aka. <code>M_EP</code> later) has changed from <code>https://www.ebi.ac.uk/biomodels/</code> to
+        <code>https://www.ebi.ac.uk/biostudies/api/v1/</code>. A list of all searchable fields and their
+        BioStudies equivalent is given below. These supplemental fields are fully adopted alongside the
+        <a href="../help#rest-api-docs">default BioStudies search criteria fields</a>.
+        <br/><br/>
+        To download files, please use the prefix endpoint (aka. <code>F_EP</code> later) via either
+        HTTP <code>https://ftp.ebi.ac.uk/biostudies/fire/</code>
+        or FTP <code>ftp://ftp.ebi.ac.uk/biostudies/fire</code>. To gain more data such as paths, section, files ect.,
+        consult <code>https://www.ebi.ac.uk/biostudies/api/v1/studies/{accession}/info</code> to get the detailed info.
+        <br/><br/>
+        Please send all questions and feedback to <a href="mailto://biostudies@ebi.ac.uk">biostudies@ebi.ac.uk</a>.
+    </dd>
+    <dt>Notes:</dt>
+    <dd>
+    <ol>
+        <li>Remember to add the endpoint root to the examples given below if you want to
+        verify them. To ease our understanding, let's work with this model <a
+        href="https://www.ebi.ac.uk/biostudies/biomodels/studies/MODEL1910290001" target="_blank">
+                MODEL1910290001</a>,</li>
+        <li>The term <span class="api">accession/identifier</span> and <span class="api">modelId</span> are exchangeable
+            to be used in the BioModels collection particularly.</li>
+    </ol></dd>
+</dl>
+<!--<details>-->
+<!--    <summary>Full list of field names and equivalents in BioStudies</summary>-->
+    <div style="overflow-x: auto; width: 100%">
+    <table style="table-layout: fixed">
+        <thead>
+        <tr>
+            <th style="width: 10%">BioModels Field</th>
+            <th style="width: 10%">BioStudies Field</th>
+            <th>What is searched for?</th>
+            <th style="width: 25%">BioModels URL</th>
+            <th style="width: 25%">BioStudies URL</th>
+        </tr>
+        </thead>
+        <tbody>
+<!--https://www.ebi.ac.uk/biostudies/files/E-MTAB-14863/N10.clean_R1.fastq.gz-->
+<!--https://ftp.ebi.ac.uk/pub/databases/biostudies/.beta/MODEL/336/MODEL1580005336/MODEL1580005336.json-->
+<!--https://www.ebi.ac.uk/biostudies/files/S-BIAD1639/S-BIAD1639.json-->
+<!--https://ftp.ebi.ac.uk/pub/databases/biostudies/.beta/MODEL/336/MODEL1580005336/Files/working/aaa/MODEL1580005336/3/BIOMD0000000119_url.xml-->
+        <tr>
+            <td colspan="5" class="section-divider"><strong>Model-related operations</strong></td>
+        </tr>
+        <tr>
+            <td>identifier</td>
+            <td>accession</td>
+            <td>Retrieve the latest metadata of a given model via the submission identifier/accession.</td>
+            <td class="api">{modelId}?format=json</td>
+            <td class="api"><span class="opt">&lt;M_EP&gt;</span>/studies/accession<br/>
+            e.g.,
+                <a href="https://www.ebi.ac.uk/biostudies/api/v1/studies/E-MTAB-13435" target="_blank">
+                    E-TAB-13435</a>, <a href="https://wwwdev.ebi.ac.uk/biostudies/api/v1/studies/MODEL1910290001"
+                                        target="_blank">MODEL1910290001</a></td>
+        </tr>
+        <tr>
+            <td>files</td>
+            <td>files</td>
+            <td>Extract the metadata of all the model files associated with a given model</td>
+            <td class="api">model/files/{modelId}</td>
+            <td class="api"><span class="opt">&lt;M_EP&gt;</span>/files/{accession}
+                <a data-open="files-help"><i class="fa fa-info-circle"></i></a><br/>
+                e.g., <a href="https://www.ebi.ac.uk/biostudies/api/v1/files/E-MTAB-13435" target="_blank">
+                    E-TAB-13435</a>, <a href="https://wwwdev.ebi.ac.uk/biostudies/api/v1/files/MODEL1910290001"
+                                        target="_blank">MODEL1910290001</a>
+            </td>
+        </tr>
+        <tr>
+            <td>download</td>
+            <td>N/A</td>
+            <td>Download a specific file associated with a given model or all its files in a COMBINE archive.
+                BioStudies does not serve to download COMBINE archive if it is unavailable, instead of downloading
+                it as the other files.</td>
+            <td class="api">model/files/{modelId}</td>
+            <td class="api"><span class="opt">&lt;F_EP&gt;</span>/files/{accession}/{filename}<br/>
+            e.g., <a href="" target="_blank"></a></td>
+        </tr>
+        <tr>
+            <td>identifiers</td>
+            <td>N/A</td>
+            <td>Extract all model identifiers. Search all in the BioModels collection and iterate over all pages to
+            extract the accession.</td>
+            <td class="api">model/identifiers?format=json|xml</td>
+            <td class="api"><span class="opt">&lt;M_EP&gt;</span>/biomodels/search?page=1&pageSize=100</td>
+        </tr>
+        <tr>
+            <td colspan="5" class="section-divider"><strong>Search models</strong></td>
+        </tr>
+        <tr>
+            <td>search</td>
+            <td>search</td>
+            <td>Search for models of interest via keywords.</td>
+            <td class="api">/search?query=homo+sapiens</td>
+            <td class="api"><span class="opt">&lt;M_EP&gt;</span>/biomodels/search?biomodels.&lt;facet_id&gt;="keywords"<br/>
+            e.g., <a href="https://wwwdev.ebi.ac.uk/biostudies/api/v1/biomodels/search?biomodels.modelling_approach=%22computational%20model%22" target="_blank">
+                    biomodels.modelling_approach=%22computational%20model%22
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>search</td>
+            <td>search</td>
+            <td>Search by the presence of certain type of links also works.
+            </td>
+            <td class="api"><span class="opt">&lt;M_EP&gt;</span>/search?query=chebi</td>
+            <td class="api"><span class="opt">&lt;M_EP&gt;</span><a href="https://wwwdev.ebi.ac.uk/biostudies/api/v1/BioModels/search?link_type=chebi"
+                   target="_blank">/search?link_type=chebi</a><br/>
+
+                <a href="https://wwwdev.ebi.ac.uk/biostudies/api/v1/BioModels/search?author=Tung"
+                   target="_blank">Search by author</a>,
+                <a href="https://wwwdev.ebi.ac.uk/biostudies/api/v1/BioModels/search?title=Diabetes" target="_blank">Search by model title</a>
+            </td>
+        </tr>
+        <!--<tr>
+            <td colspan="5" class="section-divider"><strong>Parameters Search</strong></td>
+        </tr>
+        <tr>
+            <td colspan="5">Not Ready Yet</td>
+        </tr>
+        <tr>
+            <td colspan="5" class="section-divider"><strong>Path2Models operations</strong></td>
+        </tr>
+        <tr>
+            <td colspan="5">Not Available</td>
+        </tr>
+        <tr>
+            <td colspan="5" class="section-divider"><strong>PDGSMM operations</strong></td>
+        </tr>
+        <tr>
+            <td colspan="5">Not Available</td>
+        </tr>-->
+        </tbody>
+    </table>
+    </div>
+    <div class="reveal" id="files-help" data-reveal>
+        <h4><i class="fa fa-info-circle"></i> POST works too!</h4>
+        <p>In some cases, the request header length is quite large which generates a <span class="api">400</span> HTTP
+            response status codes. To avoid this, please use a <span class="api">POST</span> request.</p>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="reveal" id="range-help" data-reveal>
+        <h4><i class="fa fa-info-circle"></i> Encode your requests! </h4>
+        <p>As per the <a href="https://tools.ietf.org/html/rfc3986#section-2.2" target="_blank">HTTP standard</a>,
+            square
+            brackets (<span class="api">[</span> and <span class="api">]</span>) are reserved characters. All range
+            requests thus need to be URL encoded to get the correct results. For example,
+            <span class="api">/search?sample_count=[1 TO 5]</span> needs to be encoded as
+            <span class="api">/search?sample_count=%5B1%20TO%205%5D</span>.</p>
+        <button class="close-button" data-close aria-label="Close modal" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+<!--</details>-->
+<!--</div>-->
+</div>
+
+<!--
+<h3 id="biomodels-data" class="topic-heading">Learn more about the data in the BioModels collection</h3>
+<div id="how-to-biomodels-data">
+
+</div>
+-->
+
+<script>
+    $('.topic-heading').on("click", function() {
+        console.log($(this).prop("id"));
+        $("#how-to-" + $(this).prop("id")).toggle();
+    });
+</script>

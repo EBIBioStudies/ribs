@@ -37,7 +37,7 @@ public class PartialUpdater {
             httpGet.setHeader(UserSecurityService.X_SESSION_TOKEN, securityConfig.getPartialUpdateRestSecurityToken());
             HttpClientBuilder clientBuilder = HttpClients.custom();
             if(securityConfig.getHttpProxyHost()!=null && !securityConfig.getHttpProxyHost().isEmpty()) {
-                clientBuilder.setProxy(new HttpHost(securityConfig.getHttpProxyHost(), securityConfig.getGetHttpProxyPort()));
+                clientBuilder.setProxy(new HttpHost(securityConfig.getHttpProxyHost(), securityConfig.getHttpProxyPort()));
             }
             int statusCode = 0;
             try (CloseableHttpResponse response = clientBuilder.build().execute(httpGet)) {

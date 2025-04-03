@@ -1,8 +1,10 @@
 package uk.ac.ebi.biostudies.config;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import uk.ac.ebi.biostudies.api.util.HttpTools;
 
 /**
  * Created by ehsan on 16/03/2017.
@@ -10,7 +12,13 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("classpath:security.properties")
-public class SecurityConfig {
+public class SecurityConfig implements InitializingBean {
+
+    @Override
+    public void afterPropertiesSet() {
+        HttpTools.PROXY_HOST = getHttpProxyHost();
+        HttpTools.PROXY_PORT = getHttpProxyPort();
+    }
 
     @Value("${auth.profileUrl}")
     private String profileUrl;
@@ -37,7 +45,7 @@ public class SecurityConfig {
     private String httpProxyHost;
 
     @Value("${http.proxy.port}")
-    private Integer getHttpProxyPort;
+    private Integer httpProxyPort;
 
     @Value("${stomp.login.header}")
     private String stompLoginUser;
@@ -95,8 +103,8 @@ public class SecurityConfig {
         return httpProxyHost;
     }
 
-    public Integer getGetHttpProxyPort() {
-        return getHttpProxyPort;
+    public Integer getHttpProxyPort() {
+        return httpProxyPort;
     }
 
     public String getPartialUpdateRestSecurityToken() {
