@@ -268,8 +268,11 @@ var Metadata = (function (_self) {
          const ID_ORG = "https://identifiers.org/";
          const ID_ORG_RESOLVER = "https://resolver.api.identifiers.org/";
          const ID_ORG_REGISTRY = "https://registry.api.identifiers.org/";
-        const typeIndex = $('thead tr th',$("#link-list")).map(function(i,v) {if ( $(v).text().toLowerCase()==='type') return i;}).filter(isFinite)[0];
-        $("tr",$("#link-list")).each( function (i,row) {
+         const $linkList = $("#link-list");
+         const typeIndex = $('thead tr th', $linkList).map(function(i,v) {
+             if ( $(v).text().toLowerCase()==='type') return i;
+         }).filter(isFinite)[0];
+         $("tr", $linkList).each( function (i,row) {
             if (i === 0) return;
             const type =  $($('td', row)[typeIndex]).text().toLowerCase().trim();
             const name = $($('td', row)[0]).text().trim();
@@ -303,14 +306,13 @@ var Metadata = (function (_self) {
                         }).done(() => {
                             // console.log(`Fetched successfully: ${url}`);
                         }).fail(() => {
-                            // console.log("namespaceEmbeddedInLui: ", embedded, "URL: ", url, ". This resource might not" +
-                            //     " use the attribute namespaceEmbeddedInLui");
+                            // console.log("This resource " + url + " is unresolvable");
                         })
                     }).done(() => {
-                        // console.log("The URL after all processes: ", url);
+                        // console.log("The URL after all processes: " + url);
                     });
                 } else {
-                    // console.log("Retrieved from the local cache: ", url);
+                    // console.log("Retrieved from the local cache: " + url);
                 }
             } else {
                 url = url.url;
@@ -323,11 +325,12 @@ var Metadata = (function (_self) {
         });
 
         //format the right column tables
-        linksTable = $("#link-list").DataTable({
+        linksTable = $linkList.DataTable({
             "lengthMenu": [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
             "dom": "rlftpi",
             "infoCallback": function( settings, start, end, max, total, out ) {
-                return (total== max) ? out : out +' <a class="section-button" id="clear-filter" onclick="clearLinkFilter();return false;">' +
+                return (total === max) ? out : out +' <a class="section-button" id="clear-filter"' +
+                    ' onclick="clearLinkFilter();return false;">' +
                     '<span class="fa-layers fa-fw">'
                     +'<i class="fas fa-filter"></i>'
                     +'<span class="fa-layers-text" data-fa-transform="shrink-2 down-4 right-6">×</span>'
