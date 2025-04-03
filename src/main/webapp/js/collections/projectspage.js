@@ -22,10 +22,19 @@ var CollectionsPage = (function (_self) {
         return files.path || (files[0] && files[0].path) || (files[0][0] && files[0][0].path);
     }
 
-    function addLogo($prj, accession, baseLink, path) {
+    function addLogo($prj, accession, baseLink, path, ftp) {
         if (path) {
-            $prj.prepend(`<div><a class="collection-logo" href="${contextPath}/${accession}/studies">
-            <img src="${baseLink}${path.startsWith('/') ? '/Files' : '/Files/'}${path}" alt="${accession}"/></a></div>`);
+            $prj.prepend(`<div>
+                <a class="collection-logo" href="${contextPath}/${accession}/studies">
+                ${(() => {
+                let files = baseLink.endsWith('/') ? 'Files' : '/Files';
+                files = path.startsWith('/') ? files : files + '/';
+                files = ftp ? files : ((baseLink.endsWith('/')||path.startsWith('/') ? '' : '/')); 
+                return `<img src="${baseLink}${files}${path}" alt="${accession}"/>`;
+            })()}
+            </a>
+            </div>`);
+
         }
     }
 
@@ -41,11 +50,11 @@ var CollectionsPage = (function (_self) {
                 if (linkData.ftpHttp_link) {
                     $.getJSON(linkData.ftpHttp_link + accession + ".json", function (data) {
                         path = getPath(data.section.files);
-                        addLogo($prj, accession, linkData.ftpHttp_link, path);
+                        addLogo($prj, accession, linkData.ftpHttp_link, path, true);
                     });
                 } else {
                     path = getPath(linkData.section.files);
-                    addLogo($prj, accession, contextPath + '/files/' + accession, path);
+                    addLogo($prj, accession, contextPath + '/files/' + accession, path, false);
                 }
             });
         });

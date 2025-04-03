@@ -17,7 +17,6 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.ssl.SSLContexts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,7 @@ public class AsperaTokenGenerator {
     public JsonNode postTokenRequest(ArrayNode requestFiles) throws Exception {
         HttpClientBuilder clientBuilder = HttpClients.custom();
         if(securityConfig.getHttpProxyHost()!=null && !securityConfig.getHttpProxyHost().isEmpty()) {
-            clientBuilder.setProxy(new HttpHost(securityConfig.getHttpProxyHost(), securityConfig.getGetHttpProxyPort()));
+            clientBuilder.setProxy(new HttpHost(securityConfig.getHttpProxyHost(), securityConfig.getHttpProxyPort()));
         }
         CloseableHttpClient httpClient = clientBuilder
                 .setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom()

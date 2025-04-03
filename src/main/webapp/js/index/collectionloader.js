@@ -35,7 +35,7 @@ Home.CollectionLoader = (function () {
                                 handlePrjData(local_data, $prj, accession)
                             });
                         }
-                        else handlePrjData(data, $prj);
+                        else handlePrjData(data, $prj, accession);
                     });
                     ;});
             }

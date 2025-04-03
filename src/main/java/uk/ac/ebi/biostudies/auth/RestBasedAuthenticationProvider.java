@@ -71,7 +71,7 @@ public class RestBasedAuthenticationProvider implements AuthenticationProvider {
         JsonNode responseJSON = null;
         HttpClientBuilder clientBuilder = HttpClients.custom();
         if (securityConfig.getHttpProxyHost() != null && !securityConfig.getHttpProxyHost().isEmpty()) {
-            clientBuilder.setProxy(new HttpHost(securityConfig.getHttpProxyHost(), securityConfig.getGetHttpProxyPort()));
+            clientBuilder.setProxy(new HttpHost(securityConfig.getHttpProxyHost(), securityConfig.getHttpProxyPort()));
         }
         CloseableHttpClient httpClient = clientBuilder
                 .setSSLSocketFactory(new SSLConnectionSocketFactory(SSLContexts.custom()

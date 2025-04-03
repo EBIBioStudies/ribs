@@ -500,7 +500,7 @@ public class IndexServiceImpl implements IndexService {
         }
 
         private void addFacet(String value, String fieldName, Document doc, JsonNode facetConfig) {
-            if (value == null || value.isEmpty()) {
+            if (value == null || value.trim().isEmpty() || value.equalsIgnoreCase("null")) {
                 if (fieldName.equalsIgnoreCase(Facets.FILE_TYPE) || fieldName.equalsIgnoreCase(Facets.LINK_TYPE)
                         || (facetConfig.has(IndexEntryAttributes.FACET_TYPE) && facetConfig.get(IndexEntryAttributes.FACET_TYPE).asText().equalsIgnoreCase("boolean"))
                 )
@@ -509,6 +509,8 @@ public class IndexServiceImpl implements IndexService {
                     value = NA;
             }
             for (String subVal : org.apache.commons.lang3.StringUtils.split(value, Facets.DELIMITER)) {
+                if(subVal==null || subVal.isEmpty())
+                    continue;
                 if (subVal.equalsIgnoreCase(NA) && facetConfig.has(IndexEntryAttributes.DEFAULT_VALUE)) {
                     subVal = facetConfig.get(IndexEntryAttributes.DEFAULT_VALUE).textValue();
                 }
