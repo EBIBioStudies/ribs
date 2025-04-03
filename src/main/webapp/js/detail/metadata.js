@@ -265,6 +265,7 @@ var Metadata = (function (_self) {
 
      function createMainLinkTable() {
         //create external links for known link types
+         const ID_ORG = "https://identifiers.org/";
          const ID_ORG_RESOLVER = "https://resolver.api.identifiers.org/";
          const ID_ORG_REGISTRY = "https://registry.api.identifiers.org/";
         const typeIndex = $('thead tr th',$("#link-list")).map(function(i,v) {if ( $(v).text().toLowerCase()==='type') return i;}).filter(isFinite)[0];
@@ -273,36 +274,50 @@ var Metadata = (function (_self) {
             const type =  $($('td', row)[typeIndex]).text().toLowerCase().trim();
             const name = $($('td', row)[0]).text().trim();
             let url = getURL(name, type);
-            if (url) {
-                $($('td', row)[0]).wrapInner('<a href="'+ url.url +'" target="_blank">');
-            } else {
-                url = ID_ORG_RESOLVER + type + ':' + name;
-                // e.g., https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=taxonomy
-                const nsURL = ID_ORG_REGISTRY + 'restApi/namespaces/search/findByPrefix?prefix=' + type;
-                $.getJSON(nsURL, (data) => {
-                   let embedded = false;
-                   if (data["namespaceEmbeddedInLui"]) {
-                       url = ID_ORG_RESOLVER + name;
-                       embedded = true;
-                   } else {
-                       url = ID_ORG_RESOLVER + type + "/" + name;
-                       console.log(url);
-                   }
-                    $.getJSON(url, function (data) {
-                        if (data && data.payload && data.payload.resolvedResources) {
-                            const ebiResources = data.payload.resolvedResources.filter(function(o){return o?.providerCode==='ebi'});
-                            let id_org_url = "https://identifiers.org/" + (embedded ? name : type+":"+name);
-                            // fallback: id_org_url = (data.payload.resolvedResources)[0].compactIdentifierResolvedUrl;
-                            url = ebiResources.length ? ebiResources[0]["compactIdentifierResolvedUrl"] : id_org_url;
-                            $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
+            const LS_KEY = type + ":" + name;
+            if (url === null) {
+                // check this type and name in the cache
+                url = localStorage.getItem(LS_KEY);
+                if (!url) {
+                    url = ID_ORG_RESOLVER + type + ':' + name;
+                    const nsURL = ID_ORG_REGISTRY + 'restApi/namespaces/search/findByPrefix?prefix=' + type;
+                    $.getJSON(nsURL, (data) => {
+                        let embedded = false;
+                        if (data["namespaceEmbeddedInLui"]) {
+                            url = ID_ORG_RESOLVER + name;
+                            embedded = true;
+                        } else {
+                            url = ID_ORG_RESOLVER + type + "/" + name;
                         }
+                        $.getJSON(url, function (data) {
+                            if (data && data.payload && data.payload.resolvedResources) {
+                                const ebiResources = data.payload.resolvedResources.filter(function (o) {
+                                    return o?.providerCode === 'ebi'
+                                });
+                                let id_org_url = ID_ORG + (embedded ? name : (type + ":" + name));
+                                // fallback: id_org_url = (data.payload.resolvedResources)[0].compactIdentifierResolvedUrl;
+                                url = ebiResources.length ? ebiResources[0]["compactIdentifierResolvedUrl"] : id_org_url;
+                                localStorage.setItem(LS_KEY, url);
+                                $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
+                            }
+                        }).done(() => {
+                            // console.log(`Fetched successfully: ${url}`);
+                        }).fail(() => {
+                            // console.log("namespaceEmbeddedInLui: ", embedded, "URL: ", url, ". This resource might not" +
+                            //     " use the attribute namespaceEmbeddedInLui");
+                        })
                     }).done(() => {
-                        console.log(`Fetched successfully: ${url}`);
-                    }).fail(() => {
-                        console.log("namespaceEmbeddedInLui: ", embedded, "URL: ", url, ". This resource might not" +
-                            " use the attribute namespaceEmbeddedInLui");
-                    })
-                });
+                        // console.log("The URL after all processes: ", url);
+                    });
+                } else {
+                    // console.log("Retrieved from the local cache: ", url);
+                }
+            } else {
+                url = url.url;
+            }
+            if (url) {
+                localStorage.setItem(LS_KEY, url);
+                $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
             }
             $($('td',row)[0]).addClass("overflow-name-column");
         });
