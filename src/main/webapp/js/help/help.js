@@ -1,7 +1,7 @@
 var Help = (function (_self) {
 
     _self.render = function () {
-        if (collection && $.inArray(collection.toLowerCase(), ['bioimages', 'arrayexpress'] >= 0)) {
+        if (collection && $.inArray(collection.toLowerCase(), ['bioimages', 'arrayexpress', 'biomodels'] >= 0)) {
             $('#renderedContent').load(contextPath + '/help/' + (collection ? collection.toLowerCase() + '-' : '') + 'help.html',
                 function (responseText, textStatus, jqXHR) {
                     if (textStatus == 'error') {
@@ -25,7 +25,7 @@ var Help = (function (_self) {
             function (responseText, textStatus, jqXHR) {
                 $('#renderedContent').html(responseText);
                 $('#renderedContent').foundation();
-        });
+            });
 
     }
 
