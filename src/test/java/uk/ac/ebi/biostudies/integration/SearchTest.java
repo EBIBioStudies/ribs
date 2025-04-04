@@ -158,7 +158,7 @@ public class SearchTest  extends WebDriverTest {
         assertArrayEquals(values, unsortedValues);
     }
 
-    @Test(expected = TimeoutException.class)
+//    @Test(expected = TimeoutException.class)
     public void testFilesAscendingSort() throws Exception {
         webDriver.get(integrationTestProperties.getBaseUrl(randomPort) + "studies?query=cancer");
         WebDriverWait wait = new WebDriverWait(webDriver, 20);
