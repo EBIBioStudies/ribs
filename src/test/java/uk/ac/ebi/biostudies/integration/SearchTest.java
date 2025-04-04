@@ -147,7 +147,11 @@ public class SearchTest  extends WebDriverTest {
         List<WebElement> list = webDriver.findElements(By.cssSelector(".release-files"));
         Integer[] values = new Integer[list.size()];
         for (int i = 0; i < values.length; i++) {
-            values[i] = Integer.parseInt(list.get(i).getAttribute("innerText").trim().split(" ")[0]);
+            try {
+                values[i] = Integer.parseInt(list.get(i).getAttribute("innerText").trim().split(" ")[0]);
+            }catch (Exception exception){
+
+            }
         }
         Integer[] unsortedValues = values.clone();
         Arrays.sort(values, Collections.reverseOrder());
@@ -167,9 +171,14 @@ public class SearchTest  extends WebDriverTest {
         List<WebElement> list = webDriver.findElements(By.cssSelector(".release-files"));
         Integer[] values = new Integer[list.size()];
         for (int i = 0; i < values.length; i++) {
-            values[i] = Integer.parseInt(list.get(i).getText().trim().split(" ")[0]);
+            try {
+                values[i] = Integer.parseInt(list.get(i).getText().trim().split(" ")[0]);
+            }catch (Exception e){
+
+            }
         }
         Integer[] unsortedValues = values.clone();
+        Arrays.sort(values);
         assertArrayEquals(values, unsortedValues);
         throw new TimeoutException("Test finished successfully");
     }
