@@ -2,7 +2,9 @@
 {{#eachGroup this}}
     {{#each this}}
         {{#if reference}}
-            <a href="{{makeAnchor value}}" class="reference"><i class="far fa-bookmark"></i> {{name}}</a>
+            {{#if value}}
+                <a href="{{makeAnchor value}}" class="reference"><i class="far fa-bookmark"></i> {{name}}</a>
+            {{/if}}
         {{else}}
             {{#ifCond name '!=' 'Title'}}
                 {{#if @first}}<div class="bs-attribute"><span class="bs-name">{{name}}</span><span class="bs-value">{{/if}}{{valueWithName name this}}{{#if @last}}</span></div>{{else}}, {{/if}}
@@ -10,4 +12,5 @@
         {{/if}}
     {{/each}}
 {{/eachGroup}}
+
 </script>
