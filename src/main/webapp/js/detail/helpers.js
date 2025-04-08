@@ -17,6 +17,10 @@ var Metadata = (function (_self) {
             return attributes.some(attr => attr.value && attr.value.trim() !== '');
         });
 
+        Handlebars.registerHelper('or', function (a, b) {
+            return a || b;
+        });
+
 
         Handlebars.registerHelper('valueWithName', function(val, obj) {
             if (obj==null) return;
