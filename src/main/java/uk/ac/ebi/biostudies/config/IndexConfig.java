@@ -48,10 +48,14 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     private int searchSnippetFragmentSize;
     @Value("${files.thumbnailsDirectory}")
     private String thumbnailDir;
-    @Value("${files.ftpUrl}")
-    private String ftpDir;
-    @Value("${files.globusUrl}")
-    private String globusUrl;
+    @Value("${files.ftpFireUrl}")
+    private String ftpFireUrl;
+    @Value("${files.ftpNfsUrl}")
+    private String ftpNfsUrl;
+    @Value("${files.globusFireUrl}")
+    private String globusFireUrl;
+    @Value("${files.globusNfsUrl}")
+    private String globusNfsUrl;
     @Value("${indexer.stopwords}")
     private String stopwords;
     @Value("${index.spellcheckerDirectory}")
@@ -68,10 +72,10 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     private String indexSyncCommand;
     @Value("${index.api.enabled}")
     private boolean apiEnabled;
-    @Value("${files.nfsFtpHttpUrl}")
-    private String nfsFtpHttpUrl;
-    @Value("${files.fireFtpHttpUrl}")
-    private String fireFtpHttpUrl;
+    @Value("${files.httpFtpNfsUrl}")
+    private String httpFtpNfsUrl;
+    @Value("${files.httpFtpFireUrl}")
+    private String httpFtpFireUrl;
     @Value("${files.isMigratedNfsPrivateDirectory}")
     private boolean isMigratedNfsPrivateDirectory;
     @Value("${files.migratingNotCompleted}")
@@ -80,8 +84,8 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() {
         STOP_WORDS = new CharArraySet(Arrays.asList(stopwords.split(",")), false);
-        FileMetaData.BASE_FTP_NFS_URL = nfsFtpHttpUrl;
-        FileMetaData.BASE_FTP_FIRE_URL = fireFtpHttpUrl;
+        FileMetaData.BASE_FTP_NFS_URL = httpFtpNfsUrl;
+        FileMetaData.BASE_FTP_FIRE_URL = httpFtpFireUrl;
         StudyUtils.IS_MIGRATED_NFS_DIRECTORY = isMigratedNfsPrivateDirectory;
     }
 
@@ -128,16 +132,16 @@ public class IndexConfig implements InitializingBean, DisposableBean {
         return submissionsDirectory;
     }
 
-    public String getFtpDir() {
-        return ftpDir;
+    public String getFtpDir(Constants.File.StorageMode storageMode) {
+        return storageMode == Constants.File.StorageMode.FIRE ? ftpFireUrl : ftpNfsUrl;
     }
 
     public String getFtpOverHttpUrl(Constants.File.StorageMode storageMode) {
-        return storageMode== Constants.File.StorageMode.FIRE ? fireFtpHttpUrl : nfsFtpHttpUrl;
+        return storageMode == Constants.File.StorageMode.FIRE ? httpFtpFireUrl : httpFtpNfsUrl;
     }
 
-    public String getGlobusUrl() {
-        return globusUrl;
+    public String getGlobusUrl(Constants.File.StorageMode storageMode) {
+        return storageMode == Constants.File.StorageMode.FIRE ? globusFireUrl:globusNfsUrl;
     }
 
     public int getQueueSize() {
