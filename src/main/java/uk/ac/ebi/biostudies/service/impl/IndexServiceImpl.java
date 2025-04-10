@@ -393,7 +393,7 @@ public class IndexServiceImpl implements IndexService {
                 Set<String> columnSet = new LinkedHashSet<>();
 
                 Map<String, Object> fileValueMap = fileIndexService.indexSubmissionFiles((String) valueMap.get(Fields.ACCESSION),
-                        (String) valueMap.get(Fields.RELATIVE_PATH), json, indexManager.getFileIndexWriter(), columnSet, removeFileDocuments, valueMap.getOrDefault(Fields.ACCESS, "").toString().toLowerCase().contains(PUBLIC));
+                        (String) valueMap.get(Fields.RELATIVE_PATH), json, indexManager.getFileIndexWriter(), columnSet, removeFileDocuments, valueMap.getOrDefault(Fields.ACCESS, "").toString().toLowerCase().contains(PUBLIC), valueMap.getOrDefault(Fields.SECRET_KEY, "").toString());
                 if (fileValueMap != null) {
                     valueMap.putAll(fileValueMap);
                     appendFileAttsToContent(valueMap);
@@ -509,7 +509,7 @@ public class IndexServiceImpl implements IndexService {
                     value = NA;
             }
             for (String subVal : org.apache.commons.lang3.StringUtils.split(value, Facets.DELIMITER)) {
-                if(subVal==null || subVal.isEmpty())
+                if(subVal==null || subVal.trim().isEmpty() )
                     continue;
                 if (subVal.equalsIgnoreCase(NA) && facetConfig.has(IndexEntryAttributes.DEFAULT_VALUE)) {
                     subVal = facetConfig.get(IndexEntryAttributes.DEFAULT_VALUE).textValue();

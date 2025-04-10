@@ -21,6 +21,7 @@ import org.apache.lucene.util.BytesRef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.service.FileDownloadService;
 import uk.ac.ebi.biostudies.service.FileIndexService;
@@ -159,7 +160,7 @@ public class FileIndexServiceImpl implements FileIndexService {
         }
     }
 
-    public Map<String, Object> indexSubmissionFiles(String accession, String relativePath, JsonNode json, IndexWriter writer, Set<String> attributeColumns, boolean removeFileDocuments, boolean isPublicStudy) throws IOException {
+    public Map<String, Object> indexSubmissionFiles(String accession, String relativePath, JsonNode json, IndexWriter writer, Set<String> attributeColumns, boolean removeFileDocuments, boolean isPublicStudy, String secretKey) throws IOException {
         Map<String, Object> valueMap = new HashMap<>();
         AtomicLong counter = new AtomicLong();
         List<String> columns = Collections.synchronizedList(new ArrayList<>());
@@ -212,6 +213,12 @@ public class FileIndexServiceImpl implements FileIndexService {
 
                 try {
                     Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(json.get(Constants.Fields.STORAGE_MODE).asText());
+                    if(storageMode == Constants.File.StorageMode.NFS && !isPublicStudy) {
+                        if(secretKey == null || secretKey.isEmpty())
+                            LOGGER.debug("invalid secret key during parsing private submission file list");
+                        else
+                            fileList.setRelativePath(StudyUtils.modifyRelativePathForPrivateStudies(secretKey, relativePath));
+                    }
                     fileList.setStorageMode(storageMode);
                     fileService.getDownloadFile(fileList);
 
