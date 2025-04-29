@@ -121,10 +121,11 @@ public class Study {
         String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
         storageModeString = storageModeString.isEmpty()? "FIRE":storageModeString;
         Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
+        String originalSecretKey = seckey;
         if(Session.getCurrentUser()!=null)
             seckey = document.get(Constants.Fields.SECRET_KEY);
         if((!isPublicStudy || indexConfig.isMigratingNotCompleted()) && storageMode == Constants.File.StorageMode.FIRE){
-            return sendFireResponse(accession, relativePath, seckey, storageMode, isPublicStudy);
+            return sendFireResponse(accession, relativePath, originalSecretKey, seckey, storageMode, isPublicStudy);
         }
 
         ObjectMapper mapper = new ObjectMapper();
@@ -137,9 +138,9 @@ public class Study {
         return new ResponseEntity(studyFtpLink, HttpStatus.OK);
     }
 
-    private ResponseEntity sendFireResponse(String accession, String relativePath, String seckey, Constants.File.StorageMode storageMode,boolean isPublicStudy) {InputStreamResource result;
+    private ResponseEntity sendFireResponse(String accession, String relativePath, String originalSecretKey, String seckey, Constants.File.StorageMode storageMode,boolean isPublicStudy) {InputStreamResource result;
         try {
-            result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, seckey != null, storageMode, isPublicStudy, seckey);
+            result = searchService.getStudyAsStream(accession.replace("..", ""), relativePath, originalSecretKey != null, storageMode, isPublicStudy, seckey);
         } catch (IOException e) {
             logger.error(e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
