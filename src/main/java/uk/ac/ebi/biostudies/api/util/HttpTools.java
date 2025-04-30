@@ -65,37 +65,9 @@ public class HttpTools {
                 : ProxySelector.getDefault();
     }
 
-    public static URI toSafeURI(String url) throws Exception {
-        URL u = new URL(url);
-        return new URI(
-                u.getProtocol(),
-                u.getUserInfo(),
-                u.getHost(),
-                u.getPort(),
-                encodePath(u.getPath()),
-                u.getQuery(),
-                u.getRef()
-        );
-    }
-
-    private static String encodePath(String path) {
-        return Arrays.stream(path.split("/"))
-                .map(HttpTools::encodePathSegment)
-                .collect(Collectors.joining("/"));
-    }
-
-    private static String encodePathSegment(String segment) {
-        try {
-            return new URI(null, null, "/" + segment, null).getRawPath().substring(1);
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid segment: " + segment, e);
-        }
-    }
-
-
     public static InputStream fetchLargeFileStream(String url) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(toSafeURI(url))
+                .uri(new URI(null, null, url, null))
                 .GET()
                 .build();
 
