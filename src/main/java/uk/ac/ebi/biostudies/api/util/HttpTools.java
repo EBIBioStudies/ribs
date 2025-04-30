@@ -104,9 +104,24 @@ public class HttpTools {
             return false;
         }
     }
-    public static boolean isValidUrl(Path url) {
-        String urlString = FileMetaData.BASE_FTP_NFS_URL + "/" + url.toString().replaceAll("\\\\", "/");
-        return isValidUrl(urlString);
+    public static boolean isValidUrl(Path path) {
+        String encodedPath = "";
+        try {
+            // Safely encode the path segment
+            encodedPath = new URI(null, null, path.toString().replace("\\", "/"), null).getRawPath();
+
+            // Ensure base URL formatting
+            String base = FileMetaData.BASE_FTP_NFS_URL;
+            if (!base.endsWith("/")) {
+                base += "/";
+            }
+
+            String fullUrl = base + encodedPath;
+            return isValidUrl(fullUrl);
+        } catch (Exception e) {
+            LOGGER.error("Error encoding URL for path '{}': {}", path, encodedPath, e);
+            return false;
+        }
     }
 
     public static void removeTokenCookie(HttpServletResponse response) {
