@@ -30,16 +30,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URLEncoder;
+import java.net.*;
 import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.concurrent.Executors;
+import java.util.Arrays;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.stream.Collectors;
 
 public class HttpTools {
 
@@ -67,10 +65,37 @@ public class HttpTools {
                 : ProxySelector.getDefault();
     }
 
+    public static URI toSafeURI(String url) throws Exception {
+        URL u = new URL(url);
+        return new URI(
+                u.getProtocol(),
+                u.getUserInfo(),
+                u.getHost(),
+                u.getPort(),
+                encodePath(u.getPath()),
+                u.getQuery(),
+                u.getRef()
+        );
+    }
+
+    private static String encodePath(String path) {
+        return Arrays.stream(path.split("/"))
+                .map(HttpTools::encodePathSegment)
+                .collect(Collectors.joining("/"));
+    }
+
+    private static String encodePathSegment(String segment) {
+        try {
+            return new URI(null, null, "/" + segment, null).getRawPath().substring(1);
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid segment: " + segment, e);
+        }
+    }
+
 
     public static InputStream fetchLargeFileStream(String url) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(toSafeURI(url))
                 .GET()
                 .build();
 
