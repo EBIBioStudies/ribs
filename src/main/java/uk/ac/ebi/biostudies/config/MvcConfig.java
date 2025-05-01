@@ -5,6 +5,7 @@ package uk.ac.ebi.biostudies.config;
  */
 
 import org.apache.catalina.Context;
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardHost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -68,6 +69,13 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**");
         registry.addMapping("/files/**").allowedOrigins(externalServicesConfig.getAccessControlAllowOrigin().split(","))
                 .allowedMethods("GET", "POST");
+    }
+
+    @Bean
+    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> customizer() {
+        return factory -> factory.addConnectorCustomizers((Connector connector) -> {
+            connector.setMaxPostSize(40 * 1024 * 1024); // 50 MB
+        });
     }
 
     @Bean

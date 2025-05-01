@@ -120,7 +120,7 @@ var DownloadDialog = (function (_self) {
     }
 
     function getSelectedFilesForm(key, type, os, filelist) {
-        let selectedHtml = '<form method="POST" target="_blank" action="'
+        let selectedHtml = '<form method="POST" enctype="multipart/form-data" target="_blank" action="'
             + window.contextPath + "/files/"
             + $('#accession').text() + type + '">';
         $(Array.from(filelist)).each(function (i, v) {
