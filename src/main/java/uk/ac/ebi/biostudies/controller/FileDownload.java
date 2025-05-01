@@ -65,7 +65,7 @@ public class FileDownload {
         dlType = dlType.replaceFirst("/", "");
         String fileExtension = dlType.equalsIgnoreCase("aspera") ? getFileExtension(os): "txt";
         String[] files = request.getParameterMap().get("files");
-        if (storageMode == Constants.File.StorageMode.FIRE) {
+        if (storageMode == Constants.File.StorageMode.FIRE && files!=null && files.length<1000) {
             files = createFireCompatibleFileNames(files);
         }
         if (dlType.equalsIgnoreCase("zip"))
