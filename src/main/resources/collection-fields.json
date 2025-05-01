@@ -68,7 +68,7 @@
     { "name": "facet.rh3r.wrk_pckg", "title": "Project part \\(Work package\\)", "fieldType": "facet", "match": "^([a-zA-Z0-9.]+)"},
     { "name": "facet.rh3r.case_study", "title": "Project part \\(Case study\\)", "fieldType": "facet", "match": "^([a-zA-Z0-9.]+)"},
     { "name": "facet.rh3r.info_type", "title": "Type of information", "fieldType": "facet"},
-    { "name": "facet.rh3r.org", "title": "Organization", "jsonPath" : "$..subsections[?(@.type==\"Organization\")].attributes[?(@.name==\"Name\")].value","fieldType": "facet"}
+    { "name": "facet.rh3r.org", "title": "Organization", "jsonPath" : "$..sections[?(@.type=='Organization')].attributes[?(@.name=='Name' && @.value != null)].value","fieldType": "facet"}
   ],
   "public": [
     { "name": "access", "title": "", "fieldType": "tokenized_string", "jsonPath": "$.accessTags[?(@ =~ /[^{].*/i)] OR $.accessTags[?(@.size() > 0)].name", "analyzer": "AccessFieldAnalyzer", "parser": "AccessParser", "toLowerCase": "true"},
