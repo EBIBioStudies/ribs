@@ -40,7 +40,7 @@ public class ViewCountLoader {
                     Long count = Long.valueOf(tokens[1]);
                     ACCESSION_VIEW_COUNT_MAP.put(tokens[0], count);
                 }catch (Exception exception){
-                   LOGGER.debug("Problem in parsing view stats for accession: {}", accession);
+//                   LOGGER.debug("Problem in parsing view stats for accession: {}", accession);
                 }
             }
         } catch (Exception exception) {
