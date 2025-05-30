@@ -112,7 +112,7 @@ var Metadata = (function (_self) {
         var slashOffset = window.location.pathname[window.location.pathname.length - 1] === '/';
         var parts = window.location.pathname.split('/');
         var accession = parts[parts.length - 1 - slashOffset].toUpperCase();
-        var url = contextPath + '/api/v1/' + (accession.startsWith("A-") ? 'arrays/' : accession.startsWith("C-") ? 'compounds/' : 'studies/') + accession;
+        var url = contextPath + '/api/v2/' + (accession.startsWith("A-") ? 'arrays/' : accession.startsWith("C-") ? 'compounds/' : 'studies/') + accession;
         var params = getParams();
 
         $.getJSON(url, params, function(ftpLinkData) {
