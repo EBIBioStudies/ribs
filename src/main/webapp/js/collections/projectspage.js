@@ -19,7 +19,7 @@ var CollectionsPage = (function (_self) {
     }
 
     function getPath(files) {
-        return files.path || (files[0] && files[0].path) || (files[0][0] && files[0][0].path);
+        return files?.path || (files[0] && files[0]?.path) || (files[0][0] && files[0][0]?.path);
     }
 
     function addLogo($prj, accession, baseLink, path, ftp) {
