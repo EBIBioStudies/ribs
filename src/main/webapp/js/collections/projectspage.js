@@ -45,7 +45,7 @@ var CollectionsPage = (function (_self) {
                 accession = $(this).data('accession');
 
             $('a', $prj).attr('href', contextPath + '/' + accession + '/studies');
-            $.getJSON(contextPath + '/api/v1/collections/' + accession, function (linkData) {
+            $.getJSON(contextPath + '/api/v2/collections/' + accession, function (linkData) {
                 var path = '';
                 if (linkData.ftpHttp_link) {
                     $.getJSON(linkData.ftpHttp_link + accession + ".json", function (data) {

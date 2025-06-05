@@ -29,7 +29,7 @@ Home.CollectionLoader = (function () {
                 $("a[data-type='collection']").each( function() {
                     var $prj = $(this), accession = $(this).data('accession');
                     $(this).attr('href',contextPath+'/'+accession+'/studies');
-                    $.getJSON(contextPath+ '/api/v1/collections/'+accession, function (data) {
+                    $.getJSON(contextPath+ '/api/v2/collections/'+accession, function (data) {
                         if(data.ftpHttp_link){
                             $.getJSON(data.ftpHttp_link+accession+'.json', function (local_data){
                                 handlePrjData(local_data, $prj, accession)

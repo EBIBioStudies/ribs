@@ -23,7 +23,7 @@ var Searcher = (function (_self) {
             var html = template(data);
             $('#renderedContent').html(html);
             if (params && params.query && params.query.indexOf(" ")<0) {
-                $.getJSON(contextPath + "/api/v1/collections/"+params.query, function (mydata) {
+                $.getJSON(contextPath + "/api/v2/collections/"+params.query, function (mydata) {
                     if(mydata.ftpHttp_link){
                         $.getJSON(mydata.ftpHttp_link+params.query, function (data) {
                             if (data && data.accno.toLowerCase() == params.query.toLowerCase()) {
