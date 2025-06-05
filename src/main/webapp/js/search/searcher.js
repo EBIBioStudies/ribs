@@ -114,7 +114,7 @@ var Searcher = (function (_self) {
         $("div[data-type='collection']").each(function () {
             var $prj = $(this), accession = $(this).data('accession');
             $('a', $prj).attr('href', contextPath + '/' + accession + '/studies');
-            $.getJSON(contextPath + '/api/v1/studies/' + accession, function (data) {
+            $.getJSON(contextPath + '/api/v2/studies/' + accession, function (data) {
                 var path = data.section.files.path;
                 if (!path && data.section.files[0]) path = data.section.files[0].path;
                 if (!path && data.section.files[0][0]) path = data.section.files[0][0].path;
