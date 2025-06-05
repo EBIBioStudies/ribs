@@ -91,7 +91,7 @@ $(function() {
             collection = DetailPage.linkTypeMap[collection]
         }
         // display collection banner
-        $.getJSON(contextPath + "/api/v1/collections/" + collection, function (linkAddress) {
+        $.getJSON(contextPath + "/api/v2/collections/" + collection, function (linkAddress) {
             linkAddress.ftpHttp_link ? callServerUrl(linkAddress.ftpHttp_link , collection + ".json") : handleServerResponse(data=linkAddress)
         }).fail(function (error) {});
     }
