@@ -69,9 +69,13 @@ public class FacetServiceImpl implements FacetService {
             if (facet == null || !facet.get(Constants.IndexEntryAttributes.FIELD_TYPE).asText().equalsIgnoreCase(Constants.IndexEntryAttributes.FieldTypeValues.FACET))
                 continue;
             List<String> listSelectedValues = userSelectedDimValues.get(facet);
+            boolean mustLowerCase = true;
+            if (facet.has(Constants.IndexEntryAttributes.TO_LOWER_CASE)) {
+                mustLowerCase = facet.get(Constants.IndexEntryAttributes.TO_LOWER_CASE).asBoolean(true);
+            }
             if (listSelectedValues != null)
                 for (String value : listSelectedValues) {
-                    drillDownQuery.add(facet.get(Constants.IndexEntryAttributes.NAME).asText(), value.toLowerCase());
+                    drillDownQuery.add(facet.get(Constants.IndexEntryAttributes.NAME).asText(), mustLowerCase ? value.toLowerCase() : value);
                 }
         }
         return drillDownQuery;

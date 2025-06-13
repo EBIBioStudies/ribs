@@ -508,13 +508,17 @@ public class IndexServiceImpl implements IndexService {
                 else
                     value = NA;
             }
+            boolean mustLowerCase = true;
+            if (facetConfig.has(Constants.IndexEntryAttributes.TO_LOWER_CASE)) {
+                mustLowerCase = facetConfig.get(Constants.IndexEntryAttributes.TO_LOWER_CASE).asBoolean(true);
+            }
             for (String subVal : org.apache.commons.lang3.StringUtils.split(value, Facets.DELIMITER)) {
                 if(subVal==null || subVal.trim().isEmpty() )
                     continue;
                 if (subVal.equalsIgnoreCase(NA) && facetConfig.has(IndexEntryAttributes.DEFAULT_VALUE)) {
                     subVal = facetConfig.get(IndexEntryAttributes.DEFAULT_VALUE).textValue();
                 }
-                doc.add(new FacetField(fieldName, subVal.trim().toLowerCase()));
+                doc.add(new FacetField(fieldName, mustLowerCase ? subVal.trim().toLowerCase() : subVal.trim()));
             }
         }
     }

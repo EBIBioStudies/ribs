@@ -24,8 +24,14 @@ public class SimpleAttributeParser extends AbstractParser {
         Object result= NA;
         String indexKey = indexEntry.get(Constants.IndexEntryAttributes.NAME).asText();
         try {
-            String title = StringUtils.replace(indexEntry.get(Constants.Fields.TITLE).asText(), "/", "\\/");
-            String newJPath = String.format(jpath, title);
+            String newJPath;
+            if (indexEntry.has(Constants.IndexEntryAttributes.JSON_PATH)) {
+                newJPath = indexEntry.get(Constants.IndexEntryAttributes.JSON_PATH).asText();
+            } else {
+                String title = StringUtils.replace(indexEntry.get(Constants.Fields.TITLE).asText(), "/", "\\/");
+                newJPath = String.format(jpath, title);
+            }
+
             List <String> resultData = jsonPathContext.read(newJPath);
             if(indexEntry.has(Constants.Facets.MATCH)) {
                 String match = indexEntry.get(Constants.Facets.MATCH).asText();
