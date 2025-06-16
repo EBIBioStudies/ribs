@@ -65,8 +65,8 @@
     { "name": "facet.eutoxrisk.project_part", "title": "Project part", "fieldType": "facet"}
   ],
   "rh3r": [
-    { "name": "facet.rh3r.wrk_pckg", "title": "Work package", "fieldType": "facet", "match": "^([a-zA-Z0-9.]+)", "parser": "SimpleAttributeParser", "jsonPath": "$.section.attributes[?(@.name=~ /Project part \\(Work package\\)/i)].value"},
-    { "name": "facet.rh3r.case_study", "title": "Case study", "fieldType": "facet", "match": "^([a-zA-Z0-9.]+)", "parser": "SimpleAttributeParser", "jsonPath": "$.section.attributes[?(@.name=~ /Project part \\(Case study\\)/i)].value"},
+    { "name": "facet.rh3r.wrk_pckg", "title": "Project part \\(Work package\\)", "fieldType": "facet", "match": "^([a-zA-Z0-9.]+)"},
+    { "name": "facet.rh3r.case_study", "title": "Project part \\(Case study\\)", "fieldType": "facet", "match": "^([a-zA-Z0-9.]+)"},
     { "name": "facet.rh3r.info_type", "title": "Type of information", "fieldType": "facet"},
     { "name": "facet.rh3r.organ", "title": "Organ", "fieldType": "facet"},
     { "name": "facet.rh3r.toxy_dom", "title": "Toxicity domain", "fieldType": "facet"},
