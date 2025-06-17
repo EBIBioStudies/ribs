@@ -69,9 +69,13 @@ public class FacetServiceImpl implements FacetService {
             if (facet == null || !facet.get(Constants.IndexEntryAttributes.FIELD_TYPE).asText().equalsIgnoreCase(Constants.IndexEntryAttributes.FieldTypeValues.FACET))
                 continue;
             List<String> listSelectedValues = userSelectedDimValues.get(facet);
+            boolean mustLowerCase = true;
+            if (facet.has(Constants.IndexEntryAttributes.TO_LOWER_CASE)) {
+                mustLowerCase = facet.get(Constants.IndexEntryAttributes.TO_LOWER_CASE).asBoolean(true);
+            }
             if (listSelectedValues != null)
                 for (String value : listSelectedValues) {
-                    drillDownQuery.add(facet.get(Constants.IndexEntryAttributes.NAME).asText(), value.toLowerCase());
+                    drillDownQuery.add(facet.get(Constants.IndexEntryAttributes.NAME).asText(), mustLowerCase ? value.toLowerCase() : value);
                 }
         }
         return drillDownQuery;
@@ -97,7 +101,7 @@ public class FacetServiceImpl implements FacetService {
             }
             FacetResult childrenFacets = resultSideWays.facets.getTopChildren(Integer.MAX_VALUE, dimension);
             List<JsonNode> children = new ArrayList<>();//mapper.createArrayNode();
-            facetJSON.put(Constants.IndexEntryAttributes.TITLE, facet.get(Constants.IndexEntryAttributes.TITLE).asText());
+            facetJSON.put(Constants.IndexEntryAttributes.TITLE, textService.getNormalisedString(facet.get(Constants.IndexEntryAttributes.TITLE).asText()));
             facetJSON.put(Constants.IndexEntryAttributes.NAME, facet.get(Constants.IndexEntryAttributes.NAME).asText());
             //boolean ignoreHapaxLegomena = dimension.equalsIgnoreCase(Constants.Facets.FILE_TYPE) || dimension.equalsIgnoreCase(Constants.Facets.LINK_TYPE);
             if (childrenFacets != null) {
@@ -232,7 +236,7 @@ public class FacetServiceImpl implements FacetService {
                 invisibleNA = true;
             if (facetNode.has(Constants.IndexEntryAttributes.DEFAULT_VALUE))
                 naDefaultStr = facetNode.get(Constants.IndexEntryAttributes.DEFAULT_VALUE).asText();
-            facet.put(Constants.IndexEntryAttributes.TITLE, facetNode.get(Constants.IndexEntryAttributes.TITLE).asText());
+            facet.put(Constants.IndexEntryAttributes.TITLE, textService.getNormalisedString( facetNode.get(Constants.IndexEntryAttributes.TITLE).asText()));
             facet.put(Constants.IndexEntryAttributes.NAME, facetNode.get(Constants.IndexEntryAttributes.NAME).asText());
             if (facetNode.has(Constants.IndexEntryAttributes.FACET_TYPE)) {
                 facet.put("type", facetNode.get(Constants.IndexEntryAttributes.FACET_TYPE).asText());
