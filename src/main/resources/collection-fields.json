@@ -70,7 +70,7 @@
     { "name": "facet.rh3r.info_type", "title": "Type of information", "fieldType": "facet"},
     { "name": "facet.rh3r.organ", "title": "Organ", "fieldType": "facet"},
     { "name": "facet.rh3r.toxy_dom", "title": "Toxicity domain", "fieldType": "facet"},
-    { "name": "facet.rh3r.org", "title": "Organization", "jsonPath" : "$..sections[?(@.type=='Organization')].attributes[?(@.name=='Name' && @.value != null)].value", "fieldType": "facet", "toLowerCase": "false"}
+    { "name": "facet.rh3r.org", "title": "Organization", "jsonPath" : "$..sections[?(@.type=='Organization' || @.type=='organisation')].attributes[?(@.name=='Name' && @.value != null)].value", "fieldType": "facet", "toLowerCase": "false"}
   ],
   "public": [
     { "name": "access", "title": "", "fieldType": "tokenized_string", "jsonPath": "$.accessTags[?(@ =~ /[^{].*/i)] OR $.accessTags[?(@.size() > 0)].name", "analyzer": "AccessFieldAnalyzer", "parser": "AccessParser", "toLowerCase": "true"},
