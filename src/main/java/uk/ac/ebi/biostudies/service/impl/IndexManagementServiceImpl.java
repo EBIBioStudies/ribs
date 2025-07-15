@@ -3,7 +3,9 @@ package uk.ac.ebi.biostudies.service.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -68,6 +70,12 @@ public class IndexManagementServiceImpl implements IndexManagementService {
         closed.set(true);
     }
 
+    @EventListener(ApplicationReadyEvent.class)
+    public void onApplicationReady() {
+        LOGGER.info("Application is fully up — starting WebSocket...");
+        openWebsocket();
+    }
+
     @Override
     public synchronized void openWebsocket() {
         if (!env.getProperty("spring.rabbitmq.stomp.enable", Boolean.class, false))
@@ -88,7 +96,6 @@ public class IndexManagementServiceImpl implements IndexManagementService {
     public void openIndicesWritersAndSearchersStartStomp() {
         try {
             indexManager.openIndicesWritersAndSearchers();
-            openWebsocket();
             indexManager.openEfoIndex();
         } catch (Throwable error) {
             LOGGER.error(error);
