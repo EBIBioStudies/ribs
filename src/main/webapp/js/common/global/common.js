@@ -24,7 +24,7 @@ $(function() {
         })
         collectionObj.title = collectionObj.title || collectionObj.accno;
         var html = template(collectionObj);
-        if (collection.toLowerCase()!='bioimages') {
+        if (!['bioimages', 'bioairepo'].includes(collection.toLowerCase())) {
             $('#collection-banner').html(html);
         }
         // add collection search checkbox
@@ -121,8 +121,10 @@ function handleProjectSpecificUI(){
         handleBioImagesUI();
     } else if (collection && collection.toLowerCase()=='arrayexpress') {
         handleArrayExpressUI();
-    }else if (collection && collection.toLowerCase()=='biomodels') {
+    } else if (collection && collection.toLowerCase()=='biomodels') {
         handleBioModelsUI();
+    } else if (collection && collection.toLowerCase()=='bioairepo') {
+        handleBioAIRepoUI();
     }
 }
 
@@ -211,6 +213,12 @@ function handleArrayExpressUI() {
     $('span.elixir-banner-description').text('ArrayExpress is an ELIXIR Core Data Resource');
 }
 
+function handleBioAIRepoUI(){
+    $('#local-title').html(
+        '<h1><img src="' + contextPath + '/images/collections/bioairepo/logo.svg" width="50%" height="50%"/></h1>'
+    );
+    $('#masthead').css("background-image","url("+contextPath +"/images/collections/bioairepo/background.jpg)");
+}
 
 function updateTitleFromBreadCrumbs() {
     //update title
