@@ -24,7 +24,10 @@ $(function() {
         })
         collectionObj.title = collectionObj.title || collectionObj.accno;
         var html = template(collectionObj);
-        if (!['bioimages', 'bioairepo'].includes(collection.toLowerCase())) {
+        if (collection.toLowerCase()=='bioairepo') {
+            html = removeLogo(html)
+        }
+        if (collection.toLowerCase()!='bioimages') {
             $('#collection-banner').html(html);
         }
         // add collection search checkbox
@@ -40,6 +43,11 @@ $(function() {
         return collectionObj;
     }
 
+    function removeLogo(collectionBannerHtml) {
+        var $html = $('<div>' + collectionBannerHtml + '</div>');
+        $html.find('.collection-logo').remove();
+        return $html.prop('outerHTML')
+    }
 
     $.ajaxSetup({
         cache: true
