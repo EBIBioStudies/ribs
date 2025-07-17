@@ -6,6 +6,7 @@ var Metadata = (function (_self) {
     var lastExpandedTable;
     var generatedID = 0;
     var sectionLinkCount = {};
+    let sectionColIndex = -1;
 
 
     function handlePageData(pageData, params, accession, template) {
@@ -290,15 +291,29 @@ var Metadata = (function (_self) {
             "lengthMenu": [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
             "dom": "rlftpi",
             "infoCallback": function( settings, start, end, max, total, out ) {
-                return (total== max) ? out : out +' <a class="section-button" id="clear-filter" onclick="clearLinkFilter();return false;">' +
+                return (total== max) ? out : out +' <a class="section-button" id="clear-filter" onclick="Metadata.clearLinkFilter();return false;">' +
                     '<span class="fa-layers fa-fw">'
                     +'<i class="fas fa-filter"></i>'
                     +'<span class="fa-layers-text" data-fa-transform="shrink-2 down-4 right-6">×</span>'
                     +'</span> show all links</a>';
             }
         });
-
+         sectionColIndex = linksTable.columns().header().to$().toArray().findIndex(th =>
+             $(th).text().trim().toLowerCase() === "section");
     }
+
+    $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+        if (!linksTable || settings.nTable !== linksTable.table().node()) return true;
+        if (!expansionSource) return true;
+
+        const td = linksTable.cell(dataIndex, sectionColIndex).node();
+        const raw = $(td).attr('data-search');
+        return raw === expansionSource;
+    });
+
+
+
+
 
 
 
@@ -536,14 +551,8 @@ var Metadata = (function (_self) {
         // handle clicks on link filters in section
         $("a[data-links-id]").click(function () {
             expansionSource = '' + $(this).data('links-id');
-            clearLinkFilter();
-            $('#all-links-expander').click();
-            linksTable.column(':contains(Section)').search('^' + accToLink(expansionSource) + '$', true, false);
-            // hide empty columns
-            linksTable.columns().every(function () {
-                if (linksTable.cells({search: 'applied'}, this).data().join('').trim() == '') this.visible(false)
-            });
-            linksTable.draw();
+            $('#all-links-expander').click(); // UI expand
+            linksTable.draw(); // trigger filtering
         });
     }
 
@@ -586,8 +595,8 @@ var Metadata = (function (_self) {
     }
 
     function clearLinkFilter() {
-        linksTable.columns().visible(true);
-        linksTable.search('').columns().search('').draw();
+        expansionSource = null;
+        linksTable.draw(); // triggers re-filtering (returns all rows)
     }
 
 
@@ -687,6 +696,6 @@ var Metadata = (function (_self) {
             $(this).parent().html('<img class="url-image" src="' + url + '"/>');
         });
     }
-
+    _self.clearLinkFilter = clearLinkFilter;
     return _self;
 })(Metadata || {});
