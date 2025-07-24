@@ -64,14 +64,42 @@ var Metadata = (function (_self) {
             if (val=='Section') {
                 Metadata.updateSectionLinkCount(e.search);
             }
-            
-            return new Handlebars.SafeString( e.url ?
-                '<td'+ ( val=='Section' && e.search ? ' data-search="'+e.search +'" ' :'') + '><a href="'
-                + e.url
-                + (e.url[0]!='#' ? '" target="_blank"':'"')
-                + (e.title ? ' title="'+e.title+'"' : '')
-                + ' ' +addValQualAttributes(e.valqual)
-                +'>'+ htmlEncode(value)+'</a></td>' : '<td><span '+ addValQualAttributes(e.valqual)+' >'+htmlEncode(value) +'</span></td>');
+
+            // Generalized: check for valqual with name=url and a valid http(s) link
+            if (Array.isArray(e.valqual)) {
+                const urlQual = e.valqual.find(q =>
+                    q?.name?.toLowerCase() === 'url' &&
+                    typeof q.value === 'string' &&
+                    q.value.startsWith('http')
+                );
+                if (urlQual) {
+                    return new Handlebars.SafeString(
+                        '<td>' +
+                        '<a href="' + htmlEncode(urlQual.value) + '" target="_blank"' +
+                        (e.title ? ' title="' + htmlEncode(e.title) + '"' : '') +
+                        ' ' + addValQualAttributes(e.valqual) + '>' +
+                        htmlEncode(e.value) +
+                        '</a>' +
+                        '</td>'
+                    );
+                }
+            }
+
+            // Fall back to regular rendering (possibly with e.url)
+            if (e.url) {
+                return new Handlebars.SafeString(
+                    '<td' + (val === 'Section' && e.search ? ' data-search="' + e.search + '"' : '') + '>' +
+                    '<a href="' + e.url + '"' +
+                    (e.url[0] !== '#' ? ' target="_blank"' : '') +
+                    (e.title ? ' title="' + htmlEncode(e.title) + '"' : '') +
+                    ' ' + addValQualAttributes(e.valqual) + '>' +
+                    htmlEncode(value) +
+                    '</a>' +
+                    '</td>'
+                );
+            }
+
+            return new Handlebars.SafeString('<td><span ' + addValQualAttributes(e.valqual) + '>' + htmlEncode(value) + '</span></td>');
         });
 
         Handlebars.registerHelper('ifHasAttribute', function(val, obj, options) {
