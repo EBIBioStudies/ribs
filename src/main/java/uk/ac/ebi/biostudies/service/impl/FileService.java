@@ -43,7 +43,7 @@ public class FileService {
 
         String relativePath = "";
         //TODO fix path for private studies
-        Path downloadFile = Paths.get( fileMetaData.getRelativePath() + (fileMetaData.isThumbnail() ? "/Thumbnails/" : "/Files/") + fileMetaData.getUiRequestedPath()+ (fileMetaData.isThumbnail() ? ".thumbnail.png" : ""));
+        Path downloadFile = Paths.get( fileMetaData.getRelativePath() + (fileMetaData.isThumbnail() ? "/Thumbnails/" : (fileMetaData.getUiRequestedPath().startsWith("Files/")?"/":"/Files/")) + fileMetaData.getUiRequestedPath()+ (fileMetaData.isThumbnail() ? ".thumbnail.png" : ""));
 
         //Hack start: override relative path if file is not found
 //        if (!Files.exists(downloadFile, LinkOption.NOFOLLOW_LINKS) && fileMetaData.getUiRequestedPath().endsWith(".tsv")) {
@@ -78,7 +78,7 @@ public class FileService {
 
     private void resolveFirePath(FileMetaData fileMetaData) throws FileNotFoundException{
         S3Object s3Object = null;
-        String path = fileMetaData.getRelativePath() + (fileMetaData.isThumbnail() ? "/Thumbnails/" : "/Files/")
+        String path = fileMetaData.getRelativePath() + (fileMetaData.isThumbnail() ? "/Thumbnails/" : (fileMetaData.getUiRequestedPath().startsWith("Files/")?"/":"/Files/"))
                 + fileMetaData.getUiRequestedPath() + (fileMetaData.isThumbnail() ? ".thumbnail.png" : "");
         if (fileMetaData.getUiRequestedPath().equals(fileMetaData.getAccession() + ".json") || fileMetaData.getUiRequestedPath().equals(fileMetaData.getAccession() + ".xml") || fileMetaData.getUiRequestedPath().equals(fileMetaData.getAccession() + ".tsv")) {
             path = fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath();
