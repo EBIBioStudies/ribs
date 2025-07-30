@@ -34,9 +34,7 @@
                     {{#ifArray this}}
                     {{else}}
                             {{#ifRenderable this}}
-                              {{#if (or (hasMeaningfulAttributes this.attributes) this.subsections)}}
                                 {{&section this 'true'}}
-                              {{/if}}
                             {{/ifRenderable}}
                     {{/ifArray}}
                 {{/each}}
@@ -47,9 +45,9 @@
                 {{#each sections}}
                     {{#ifCond this.extType '==' 'sectionsTable'}}
                     {{else}}
-                      {{#if (or (hasMeaningfulAttributes this.attributes) this.subsections)}}
-                        {{&section this 'true'}}
-                      {{/if}}
+                        {{#ifRenderable this}}
+                            {{&section this 'true'}}
+                        {{/ifRenderable}}
                     {{/ifCond}}
                 {{/each}}
             {{/if}}
