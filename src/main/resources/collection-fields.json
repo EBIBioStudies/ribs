@@ -72,6 +72,25 @@
     { "name": "facet.rh3r.toxy_dom", "title": "Toxicity domain", "fieldType": "facet"},
     { "name": "facet.rh3r.org", "title": "Organization", "jsonPath" : "$..sections[?(@.type=='Organization' || @.type=='organisation')].attributes[?(@.name=='Name' && @.value != null)].value", "fieldType": "facet", "toLowerCase": "false"}
   ],
+  "cancermodelsorg": [
+    { "name": "facet.cancermodelsorg.model_id", "title": "", "fieldType": "untokenized_string", "jsonPath" : "$.section.attributes[?(@.name=='Model ID')].value"},
+    { "name": "facet.cancermodelsorg.model_type", "title": "Model type", "fieldType": "facet"},
+    { "name": "facet.cancermodelsorg.dataset_available", "title": "Dataset Available", "fieldType": "facet"},
+    { "name": "facet.cancermodelsorg.model_availability", "title": "Available for distribution", "fieldType": "facet"},
+    { "name": "facet.cancermodelsorg.related_models", "title": "Has Related Models", "fieldType": "facet"},
+    { "name": "facet.cancermodelsorg.project", "title": "Project", "fieldType": "facet"},
+    { "name": "facet.cancermodelsorg.paediatric", "title": "Paediatric", "fieldType": "facet"},
+    { "name": "facet.cancermodelsorg.patient_sex", "title": "Patient Sex", "fieldType": "facet", "jsonPath" : "$..sections[?(@.type=='Patient / Tumour Metadata')].attributes[?(@.name=='Patient Sex')].value OR $..subsections[?(@.type=='Patient / Tumour Metadata')].attributes[?(@.name=='Patient Sex')].value"},
+    { "name": "facet.cancermodelsorg.tumour_type", "title": "Tumour Type", "fieldType": "facet", "jsonPath" : "$..sections[?(@.type=='Patient / Tumour Metadata')].attributes[?(@.name=='Tumour Type')].value OR $..subsections[?(@.type=='Patient / Tumour Metadata')].attributes[?(@.name=='Tumour Type')].value"},
+    { "name": "facet.cancermodelsorg.patient_ethnicity_group", "title": "Patient Ethnicity Group", "fieldType": "facet", "jsonPath" : "$..sections[?(@.type=='Patient / Tumour Metadata')].attributes[?(@.name=='Patient Ethnicity Group')].value OR $..subsections[?(@.type=='Patient / Tumour Metadata')].attributes[?(@.name=='Patient Ethnicity Group')].value"},
+    { "name": "facet.cancermodelsorg.patient_age", "title": "Patient Age", "fieldType": "facet", "jsonPath" : "$..sections[?(@.type=='Patient / Tumour Metadata')].attributes[?(@.name=='Patient Age')].value OR $..subsections[?(@.type=='Patient / Tumour Metadata')].attributes[?(@.name=='Patient Age')].value"},
+    { "name": "facet.cancermodelsorg.cancer_system", "title": "Cancer System", "fieldType": "facet", "jsonPath" : "$..sections[?(@.type=='Patient / Tumour Metadata')].attributes[?(@.name=='Cancer System')].value OR $..subsections[?(@.type=='Patient / Tumour Metadata')].attributes[?(@.name=='Cancer System')].value"},
+    { "name": "facet.cancermodelsorg.breast_cancer_biomarkers", "title": "Breast Cancer Biomarkers", "fieldType": "facet"},
+    { "name": "facet.cancermodelsorg.msi_status", "title": "MSI Status", "fieldType": "facet", "jsonPath" : "$..sections[?(@.type=='Immune markers')]..sections.attributes[?(@.name == 'MSI')].value OR $..subsections[?(@.type=='Immune markers')]..subsections.attributes[?(@.name == 'MSI')].value"},
+    { "name": "facet.cancermodelsorg.hla_types", "title": "HLA Types", "fieldType": "facet", "jsonPath" : "$..sections[?(@.type=='Immune markers')]..sections[?(@.type=='HLA')].attributes[?(@.name != 'Sample ID')].name OR $..subsections[?(@.type=='Immune markers')]..subsections[?(@.type=='HLA')].attributes[?(@.name != 'Sample ID')].name"},
+    { "name": "facet.cancermodelsorg.patient_treatment_response", "title": "Patient Treatment Response", "fieldType": "facet", "jsonPath" : "$..sections[?(@.type=='Patient treatment')].attributes[?(@.name == 'Response')].value OR $..subsections[?(@.type=='Patient treatment')].attributes[?(@.name == 'Response')].value"},
+    { "name": "facet.cancermodelsorg.model_treatment_response", "title": "Model Treatment Response", "fieldType": "facet", "jsonPath" : "$..sections[?(@.type=='Model treatment')].attributes[?(@.name == 'Response')].value OR $..subsections[?(@.type=='Model treatment')].attributes[?(@.name == 'Response')].value"}
+  ],
   "public": [
     { "name": "access", "title": "", "fieldType": "tokenized_string", "jsonPath": "$.accessTags[?(@ =~ /[^{].*/i)] OR $.accessTags[?(@.size() > 0)].name", "analyzer": "AccessFieldAnalyzer", "parser": "AccessParser", "toLowerCase": "true"},
     { "name": "accession", "title": "", "fieldType": "tokenized_string", "retrieved": true, "analyzer": "AttributeFieldAnalyzer", "jsonPath": "$.accno OR $.accNo"},
