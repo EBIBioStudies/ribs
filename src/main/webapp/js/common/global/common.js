@@ -10,6 +10,20 @@ $(function() {
                 + '" title="' + data.title
                 + '">' + data.title + '</a></li>');
         }
+        if (collection.toLowerCase()==='bioairepo') {
+            reorderRepoTab(data)
+        }
+    }
+
+    function reorderRepoTab(data) {
+        var $navMenu = $('nav ul[data-description="navigational"]');
+        var $repoLi = $navMenu.find('a[title="' + data.title + '"]').closest('li');
+        // Move it to the end of the menu
+        $repoLi.appendTo($navMenu);
+        $repoLi.find('a').css({
+            'color': 'white',
+            'background-color': '#006dcc'
+        });
     }
 
     function showCollectionBanner(data, logoBaseUrl) {
