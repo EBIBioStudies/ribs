@@ -48,11 +48,17 @@ var CollectionsPage = (function (_self) {
             $.getJSON(contextPath + '/api/v2/collections/' + accession, function (linkData) {
                 var path = '';
                 if (linkData.ftpHttp_link) {
-                    $.getJSON(linkData.ftpHttp_link + accession + ".json", function (data) {
-                        path = getPath(data.section.files);
+                    if(linkData.pageTab){//read pagetab from server nfs cache instead of ftp server
+                        const pageTabObj = JSON.parse(linkData.pageTab);
+                        path = getPath(pageTabObj.section.files);
                         addLogo($prj, accession, linkData.ftpHttp_link, path, true);
-                    });
-                } else {
+                    }else {
+                        $.getJSON(linkData.ftpHttp_link + accession + ".json", function (data) {
+                            path = getPath(data.section.files);
+                            addLogo($prj, accession, linkData.ftpHttp_link, path, true);
+                        });
+                    }
+                } else {//is a private fire study
                     path = getPath(linkData.section.files);
                     addLogo($prj, accession, contextPath + '/files/' + accession, path, false);
                 }

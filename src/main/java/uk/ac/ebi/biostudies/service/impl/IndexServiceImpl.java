@@ -434,6 +434,9 @@ public class IndexServiceImpl implements IndexService {
             String prjName = (String) valueMap.get(Facets.COLLECTION);
             //updateCollectionParents(valueMap);
             addFileAttributes(doc, (Set<String>) valueMap.get(Constants.File.FILE_ATTS));
+            if(valueMap.get(Fields.HAS_FILE_PARSING_ERROR)!=null){
+                doc.add(new TextField(Fields.HAS_FILE_PARSING_ERROR, "true", Field.Store.YES));
+            }
             for (String field : indexManager.getCollectionRelatedFields(prjName.toLowerCase())) {
                 JsonNode curNode = indexManager.getIndexEntryMap().get(field);
                 String fieldType = curNode.get(IndexEntryAttributes.FIELD_TYPE).asText();

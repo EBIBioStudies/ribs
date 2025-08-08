@@ -8,6 +8,7 @@ var FileTable = (function (_self) {
     var columnDefinitions = [];
     var sorting = false;
     var afterTableInit = false;
+    var hasFileParsingError = false;
     var allPaths = [];
     const MAX_FILES_ALLOWED = 1000;
     const MAX_FILE_SIZE_ALLOWED = 20000;
@@ -18,6 +19,7 @@ var FileTable = (function (_self) {
             data: params,
             success: function (response) {
                 var hasZippedFolders = response.hasZippedFolders || false;
+                hasFileParsingError = response.hasFileParsingError || false;
                 if (isDetailPage) {
                     handleSecretKey(response.seckey, params.key);
                     handleStats(response.released, response.modified, response.views);
@@ -25,8 +27,11 @@ var FileTable = (function (_self) {
                         handleSubmissionFolderLinks(response.httpLink, response.ftpLink, response.globusLink);
                     }
                 }
+                if(!hasFileParsingError){
+                    $('#error').remove();
+                }
                 if (!response.files || response.files === 0) {
-                    $('#file-list-container').parent().remove();
+                    $('#file-list-container').remove();
                     return;
                 }
                 handleFileTableColumns(response.columns, acc, params, isDetailPage, hasZippedFolders);
@@ -213,7 +218,7 @@ var FileTable = (function (_self) {
         // add section rendering
         if (isDetailPage) {
             var sectionColumn = columns.filter(function (c) {
-                return c.name == 'Section';
+                return c.name === 'Section';
             });
             if (sectionColumn.length) {
                 sectionColumn[0].render = function (data, type, row) {

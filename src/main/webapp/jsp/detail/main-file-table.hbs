@@ -1,5 +1,11 @@
 <script id='main-file-table' type='text/x-handlebars-template'>
     <section>
+        <div id="error" style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin: 10px 0;">
+          <div class="small" style="display: flex; align-items: center;">
+            <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+            <p style="margin: 0; font-weight: bold;">Error in parsing file list</p>
+          </div>
+        </div>
         <div id="file-list-container">
             <div class="table-caption">
                 <span class="widge-title"><i class="fa fa-paperclip"></i> Data files</span>

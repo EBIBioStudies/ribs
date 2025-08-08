@@ -1,5 +1,6 @@
 package uk.ac.ebi.biostudies.api.util;
 
+import com.google.common.base.Charsets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -7,6 +8,9 @@ import org.apache.lucene.document.Document;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class StudyUtils {
 
@@ -64,5 +68,15 @@ public class StudyUtils {
         if(!IS_MIGRATED_NFS_DIRECTORY || secretKey==null || secretKey.isEmpty() || secretKey.length()<2 || relativePath.contains(".private"))
             return relativePath;
         return ".private/"+secretKey.substring(0, 2)+"/"+secretKey.substring(2)+"/"+relativePath;
+    }
+
+    public static String readPagetabFromNfsCache(String basePath, String relativePath, String accession, boolean isBlindReview) throws Exception {
+        String filePath = (basePath.endsWith("/") || relativePath.startsWith("/")) ? basePath+relativePath : (basePath+"/"+relativePath);
+        Path pagetabFilePath = Paths.get(filePath, accession+".json");
+        if(Files.exists(pagetabFilePath)) {
+            LOGGER.debug("Reading pagetab file from NFS cache accession: {} filename: {}", accession, pagetabFilePath.getFileName());
+            return  Files.readString(pagetabFilePath, Charsets.UTF_8);
+        }
+        return null;
     }
 }

@@ -145,7 +145,24 @@ public class Study {
         String originalSecretKey = seckey;
         if(Session.getCurrentUser()!=null)
             seckey = document.get(Constants.Fields.SECRET_KEY);
+        String cachedPagetab = null;
+        if(indexConfig.getPageTabHasNFSBackup()){
+            try{
+                cachedPagetab = StudyUtils.readPagetabFromNfsCache(indexConfig.getNfsCachePath(), isPublicStudy?relativePath:StudyUtils.modifyRelativePathForPrivateStudies(seckey, relativePath), accession,false);
+                if(cachedPagetab!=null && originalSecretKey!=null && !originalSecretKey.trim().isEmpty()){
+                    cachedPagetab = searchService.anonymisePagetab(cachedPagetab);
+                }
+                if(version.equalsIgnoreCase("v1")&&cachedPagetab!=null){
+                    return ResponseEntity.status(HttpStatus.OK).body(cachedPagetab);
+                }
+            }catch (Exception e){
+                logger.error("Problem in reading from filesystem pagetab cache accession: {}", accession, e);
+            }
+        }
         if((!isPublicStudy || indexConfig.isMigratingNotCompleted()) && storageMode == Constants.File.StorageMode.FIRE){
+            if(cachedPagetab != null){
+                return new ResponseEntity(cachedPagetab, HttpStatus.OK);
+            }
             return sendFireResponse(accession, relativePath, originalSecretKey, seckey, storageMode, isPublicStudy);
         }
 
@@ -156,6 +173,9 @@ public class Study {
         }
         String ftpHttpLink = indexConfig.getFtpOverHttpUrl(storageMode) + "/" + relativePath+"/";
         studyFtpLink.put("ftpHttp_link", ftpHttpLink);//+(type.trim().equalsIgnoreCase("study")?"":accession.toUpperCase()+".json"));
+        if(cachedPagetab!=null) {
+            studyFtpLink.put("pageTab", cachedPagetab);
+        }
         if(version.equalsIgnoreCase("v2")) {
             return new ResponseEntity(studyFtpLink, HttpStatus.OK);
         }else if(httpResponse!=null) {
@@ -178,5 +198,8 @@ public class Study {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .contentType(MediaType.APPLICATION_JSON).body("{\"errorMessage\":\"Study not found\"}");
         }
-        return new ResponseEntity(result, HttpStatus.OK);}
+        return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+
 }
