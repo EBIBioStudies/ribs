@@ -216,10 +216,13 @@ public class FileIndexServiceImpl implements FileIndexService {
                 try {
                     Constants.File.StorageMode storageMode = Constants.File.StorageMode.valueOf(json.get(Constants.Fields.STORAGE_MODE).asText());
                     if(storageMode == Constants.File.StorageMode.NFS && !isPublicStudy) {
-                        if(secretKey == null || secretKey.isEmpty())
+                        if(secretKey == null || secretKey.isEmpty()){
                             LOGGER.debug("invalid secret key during parsing private submission file list");
-                        else
-                            fileList.setRelativePath(StudyUtils.modifyRelativePathForPrivateStudies(secretKey, relativePath));
+                        }else {
+                            fileList.setSecKey(secretKey);
+                            //cache does not use secret key so I removed this line
+                            //fileList.setRelativePath(StudyUtils.modifyRelativePathForPrivateStudies(secretKey, relativePath));
+                        }
                     }
                     fileList.setStorageMode(storageMode);
                     fileService.getDownloadFile(fileList);

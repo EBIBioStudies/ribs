@@ -57,8 +57,11 @@ public class FileService {
 
     private void resolveNfsPath(FileMetaData fileMetaData) throws FileNotFoundException {
 
-        String relativePath = "";
-        //TODO fix path for private studies
+        if(fileMetaData.getSecKey()!=null){//This is a private study pagetab that there is not in cache too and http server is our last hope
+            //I used secretKey as a flag for modifying url the better choice is adding a separated flag for it
+            fileMetaData.setRelativePath(StudyUtils.modifyRelativePathForPrivateStudies(fileMetaData.getSecKey(), fileMetaData.getRelativePath()));
+        }
+
         Path downloadFile = Paths.get( fileMetaData.getRelativePath() + (fileMetaData.isThumbnail() ? "/Thumbnails/" : (fileMetaData.getUiRequestedPath().startsWith("Files/")?"/":"/Files/")) + fileMetaData.getUiRequestedPath()+ (fileMetaData.isThumbnail() ? ".thumbnail.png" : ""));
 
         //Hack start: override relative path if file is not found
