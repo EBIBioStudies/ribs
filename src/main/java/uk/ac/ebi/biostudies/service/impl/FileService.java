@@ -29,6 +29,22 @@ public class FileService {
 
 
     public void getDownloadFile(FileMetaData fileMetaData) throws FileNotFoundException{
+
+        //Serve pagetab or filelist from nfs cache and return
+        if(indexConfig.getPageTabHasNFSBackup() && fileMetaData.getUiRequestedPath()!=null && fileMetaData.getUiRequestedPath().endsWith(".json")){
+            Path path = Paths.get(indexConfig.getNfsCachePath(), fileMetaData.getRelativePath(), "Files", fileMetaData.getUiRequestedPath());
+            if(Files.exists(path)){
+                try {
+                    logger.debug("Accessing library filelist {} from NFS cache, accession: {}", path.getFileName(), fileMetaData.getAccession());
+                    fileMetaData.setPath(path);
+                    fileMetaData.setInputStream(Files.newInputStream(path));
+                    return;
+                }catch (Exception e){
+                    fileMetaData.setPath(null);
+                    logger.debug("Problem in creating inputStream from NFS cache", e);
+                }
+            }
+        }
         if(fileMetaData.getStorageMode()== Constants.File.StorageMode.FIRE)
             resolveFirePath(fileMetaData);
         else if(fileMetaData.getStorageMode()== Constants.File.StorageMode.NFS)

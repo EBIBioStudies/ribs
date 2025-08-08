@@ -121,4 +121,11 @@ public class Search {
         allSelected.set("fields", selectedFields);
         return allSelected;
     }
+
+    @PublicRESTMethod
+    @RequestMapping(value = "/failed-submissions", produces = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.GET)
+    public String getFailedIndexingSubmissions() {
+        return searchService.getFailedIndexingSubmissions();
+    }
+
 }

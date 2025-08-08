@@ -8,6 +8,7 @@ import org.springframework.core.io.InputStreamResource;
 import uk.ac.ebi.biostudies.api.util.Constants;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by ehsan on 27/02/2017.
@@ -34,5 +35,11 @@ public interface SearchService {
     String getLatestStudies() throws Exception;
 
     boolean isDocumentInCollection(Document submissionDoc, String collection);
+
+    InputStream anonymisePagetab(InputStream inputStream) throws IOException;
+
+    String anonymisePagetab(String inputString) throws IOException;
+
+    String getFailedIndexingSubmissions();
 }
 

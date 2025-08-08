@@ -112,6 +112,8 @@ public interface Constants {
         String CREATION_TIME_FULL = "creationTime";
         String STORAGE_MODE = "storageMode";
         String VIEWS = "views";
+        String HAS_FILE_PARSING_ERROR = "parsingError";
+
     }
     interface Link{
         String TYPE = "type";

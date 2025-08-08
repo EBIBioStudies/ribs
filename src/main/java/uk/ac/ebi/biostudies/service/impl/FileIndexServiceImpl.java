@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -162,6 +163,7 @@ public class FileIndexServiceImpl implements FileIndexService {
 
     public Map<String, Object> indexSubmissionFiles(String accession, String relativePath, JsonNode json, IndexWriter writer, Set<String> attributeColumns, boolean removeFileDocuments, boolean isPublicStudy, String secretKey) throws IOException {
         Map<String, Object> valueMap = new HashMap<>();
+        AtomicBoolean hasError = new AtomicBoolean(false);
         AtomicLong counter = new AtomicLong();
         List<String> columns = Collections.synchronizedList(new ArrayList<>());
         Set<String> sectionsWithFiles = ConcurrentHashMap.newKeySet();
@@ -231,6 +233,7 @@ public class FileIndexServiceImpl implements FileIndexService {
 
                 } catch (Exception e) {
                     LOGGER.error("Problem in parsing attached files", e);
+                    hasError.set(true);
                 } finally {
                     try {
                         if (fileList != null) {
@@ -254,6 +257,9 @@ public class FileIndexServiceImpl implements FileIndexService {
         }
         valueMap.put(Constants.Fields.FILES, counter.longValue());
         valueMap.put(Constants.FILE_ATT_KEY_VALUE, String.join(" ", fileKeyValuePureTextForSearch));
+        if(hasError.get()) {
+            valueMap.put(Constants.Fields.HAS_FILE_PARSING_ERROR, "true");
+        }
         return valueMap;
     }
 
@@ -277,7 +283,7 @@ public class FileIndexServiceImpl implements FileIndexService {
         }
     }
 
-    private void indexLibraryFile(String accession, IndexWriter writer, AtomicLong counter, List<String> columns, Set<String> sectionsWithFiles, Set<String> fileKeyValuePureTextForSearch, JsonNode parent, FileMetaData libraryFile) throws IOException {
+    private void indexLibraryFile(String accession, IndexWriter writer, AtomicLong counter, List<String> columns, Set<String> sectionsWithFiles, Set<String> fileKeyValuePureTextForSearch, JsonNode parent, FileMetaData libraryFile) throws Exception {
         List<Future> submittedTasks = new ArrayList<>();
         try (InputStreamReader inputStreamReader = new InputStreamReader(libraryFile.getInputStream(), StandardCharsets.UTF_8)) {
             JsonFactory factory = new JsonFactory();

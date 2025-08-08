@@ -10,18 +10,6 @@ var Metadata = (function (_self) {
             if (e!==undefined) return new Handlebars.SafeString(e[val]);
         });
 
-        Handlebars.registerHelper('hasMeaningfulAttributes', function (attributes) {
-            if (!attributes || attributes.length === 0) {
-                return false;
-            }
-            return attributes.some(attr => attr.value && attr.value.trim() !== '');
-        });
-
-        Handlebars.registerHelper('or', function (a, b) {
-            return a || b;
-        });
-
-
         Handlebars.registerHelper('valueWithName', function(val, obj) {
             if (obj==null) return;
             if (!Array.isArray(obj)) obj = [obj];

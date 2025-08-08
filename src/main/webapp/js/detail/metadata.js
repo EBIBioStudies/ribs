@@ -121,9 +121,19 @@ var Metadata = (function (_self) {
                 loadByServer = false;
                 ftpURL = ftpLinkData.ftpHttp_link;
                 // If ftpHttp_link exists, make a second call
-                $.getJSON(ftpLinkData.ftpHttp_link + accession + ".json", params, function(pageData) {
-                    handlePageData(pageData, params, accession, template);
-                }).fail(showError);
+                if(ftpLinkData.pageTab){
+                    try {
+                        const pageTabObj = JSON.parse(ftpLinkData.pageTab);
+                        handlePageData(pageTabObj, params, accession, template);
+                    } catch (e) {
+                        console.error("Invalid JSON in ftpLinkData.pageTab:", e);
+                    }
+                }
+                else {
+                    $.getJSON(ftpLinkData.ftpHttp_link + accession + ".json", params, function (pageData) {
+                        handlePageData(pageData, params, accession, template);
+                    }).fail(showError);
+                }
             } else if(ftpLinkData){
                 // Process the first response directly
                 loadByServer = true;

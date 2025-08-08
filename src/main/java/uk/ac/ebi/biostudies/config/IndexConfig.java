@@ -80,6 +80,10 @@ public class IndexConfig implements InitializingBean, DisposableBean {
     private boolean isMigratedNfsPrivateDirectory;
     @Value("${files.migratingNotCompleted}")
     private boolean migratingNotCompleted;
+    @Value("${files.pageTabHasNFSBackup}")
+    private boolean hasNFSBackup;
+    @Value("${files.nfsCachePath}")
+    private String nfsCachePath;
 
     @Override
     public void afterPropertiesSet() {
@@ -199,5 +203,13 @@ public class IndexConfig implements InitializingBean, DisposableBean {
 
     public boolean isMigratingNotCompleted() {
         return migratingNotCompleted;
+    }
+
+    public boolean getPageTabHasNFSBackup() {
+        return hasNFSBackup;
+    }
+
+    public String getNfsCachePath() {
+        return nfsCachePath;
     }
 }

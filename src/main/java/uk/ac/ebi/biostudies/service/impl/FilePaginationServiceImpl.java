@@ -99,6 +99,9 @@ public class FilePaginationServiceImpl implements FilePaginationService {
         studyInfo.put(Constants.Fields.RELATIVE_PATH, relativePath);
         studyInfo.put("hasZippedFolders",storageMode == Constants.File.StorageMode.FIRE);
         studyInfo.put("views",  Long.parseLong(doc.get(Constants.Fields.VIEWS)));
+        if(doc.get(Constants.Fields.HAS_FILE_PARSING_ERROR)!=null) {
+            studyInfo.put("hasFileParsingError", "true");
+        }
 
         setDates(studyInfo, doc);
         setPrivateData(studyInfo, doc, secretKey);

@@ -265,6 +265,44 @@ public class SearchServiceImpl implements SearchService {
         return response.toString();
     }
 
+    public String getFailedIndexingSubmissions() {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode response = mapper.createObjectNode();
+        ArrayNode failedAccessions = mapper.createArrayNode();
+
+        try {
+            // Query: HAS_FILE_PARSING_ERROR:true
+            Query query = new TermQuery(new Term(Fields.HAS_FILE_PARSING_ERROR, "true"));
+            IndexSearcher searcher = indexManager.getIndexSearcher();
+            IndexReader reader = indexManager.getSearchIndexReader();
+
+            // Fetch total first
+            TotalHitCountCollector countCollector = new TotalHitCountCollector();
+            searcher.search(query, countCollector);
+            int totalFailure = countCollector.getTotalHits();
+
+            // Fetch top 100 only
+            TopDocs hits = searcher.search(query, 100);
+            for (ScoreDoc scoreDoc : hits.scoreDocs) {
+                Document doc = reader.document(scoreDoc.doc);
+                String accession = doc.get(Fields.ACCESSION);
+                if (accession != null) {
+                    failedAccessions.add(accession);
+                }
+            }
+
+            response.put("totalFailure", totalFailure);
+            response.set("failedAccessions", failedAccessions);
+
+        } catch (Exception e) {
+            logger.error("Error retrieving failed indexing submissions", e);
+            response.put("error", "Internal error while retrieving failed submissions");
+        }
+
+        return response.toString();
+    }
+
+
 
     @Override
     public InputStreamResource getStudyAsStream(String accession, String relativePath, boolean anonymise, Constants.File.StorageMode storageMode, boolean isPublicStudy, String secretKey)
@@ -313,25 +351,39 @@ public class SearchServiceImpl implements SearchService {
 
 
         if (anonymise) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode json = mapper.readTree(inputStream);
-            JsonNode subSections = json.get("section").get("subsections");
-            if (subSections!=null && subSections.isArray()) {
-                Iterator<JsonNode> iterator = subSections.iterator();
-                while (iterator.hasNext()) {
-                    JsonNode node = iterator.next();
-                    if (node.has("type") && sectionsToFilter.contains(node.get("type").textValue().toLowerCase())) {
-                        iterator.remove();
-                    }
-                }
-            }
-            inputStream.close();
-            inputStream = new ByteArrayInputStream(mapper.writeValueAsBytes(json));
+            inputStream = anonymisePagetab(inputStream);
         }
 
         return new InputStreamResource(inputStream);
     }
 
+    public InputStream anonymisePagetab(InputStream inputStream) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode json = mapper.readTree(inputStream);
+        removePagetabSensitiveSections(json);
+        inputStream.close();
+        return new ByteArrayInputStream(mapper.writeValueAsBytes(json));
+    }
+
+    public String anonymisePagetab(String inputString) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode json = mapper.readTree(inputString);
+        removePagetabSensitiveSections(json);
+        return mapper.writeValueAsString(json);
+    }
+
+    private void removePagetabSensitiveSections(JsonNode json){
+        JsonNode subSections = json.get("section").get("subsections");
+        if (subSections!=null && subSections.isArray()) {
+            Iterator<JsonNode> iterator = subSections.iterator();
+            while (iterator.hasNext()) {
+                JsonNode node = iterator.next();
+                if (node.has("type") && sectionsToFilter.contains(node.get("type").textValue().toLowerCase())) {
+                    iterator.remove();
+                }
+            }
+        }
+    }
     private void addPagetabDocument(String accession, byte[] pagetabContent) {
         accession = accession.toLowerCase();
         Document pagetabDoc = new Document();
