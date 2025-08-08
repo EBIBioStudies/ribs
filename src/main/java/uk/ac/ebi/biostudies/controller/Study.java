@@ -148,7 +148,7 @@ public class Study {
         String cachedPagetab = null;
         if(indexConfig.getPageTabHasNFSBackup()){
             try{
-                cachedPagetab = StudyUtils.readPagetabFromNfsCache(indexConfig.getNfsCachePath(), isPublicStudy?relativePath:StudyUtils.modifyRelativePathForPrivateStudies(seckey, relativePath), accession,false);
+                cachedPagetab = StudyUtils.readPagetabFromNfsCache(indexConfig.getNfsCachePath(), relativePath, accession,false);
                 if(cachedPagetab!=null && originalSecretKey!=null && !originalSecretKey.trim().isEmpty()){
                     cachedPagetab = searchService.anonymisePagetab(cachedPagetab);
                 }

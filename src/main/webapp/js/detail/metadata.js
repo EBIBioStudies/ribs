@@ -52,10 +52,10 @@ var Metadata = (function (_self) {
 
             if (location.href.toLowerCase().indexOf(collection.toLowerCase()) < 0)
                 handleProjectSpecificUI();
-            title = pageData.attributes.filter(function(v, i) {
+            title = pageData?.attributes.filter(function(v, i) {
                 return v.name.trim() === 'Title';
             });
-            pageData.attributes.forEach(function(v, i) {
+            pageData?.attributes.forEach(function(v, i) {
                 if (v.name.trim() === 'ReleaseDate') {
                     releaseDate = v.value;
                 }
@@ -73,8 +73,8 @@ var Metadata = (function (_self) {
                 pageData.section.attributes.push({ name: 'Title', value: title[0] ? title[0].value : "" });
             }
             // Copy DOI
-            const dois = pageData.attributes.filter((v) => v.name.trim() === 'DOI');
-            if (dois.length) {
+            const dois = pageData?.attributes.filter((v) => v.name.trim() === 'DOI');
+            if (dois && dois.length) {
                 pageData.section.doi = dois[0].value;
             }
             pageData.section.isFromSubmissionTool = document.referrer.toLowerCase().indexOf("ebi.ac.uk/biostudies/submissions/") > 0

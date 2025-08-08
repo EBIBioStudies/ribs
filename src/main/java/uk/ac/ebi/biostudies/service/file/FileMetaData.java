@@ -25,6 +25,7 @@ public class FileMetaData {
     private boolean isThumbnail;
     private boolean hasKey;
     private boolean isDirectory;
+    private String secKey;
 
     private Path path;
     private S3Object s3Object;
@@ -220,5 +221,13 @@ public class FileMetaData {
 
     public String getUnDecodedRequestedPath() {
         return unDecodedRequestedPath;
+    }
+
+    public String getSecKey() {
+        return secKey;
+    }
+
+    public void setSecKey(String secKey) {
+        this.secKey = secKey;
     }
 }
