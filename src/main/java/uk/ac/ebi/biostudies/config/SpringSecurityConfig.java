@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import uk.ac.ebi.biostudies.auth.*;
 
 
@@ -26,6 +27,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     CookieFilter cookieFilter;
     @Autowired
     SecurityConfig securityConfig;
+    @Autowired
+    private XSSFilter xssFilter;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -41,7 +44,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         for(String ipAdmin:adminIPAllowList){
             ipAllowList.append(String.format(" or hasIpAddress('%s')", ipAdmin));
         }
-        http.addFilterAfter(cookieFilter, AnonymousAuthenticationFilter.class)
+        http.addFilterAfter(xssFilter, SecurityContextPersistenceFilter.class)
+                .addFilterAfter(cookieFilter, AnonymousAuthenticationFilter.class)
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin().and()
                 .anonymous().principal("guest").authorities("GUEST").and()
