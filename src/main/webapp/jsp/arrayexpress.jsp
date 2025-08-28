@@ -66,7 +66,7 @@
         <section class="columns medium-4"><h4><i class="icon icon-generic" data-icon="L"></i> Links</h4>
             <p>Information about how to search ArrayExpress can
                 be found in our <a href="${contextPath}/arrayexpress/help">Help section</a>.</p>
-            <p>Find out more about the <a href="https://www.ebi.ac.uk/about/people/alvis-brazma">Functional Genomics
+            <p>Find out more about the <a href="https://www.ebi.ac.uk/about/teams/functional-genomics/">Functional Genomics
                 group</a>.</p></section>
         <section class="columns medium-4"><h4><i class="icon icon-functional" data-icon="t"></i> Tools and Access</h4>
             <p><a href="https://www.ebi.ac.uk/fg/annotare/">Annotare</a>: web-based submission tool for ArrayExpress.
