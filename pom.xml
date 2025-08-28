@@ -282,6 +282,13 @@
             <artifactId>jawr-spring-extension</artifactId>
             <version>3.9</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.owasp.encoder</groupId>
+            <artifactId>encoder</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
     </dependencies>
 
     <build>
