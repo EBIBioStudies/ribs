@@ -17,6 +17,9 @@
 
 package uk.ac.ebi.biostudies.efo;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.index.Term;
@@ -26,10 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 @Component
 @Scope("singleton")
@@ -119,16 +118,18 @@ public class EFOQueryExpander {
             } else if (query instanceof PhraseQuery) {
                 Term[] terms = ((PhraseQuery)query).getTerms();
                 if (0 == terms.length) {
-                    logger.error("No terms found for query [{}]", query.toString());
+                    logger.error("No terms found for query [{}]", query);
                     return null;
                 }
                 field = terms[0].field();
             } else {
-                logger.error("Unsupported class [{}] for  query [{}]", query.getClass().getName(), query.toString());
+                logger.error("Unsupported class [{}] for  query [{}]", query.getClass().getName(),
+                    query);
                 return null;
             }
         } catch (UnsupportedOperationException x) {
-            logger.error("Query of [{}], class [{}] doesn't allow us to get its terms extracted", query.toString(), query.getClass().getCanonicalName());
+            logger.error("Query of [{}], class [{}] doesn't allow us to get its terms extracted",
+                query, query.getClass().getCanonicalName());
         }
 
         return field;
@@ -185,12 +186,12 @@ public class EFOQueryExpander {
         } else if (query instanceof PhraseQuery) {
             Term[] terms = ((PhraseQuery)query).getTerms();
             if (0 == terms.length) {
-                logger.error("No terms found for query [{}]", query.toString());
+                logger.error("No terms found for query [{}]", query);
                 return term;
             }
             term = terms[0];
         } else {
-            logger.error("Unsupported class [{}] for query [{}]", query.getClass().getName(), query.toString());
+            logger.error("Unsupported class [{}] for query [{}]", query.getClass().getName(), query);
             return term;
         }
         return term;

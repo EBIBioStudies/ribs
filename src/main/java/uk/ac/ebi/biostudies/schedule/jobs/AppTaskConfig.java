@@ -12,21 +12,19 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class AppTaskConfig implements AsyncConfigurer {
 
-    @Override
-    public Executor getAsyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(7);
-        executor.setMaxPoolSize(42);
-        executor.setQueueCapacity(11);
-        executor.setThreadNamePrefix("MyExecutor-");
-        executor.initialize();
-        return executor;
-    }
+  @Override
+  public Executor getAsyncExecutor() {
+    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    executor.setCorePoolSize(7);
+    executor.setMaxPoolSize(42);
+    executor.setQueueCapacity(11);
+    executor.setThreadNamePrefix("MyExecutor-");
+    executor.initialize();
+    return executor;
+  }
 
-    @Override
-    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return new MyAsyncUncaughtExceptionHandler();
-    }
-
-
+  @Override
+  public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+    return new MyAsyncUncaughtExceptionHandler();
+  }
 }

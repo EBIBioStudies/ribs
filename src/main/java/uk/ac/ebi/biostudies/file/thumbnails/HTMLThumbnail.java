@@ -18,10 +18,6 @@
 package uk.ac.ebi.biostudies.file.thumbnails;
 
 import com.twelvemonkeys.image.ResampleOp;
-import org.apache.commons.io.IOUtils;
-import org.apache.pdfbox.tools.imageio.ImageIOUtil;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
@@ -29,12 +25,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import javax.swing.*;
+import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 
 public class HTMLThumbnail implements IThumbnail{
 
-    private Color background = Color.WHITE;
-    private Font font = new Font("sans-serif", Font.PLAIN, 4);
-    private static String [] supportedTypes= {"htm","html"};
+    private final Color background = Color.WHITE;
+    private final Font font = new Font("sans-serif", Font.PLAIN, 4);
+    private static final String [] supportedTypes= {"htm","html"};
 
     @Override
     public String[] getSupportedTypes() {

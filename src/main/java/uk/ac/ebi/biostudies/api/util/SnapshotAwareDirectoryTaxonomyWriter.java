@@ -1,13 +1,12 @@
 package uk.ac.ebi.biostudies.api.util;
 
+import java.io.IOException;
 import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.KeepOnlyLastCommitDeletionPolicy;
 import org.apache.lucene.index.SnapshotDeletionPolicy;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
-
-import java.io.IOException;
 
 public class SnapshotAwareDirectoryTaxonomyWriter extends DirectoryTaxonomyWriter {
 

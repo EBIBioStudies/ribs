@@ -1,5 +1,8 @@
 package uk.ac.ebi.biostudies.service.impl;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static uk.ac.ebi.biostudies.api.util.Constants.*;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -7,6 +10,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
+import java.io.*;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -33,19 +45,6 @@ import uk.ac.ebi.biostudies.config.IndexManager;
 import uk.ac.ebi.biostudies.config.TaxonomyManager;
 import uk.ac.ebi.biostudies.service.*;
 
-import java.io.File;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static uk.ac.ebi.biostudies.api.util.Constants.*;
-
 /**
  * Created by ehsan on 27/02/2017.
  */
@@ -59,7 +58,7 @@ public class IndexServiceImpl implements IndexService {
     public static final FieldType TYPE_NOT_ANALYZED = new FieldType();
     private static final BlockingQueue<String> indexFileQueue = new LinkedBlockingQueue<>();
     public static AtomicInteger ActiveExecutorService = new AtomicInteger(0);
-    private static AtomicBoolean INDEX_SEARCHER_NEED_REFRESH = new AtomicBoolean(false);
+    private static final AtomicBoolean INDEX_SEARCHER_NEED_REFRESH = new AtomicBoolean(false);
 
     static {
         TYPE_NOT_ANALYZED.setIndexOptions(IndexOptions.DOCS);
@@ -145,10 +144,6 @@ public class IndexServiceImpl implements IndexService {
             searchService.clearStatsCache();
         } catch (Throwable error) {
             logger.error("problem in parsing partial update", error);
-        } finally {
-//            indexManagementService.open();
-            //logger.debug("Deleting temp file {}", inputStudiesFilePath);
-            //Files.delete(Paths.get(inputStudiesFilePath));
         }
     }
 
@@ -407,9 +402,9 @@ public class IndexServiceImpl implements IndexService {
         }
 
         private void appendFileAttsToContent(Map<String, Object> valueMap) {
-            StringBuilder content = new StringBuilder(valueMap.get(Fields.CONTENT).toString());
-            content.append(" ").append(valueMap.get(FILE_ATT_KEY_VALUE).toString());
-            valueMap.put(Fields.CONTENT, content.toString());
+          valueMap.put(Fields.CONTENT,
+              valueMap.get(Fields.CONTENT).toString() + " " + valueMap.get(FILE_ATT_KEY_VALUE)
+                  .toString());
         }
 
         private void addCollectionToHierarchy(Map<String, Object> valueMap, String accession) {

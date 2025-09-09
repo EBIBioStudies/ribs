@@ -1,6 +1,9 @@
 package uk.ac.ebi.biostudies.config;
 
+import static uk.ac.ebi.biostudies.api.util.Constants.*;
+
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Collection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.facet.FacetsConfig;
@@ -11,18 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
-import java.util.Collection;
-
-import static uk.ac.ebi.biostudies.api.util.Constants.*;
-
 /**
  * Created by ehsan on 09/03/2017.
  */
 @Component
 @Scope("singleton")
 public class TaxonomyManager {
-    private Logger logger = LogManager.getLogger(TaxonomyManager.class.getName());
+    private final Logger logger = LogManager.getLogger(TaxonomyManager.class.getName());
 
     private TaxonomyWriter taxonomyWriter;
     private TaxonomyReader taxonomyReader;

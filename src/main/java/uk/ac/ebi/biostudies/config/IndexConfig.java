@@ -1,5 +1,7 @@
 package uk.ac.ebi.biostudies.config;
 
+import java.util.Arrays;
+import java.util.List;
 import org.apache.lucene.analysis.CharArraySet;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -9,9 +11,6 @@ import org.springframework.context.annotation.PropertySource;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by ehsan on 27/02/2017.

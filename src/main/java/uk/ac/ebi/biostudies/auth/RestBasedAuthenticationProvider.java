@@ -3,6 +3,7 @@ package uk.ac.ebi.biostudies.auth;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -26,8 +27,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.config.SecurityConfig;
 
-import java.io.IOException;
-
 @Service
 public class RestBasedAuthenticationProvider implements AuthenticationProvider {
 
@@ -38,8 +37,8 @@ public class RestBasedAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     UserSecurityService userSecurityService;
 
-    private static int REQUEST_TIMEOUT = 30000;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final int REQUEST_TIMEOUT = 30000;
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

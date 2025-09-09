@@ -11,7 +11,6 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import uk.ac.ebi.biostudies.auth.*;
 
-
 @Configuration
 @EnableWebSecurity
 @ComponentScan("uk.ac.ebi.biostudies.config")
@@ -39,8 +38,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         String adminIPAllowStr = securityConfig.getAdminIPAllowList();
-        String adminIPAllowList[] = adminIPAllowStr.split("\\|");
-        StringBuilder ipAllowList = new StringBuilder("");
+        String[] adminIPAllowList = adminIPAllowStr.split("\\|");
+        StringBuilder ipAllowList = new StringBuilder();
         for(String ipAdmin:adminIPAllowList){
             ipAllowList.append(String.format(" or hasIpAddress('%s')", ipAdmin));
         }
@@ -49,7 +48,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin().and()
                 .anonymous().principal("guest").authorities("GUEST").and()
-                .authorizeRequests().antMatchers("/api/v1/index/**").access("hasAuthority('SUPER_USER')"+ipAllowList.toString())
+                .authorizeRequests().antMatchers("/api/v1/index/**").access("hasAuthority('SUPER_USER')"+ ipAllowList)
                 .antMatchers("/**").permitAll()
                 .and().formLogin().successHandler(new RefererAuthenticationSuccessHandler())
                 .loginPage("/").usernameParameter("u").passwordParameter("p").permitAll()

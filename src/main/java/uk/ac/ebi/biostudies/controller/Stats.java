@@ -11,31 +11,32 @@ import static uk.ac.ebi.biostudies.api.util.Constants.JSON_UNICODE_MEDIA_TYPE;
 
 /**
  * Created by awais on 14/02/2017.
- * <p>
- * Rest endpoint for searching Biostudies
+ *
+ * <p>Rest endpoint for searching Biostudies
  */
-
 @RestController
 @RequestMapping(value = "/api/v1")
 public class Stats {
 
-    private Logger logger = LogManager.getLogger(Stats.class.getName());
-    public static final String LATEST_ENDPOINT = "/latest";
-    public static final String STATS_ENDPOINT = "/stats";
+  private final Logger logger = LogManager.getLogger(Stats.class.getName());
+  public static final String LATEST_ENDPOINT = "/latest";
+  public static final String STATS_ENDPOINT = "/stats";
 
-    @Autowired
-    SearchService searchService;
+  @Autowired SearchService searchService;
 
-    @RequestMapping(value = LATEST_ENDPOINT , produces = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.GET)
-    public String getLatestStudies() throws Exception {
-        return searchService.getLatestStudies();
-    }
+  @RequestMapping(
+      value = LATEST_ENDPOINT,
+      produces = JSON_UNICODE_MEDIA_TYPE,
+      method = RequestMethod.GET)
+  public String getLatestStudies() throws Exception {
+    return searchService.getLatestStudies();
+  }
 
-
-    @RequestMapping(value = STATS_ENDPOINT, produces = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.GET)
-    public String getStats() throws Exception {
-        return searchService.getFieldStats();
-    }
-
-
+  @RequestMapping(
+      value = STATS_ENDPOINT,
+      produces = JSON_UNICODE_MEDIA_TYPE,
+      method = RequestMethod.GET)
+  public String getStats() throws Exception {
+    return searchService.getFieldStats();
+  }
 }

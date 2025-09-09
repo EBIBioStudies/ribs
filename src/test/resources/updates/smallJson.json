@@ -1,1 +1,191 @@
-{"submissions":[{"rtime":"1460389126","accessTags":["Public"],"seckey":"S-EPMC3343805","views":10,"accno":"S-EPMC3343805","relPath":"S-EPMC/S-EPMCxxx805/S-EPMC3343805","ctime":"1460389126","attributes":[{"name":"RootPath","value":"S-EPMC/S-EPMCxxx805/S-EPMC3343805"},{"name":"Title","value":"NUMBER12345"},{"name":"ReleaseDate","value":"2016-04-11"},{"name":"DataSource","value":"Europe PMC"},{"name":"AttachTo","value":"EuropePMC"}],"section":{"subsections":[{"accno":"PMC3343805","attributes":[{"name":"Journal","value":"Acta crystallographica. Section E, Structure reports online"},{"name":"Volume","value":"68(Pt 4)"},{"name":"Pages","value":"m392"},{"name":"Publication date","value":"2012 Apr"}],"type":"Publication"},{"accno":"a1","attributes":[{"name":"Name","value":"Kargar H"},{"name":"affiliation","isReference":true,"value":"o1"}],"type":"Author"},{"accno":"a2","attributes":[{"name":"Name","value":"Kia R"},{"name":"affiliation","isReference":true,"value":"o2"}],"type":"Author"},{"accno":"a3","attributes":[{"name":"Name","value":"Haghshenas M"},{"name":"affiliation","isReference":true,"value":"o1"}],"type":"Author"},{"accno":"a4","attributes":[{"name":"Name","value":"Tahir MN"},{"name":"affiliation","isReference":true,"value":"o3"}],"type":"Author"},{"accno":"o1","attributes":[{"name":"Name","value":"a Department of Chemistry, Payame Noor University, PO Box 19395-Tehran, I. R. of"}],"type":"Organization"},{"accno":"o2","attributes":[{"name":"Name","value":"b X-ray Crystallography Laboratory, Plasma Physics Research Center, Science and Research Branch, Islamic Azad University, Tehran, Iran, and, Department of Chemistry, Science and Research Branch, Islamic Azad University, Tehran,"}],"type":"Organization"},{"accno":"o3","attributes":[{"name":"Name","value":"c Department of Physics, University of Sargodha, Punjab,"}],"type":"Organization"}],"files":[{"path":"e-68-0m392-sup1.cif","size":16553,"attributes":[{"name":"Type","value":"chemical(x-cif)"}],"type":"file"},{"path":"e-68-0m392-Isup2.hkl","size":127712,"attributes":[{"name":"Type","value":"text(plain)"}],"type":"file"}],"attributes":[{"name":"Title","value":"{4,4',6,6'-Tetra-bromo-2,2'-[(2,2-dimethyl-propane-1,3-di-yl)bis-(nitrilo-methanylyl-idene)]diphenolato}copper(II)."},{"name":"Abstract","value":"In the title compound, [Cu(C(19)H(16)Br(4)N(2)O(2))], the Cu(II) ion and the substituted C atom of the diamine fragment lie on a crystallographic twofold rotation axis. The geometry around the Cu(II) ion is distorted square-planar, which is defined by the N(2)O(2) donor atoms of the coordinated Schiff base ligand. The dihedral angle between the symmetry-related substituted benzene rings is 25.33 (14)°. The crystal structure is stabilized by an inter-molecular π-π inter-action [centroid-centroid distance = 3.8891 (18) Å]."}],"type":"Study"},"id":89,"type":"submission","mtime":"1460389126"}]}
+{
+  "submissions": [
+    {
+      "rtime": "1460389126",
+      "accessTags": [
+        "Public"
+      ],
+      "seckey": "S-EPMC3343805",
+      "views": 10,
+      "accno": "S-EPMC3343805",
+      "relPath": "S-EPMC/S-EPMCxxx805/S-EPMC3343805",
+      "ctime": "1460389126",
+      "attributes": [
+        {
+          "name": "RootPath",
+          "value": "S-EPMC/S-EPMCxxx805/S-EPMC3343805"
+        },
+        {
+          "name": "Title",
+          "value": "NUMBER12345"
+        },
+        {
+          "name": "ReleaseDate",
+          "value": "2016-04-11"
+        },
+        {
+          "name": "DataSource",
+          "value": "Europe PMC"
+        },
+        {
+          "name": "AttachTo",
+          "value": "EuropePMC"
+        }
+      ],
+      "section": {
+        "subsections": [
+          {
+            "accno": "PMC3343805",
+            "attributes": [
+              {
+                "name": "Journal",
+                "value": "Acta crystallographica. Section E, Structure reports online"
+              },
+              {
+                "name": "Volume",
+                "value": "68(Pt 4)"
+              },
+              {
+                "name": "Pages",
+                "value": "m392"
+              },
+              {
+                "name": "Publication date",
+                "value": "2012 Apr"
+              }
+            ],
+            "type": "Publication"
+          },
+          {
+            "accno": "a1",
+            "attributes": [
+              {
+                "name": "Name",
+                "value": "Kargar H"
+              },
+              {
+                "name": "affiliation",
+                "isReference": true,
+                "value": "o1"
+              }
+            ],
+            "type": "Author"
+          },
+          {
+            "accno": "a2",
+            "attributes": [
+              {
+                "name": "Name",
+                "value": "Kia R"
+              },
+              {
+                "name": "affiliation",
+                "isReference": true,
+                "value": "o2"
+              }
+            ],
+            "type": "Author"
+          },
+          {
+            "accno": "a3",
+            "attributes": [
+              {
+                "name": "Name",
+                "value": "Haghshenas M"
+              },
+              {
+                "name": "affiliation",
+                "isReference": true,
+                "value": "o1"
+              }
+            ],
+            "type": "Author"
+          },
+          {
+            "accno": "a4",
+            "attributes": [
+              {
+                "name": "Name",
+                "value": "Tahir MN"
+              },
+              {
+                "name": "affiliation",
+                "isReference": true,
+                "value": "o3"
+              }
+            ],
+            "type": "Author"
+          },
+          {
+            "accno": "o1",
+            "attributes": [
+              {
+                "name": "Name",
+                "value": "a Department of Chemistry, Payame Noor University, PO Box 19395-Tehran, I. R. of"
+              }
+            ],
+            "type": "Organization"
+          },
+          {
+            "accno": "o2",
+            "attributes": [
+              {
+                "name": "Name",
+                "value": "b X-ray Crystallography Laboratory, Plasma Physics Research Center, Science and Research Branch, Islamic Azad University, Tehran, Iran, and, Department of Chemistry, Science and Research Branch, Islamic Azad University, Tehran,"
+              }
+            ],
+            "type": "Organization"
+          },
+          {
+            "accno": "o3",
+            "attributes": [
+              {
+                "name": "Name",
+                "value": "c Department of Physics, University of Sargodha, Punjab,"
+              }
+            ],
+            "type": "Organization"
+          }
+        ],
+        "files": [
+          {
+            "path": "e-68-0m392-sup1.cif",
+            "size": 16553,
+            "attributes": [
+              {
+                "name": "Type",
+                "value": "chemical(x-cif)"
+              }
+            ],
+            "type": "file"
+          },
+          {
+            "path": "e-68-0m392-Isup2.hkl",
+            "size": 127712,
+            "attributes": [
+              {
+                "name": "Type",
+                "value": "text(plain)"
+              }
+            ],
+            "type": "file"
+          }
+        ],
+        "attributes": [
+          {
+            "name": "Title",
+            "value": "{4,4',6,6'-Tetra-bromo-2,2'-[(2,2-dimethyl-propane-1,3-di-yl)bis-(nitrilo-methanylyl-idene)]diphenolato}copper(II)."
+          },
+          {
+            "name": "Abstract",
+            "value": "In the title compound, [Cu(C(19)H(16)Br(4)N(2)O(2))], the Cu(II) ion and the substituted C atom of the diamine fragment lie on a crystallographic twofold rotation axis. The geometry around the Cu(II) ion is distorted square-planar, which is defined by the N(2)O(2) donor atoms of the coordinated Schiff base ligand. The dihedral angle between the symmetry-related substituted benzene rings is 25.33 (14)°. The crystal structure is stabilized by an inter-molecular π-π inter-action [centroid-centroid distance = 3.8891 (18) Å]."
+          }
+        ],
+        "type": "Study"
+      },
+      "id": 89,
+      "type": "submission",
+      "mtime": "1460389126"
+    }
+  ]
+}

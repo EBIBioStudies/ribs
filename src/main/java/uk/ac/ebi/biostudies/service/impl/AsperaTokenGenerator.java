@@ -4,6 +4,7 @@ package uk.ac.ebi.biostudies.service.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -21,8 +22,6 @@ import org.apache.http.ssl.SSLContexts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.config.SecurityConfig;
-
-import java.nio.charset.StandardCharsets;
 
 @Service
 public class AsperaTokenGenerator {

@@ -1,15 +1,13 @@
 package uk.ac.ebi.biostudies.service.impl;
 
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.*;
 import java.util.Collection;
-
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FileSystemIndexTransferer implements IndexTransferer {

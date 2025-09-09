@@ -1,20 +1,19 @@
 package uk.ac.ebi.biostudies.api.util.parser;
 
+import static uk.ac.ebi.biostudies.api.util.Constants.NA;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.ReadContext;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import net.minidev.json.JSONArray;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.biostudies.api.util.Constants;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static uk.ac.ebi.biostudies.api.util.Constants.NA;
 
 public class FileTypeParser extends AbstractParser{
     private static final Logger logger = LogManager.getLogger(FileTypeParser.class.getName());

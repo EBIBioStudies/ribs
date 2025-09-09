@@ -1,6 +1,10 @@
 package uk.ac.ebi.biostudies.service.impl;
 
 import com.amazonaws.services.s3.model.S3Object;
+import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +14,6 @@ import uk.ac.ebi.biostudies.api.util.HttpTools;
 import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
-
-import java.io.FileNotFoundException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @Service
 public class FileService {

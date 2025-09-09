@@ -12,25 +12,26 @@ import org.springframework.messaging.handler.annotation.support.MessageHandlerMe
 
 @Configuration
 public class RabbitListenerConfig implements RabbitListenerConfigurer {
-    @Override
-    public void configureRabbitListeners(RabbitListenerEndpointRegistrar registrar) {
-        registrar.setMessageHandlerMethodFactory(messageHandlerMethodFactory());
-    }
+  @Override
+  public void configureRabbitListeners(RabbitListenerEndpointRegistrar registrar) {
+    registrar.setMessageHandlerMethodFactory(messageHandlerMethodFactory());
+  }
 
-    @Bean
-    MessageHandlerMethodFactory messageHandlerMethodFactory() {
-        DefaultMessageHandlerMethodFactory messageHandlerMethodFactory = new DefaultMessageHandlerMethodFactory();
-        messageHandlerMethodFactory.setMessageConverter(consumerJackson2MessageConverter());
-        return messageHandlerMethodFactory;
-    }
+  @Bean
+  MessageHandlerMethodFactory messageHandlerMethodFactory() {
+    DefaultMessageHandlerMethodFactory messageHandlerMethodFactory =
+        new DefaultMessageHandlerMethodFactory();
+    messageHandlerMethodFactory.setMessageConverter(consumerJackson2MessageConverter());
+    return messageHandlerMethodFactory;
+  }
 
-    @Bean
-    public MappingJackson2MessageConverter consumerJackson2MessageConverter() {
-        return new MappingJackson2MessageConverter();
-    }
+  @Bean
+  public MappingJackson2MessageConverter consumerJackson2MessageConverter() {
+    return new MappingJackson2MessageConverter();
+  }
 
-    @Bean(name = RabbitListenerConfigUtils.RABBIT_LISTENER_ENDPOINT_REGISTRY_BEAN_NAME)
-    public RabbitListenerEndpointRegistry defaultRabbitListenerEndpointRegistry() {
-        return new RabbitListenerEndpointRegistry();
-    }
+  @Bean(name = RabbitListenerConfigUtils.RABBIT_LISTENER_ENDPOINT_REGISTRY_BEAN_NAME)
+  public RabbitListenerEndpointRegistry defaultRabbitListenerEndpointRegistry() {
+    return new RabbitListenerEndpointRegistry();
+  }
 }

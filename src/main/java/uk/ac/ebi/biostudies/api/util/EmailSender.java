@@ -32,45 +32,46 @@ import java.util.Properties;
 @Service
 public class EmailSender {
 
-    @Autowired
-    MailConfig mailConfig;
+  @Autowired MailConfig mailConfig;
 
-    public void send(String recipients[], String hiddenRecipients[], String subject, String message, String from) throws MessagingException {
-        boolean debug = false;
+  public void send(
+      String[] recipients, String[] hiddenRecipients, String subject, String message, String from)
+      throws MessagingException {
+    boolean debug = false;
 
-        //Set the host smtp address and port
-        Properties props = new Properties();
-        props.put("mail.smtp.host", mailConfig.getSmtpHost());
-        props.put("mail.smtp.port", mailConfig.getSmtpPort());
+    // Set the host smtp address and port
+    Properties props = new Properties();
+    props.put("mail.smtp.host", mailConfig.getSmtpHost());
+    props.put("mail.smtp.port", mailConfig.getSmtpPort());
 
-        // create some properties and get the default Session
-        Session session = Session.getDefaultInstance(props, null);
-        session.setDebug(debug);
+    // create some properties and get the default Session
+    Session session = Session.getDefaultInstance(props, null);
+    session.setDebug(debug);
 
-        // create a message
-        MimeMessage msg = new MimeMessage(session);
+    // create a message
+    MimeMessage msg = new MimeMessage(session);
 
-        // set originator (FROM) address
-        InternetAddress addressFrom = new InternetAddress(from);
-        msg.setFrom(addressFrom);
+    // set originator (FROM) address
+    InternetAddress addressFrom = new InternetAddress(from);
+    msg.setFrom(addressFrom);
 
-        // set recipients (TO) address
-        InternetAddress[] addressTo = new InternetAddress[recipients.length];
-        for (int i = 0; i < recipients.length; i++) {
-            addressTo[i] = new InternetAddress(recipients[i]);
-        }
-        msg.setRecipients(Message.RecipientType.TO, addressTo);
-
-        // set hidden recipients (BCC) address
-        InternetAddress[] addressBcc = new InternetAddress[hiddenRecipients.length];
-        for (int i = 0; i < hiddenRecipients.length; i++) {
-            addressBcc[i] = new InternetAddress(hiddenRecipients[i]);
-        }
-        msg.setRecipients(Message.RecipientType.BCC, addressBcc);
-
-        // Setting the Subject and Content Type
-        msg.setSubject(subject);
-        msg.setText(message, "UTF-8");
-        Transport.send(msg);
+    // set recipients (TO) address
+    InternetAddress[] addressTo = new InternetAddress[recipients.length];
+    for (int i = 0; i < recipients.length; i++) {
+      addressTo[i] = new InternetAddress(recipients[i]);
     }
+    msg.setRecipients(Message.RecipientType.TO, addressTo);
+
+    // set hidden recipients (BCC) address
+    InternetAddress[] addressBcc = new InternetAddress[hiddenRecipients.length];
+    for (int i = 0; i < hiddenRecipients.length; i++) {
+      addressBcc[i] = new InternetAddress(hiddenRecipients[i]);
+    }
+    msg.setRecipients(Message.RecipientType.BCC, addressBcc);
+
+    // Setting the Subject and Content Type
+    msg.setSubject(subject);
+    msg.setText(message, "UTF-8");
+    Transport.send(msg);
+  }
 }

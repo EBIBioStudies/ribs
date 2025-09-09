@@ -1,11 +1,28 @@
 package uk.ac.ebi.biostudies.service.impl;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static uk.ac.ebi.biostudies.api.util.Constants.*;
+import static uk.ac.ebi.biostudies.controller.Stats.LATEST_ENDPOINT;
+import static uk.ac.ebi.biostudies.controller.Stats.STATS_ENDPOINT;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -38,24 +55,6 @@ import uk.ac.ebi.biostudies.service.FacetService;
 import uk.ac.ebi.biostudies.service.QueryService;
 import uk.ac.ebi.biostudies.service.SearchService;
 import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
-
-import javax.annotation.PostConstruct;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLDecoder;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static uk.ac.ebi.biostudies.api.util.Constants.*;
-import static uk.ac.ebi.biostudies.controller.Stats.LATEST_ENDPOINT;
-import static uk.ac.ebi.biostudies.controller.Stats.STATS_ENDPOINT;
 
 /**
  * Created by ehsan on 27/02/2017.

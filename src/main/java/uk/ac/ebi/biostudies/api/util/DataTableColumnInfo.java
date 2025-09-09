@@ -1,15 +1,15 @@
 package uk.ac.ebi.biostudies.api.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.util.MultiValueMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.util.MultiValueMap;
 
 public class DataTableColumnInfo {
-    private static Logger LOGGER = LogManager.getLogger(DataTableColumnInfo.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(DataTableColumnInfo.class.getName());
     private String name;
     private int index;
     private String dir;
@@ -89,7 +89,7 @@ public class DataTableColumnInfo {
         }
         for (String[] order : orderSet) {
             try {
-                colIndex = (Integer) orderMap.get(Integer.valueOf(order[0]));
+                colIndex = orderMap.get(Integer.valueOf(order[0]));
                 colInfo = resultMap.get(colIndex);
                 if (colInfo != null) {
                     colInfo.setDir(order[1]);

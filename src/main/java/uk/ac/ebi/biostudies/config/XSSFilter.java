@@ -1,17 +1,16 @@
 package uk.ac.ebi.biostudies.config;
 
-import org.owasp.encoder.Encode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Pattern;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.*;
-import java.util.regex.Pattern;
+import org.owasp.encoder.Encode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * XSS Filter to sanitize all incoming HTTP requests and prevent XSS attacks.
@@ -24,7 +23,8 @@ public class XSSFilter implements Filter {
     // Patterns to detect potential XSS attacks
     private static final Pattern[] XSS_PATTERNS = {
         Pattern.compile("<script[^>]*>.*?</script>", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+        Pattern.compile(
+            "src[\r\n]*=[\r\n]*\\'(.*?)\\'", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
         Pattern.compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
         Pattern.compile("</script>", Pattern.CASE_INSENSITIVE),
         Pattern.compile("<script(.*?)>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),

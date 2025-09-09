@@ -15,26 +15,24 @@ import java.util.Properties;
 @Service
 public class TextService implements InitializingBean, DisposableBean {
 
-    private Logger logger = LogManager.getLogger(TextService.class.getName());
-    Properties props = null;
+  private final Logger logger = LogManager.getLogger(TextService.class.getName());
+  Properties props = null;
 
-    public String getNormalisedString(String string) {
-        return props.containsKey(string) ? props.getProperty(string) : string;
+  public String getNormalisedString(String string) {
+    return props.containsKey(string) ? props.getProperty(string) : string;
+  }
+
+  @Override
+  public void destroy() {}
+
+  @Override
+  public void afterPropertiesSet() {
+    logger.debug("Initialising TextService");
+    Resource resource = new ClassPathResource("normalised-text.properties");
+    try {
+      props = PropertiesLoaderUtils.loadProperties(resource);
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-
-    @Override
-    public void destroy() {
-
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        logger.debug("Initialising TextService");
-        Resource resource = new ClassPathResource("normalised-text.properties");
-        try {
-            props = PropertiesLoaderUtils.loadProperties(resource);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+  }
 }

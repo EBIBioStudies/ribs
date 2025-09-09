@@ -17,6 +17,8 @@
 
 package uk.ac.ebi.biostudies.file.thumbnails;
 
+import java.awt.image.BufferedImage;
+import java.io.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
@@ -24,12 +26,9 @@ import org.apache.poi.xwpf.converter.pdf.PdfConverter;
 import org.apache.poi.xwpf.converter.pdf.PdfOptions;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
-import java.awt.image.BufferedImage;
-import java.io.*;
-
 public class DOCXThumbnail implements IThumbnail{
 
-    private static String [] supportedTypes= {"docx"};
+    private static final String [] supportedTypes= {"docx"};
 
     @Override
     public String[] getSupportedTypes() {

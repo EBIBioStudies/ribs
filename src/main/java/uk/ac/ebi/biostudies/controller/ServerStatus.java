@@ -15,28 +15,29 @@ import java.nio.file.Paths;
 
 import static uk.ac.ebi.biostudies.api.util.Constants.JSON_UNICODE_MEDIA_TYPE;
 
-
 @RestController
-@RequestMapping(value="/api/v1")
+@RequestMapping(value = "/api/v1")
 public class ServerStatus {
 
-    private Logger logger = LogManager.getLogger(ServerStatus.class.getName());
+  private final Logger logger = LogManager.getLogger(ServerStatus.class.getName());
 
-    @RequestMapping(value = "/status", produces = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.GET)
-    public ResponseEntity<String> status(@RequestParam(value = "path", required = false) String path) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode message = mapper.createObjectNode();
-        message.put ("status",  "up");
-        if (path!=null && !StringUtils.isEmpty(path)) {
-            Files.list(Paths.get(path)).forEach(p -> {
+  @RequestMapping(value = "/status", produces = JSON_UNICODE_MEDIA_TYPE, method = RequestMethod.GET)
+  public ResponseEntity<String> status(@RequestParam(value = "path", required = false) String path)
+      throws Exception {
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode message = mapper.createObjectNode();
+    message.put("status", "up");
+    if (path != null && !StringUtils.isEmpty(path)) {
+      Files.list(Paths.get(path))
+          .forEach(
+              p -> {
                 try {
-                    message.put( p.toString() , Files.size(p));
+                  message.put(p.toString(), Files.size(p));
                 } catch (IOException e) {
 
                 }
-            });
-        }
-        return ResponseEntity.ok( mapper.writeValueAsString(message) );
+              });
     }
-
+    return ResponseEntity.ok(mapper.writeValueAsString(message));
+  }
 }

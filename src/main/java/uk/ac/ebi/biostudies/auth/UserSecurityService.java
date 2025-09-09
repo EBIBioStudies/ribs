@@ -22,6 +22,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Sets;
+import java.io.IOException;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -40,21 +44,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.config.SecurityConfig;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
-
 @Service
 public class UserSecurityService {
     public static final String X_SESSION_TOKEN = "X-Session-Token";
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Cache<Object, Object> userAuthCache;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private SecurityConfig securityConfig;
-    private static int REQUEST_TIMEOUT = 30000;
+    private static final int REQUEST_TIMEOUT = 30000;
 
     public JsonNode sendAuthenticationCheckRequest(String token) throws Exception {
         JsonNode responseJSON = null;

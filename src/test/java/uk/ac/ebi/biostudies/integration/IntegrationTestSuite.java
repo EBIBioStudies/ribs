@@ -6,22 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.biostudies.integration.rest.FileRestApiTest;
 import uk.ac.ebi.biostudies.integration.utils.IntegrationTestProperties;
 
-
-/**
- * Created by ehsan on 29/06/2017.
- */
-
-
+/** Created by ehsan on 29/06/2017. */
 @Suite.SuiteClasses({
-        IndexTest.class,
-//      AuthTest.class,
-        DetailTest.class,
-        SearchTest.class,
-        FileRestApiTest.class
+  IndexTest.class,
+  //      AuthTest.class,
+  DetailTest.class,
+  SearchTest.class,
+  FileRestApiTest.class
 })
-
 @RunWith(Suite.class)
 public class IntegrationTestSuite {
-    @Autowired
-    IntegrationTestProperties integrationTestProperties;
+  @Autowired IntegrationTestProperties integrationTestProperties;
 }

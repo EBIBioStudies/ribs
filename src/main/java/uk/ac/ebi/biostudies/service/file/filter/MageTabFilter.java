@@ -1,15 +1,14 @@
 package uk.ac.ebi.biostudies.service.file.filter;
 
 import au.com.bytecode.opencsv.CSVReader;
-import org.apache.commons.io.IOUtils;
-import uk.ac.ebi.biostudies.service.file.FileMetaData;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
+import uk.ac.ebi.biostudies.service.file.FileMetaData;
 
 @Deprecated
 /**

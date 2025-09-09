@@ -11,27 +11,27 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * unfortunately there are two titles in json in similar paths therefore it is hard to parse it automatically
+ * unfortunately there are two titles in json in similar paths therefore it is hard to parse it
+ * automatically
  */
-public class TypeParser extends AbstractParser  {
-    private final static Logger LOGGER = LogManager.getLogger(TypeParser.class.getName());
+public class TypeParser extends AbstractParser {
+  private static final Logger LOGGER = LogManager.getLogger(TypeParser.class.getName());
 
-    @Override
-    public String parse(Map<String, Object> valueMap, JsonNode submission, ReadContext jsonPathContext) {
-        String type = "";
-        String indexKey = indexEntry.get(Constants.IndexEntryAttributes.NAME).asText();
+  @Override
+  public String parse(
+      Map<String, Object> valueMap, JsonNode submission, ReadContext jsonPathContext) {
+    String type = "";
+    String indexKey = indexEntry.get(Constants.IndexEntryAttributes.NAME).asText();
 
-        try {
-            type = submission.get("section").get("type").textValue().toLowerCase();
-        } catch (Exception ex1) {
-        }
-        if (type.equalsIgnoreCase("project")) {
-            type = "collection";
-        }
-        if(type.isEmpty())
-            LOGGER.error("type is empty in accession: {}", valueMap.toString());
-        valueMap.put(indexKey, type);
-        return type;
-
+    try {
+      type = submission.get("section").get("type").textValue().toLowerCase();
+    } catch (Exception ex1) {
     }
+    if (type.equalsIgnoreCase("project")) {
+      type = "collection";
+    }
+    if (type.isEmpty()) LOGGER.error("type is empty in accession: {}", valueMap.toString());
+    valueMap.put(indexKey, type);
+    return type;
+  }
 }

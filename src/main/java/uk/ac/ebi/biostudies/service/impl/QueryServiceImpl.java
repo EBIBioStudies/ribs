@@ -3,6 +3,12 @@ package uk.ac.ebi.biostudies.service.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,13 +32,6 @@ import uk.ac.ebi.biostudies.config.TaxonomyManager;
 import uk.ac.ebi.biostudies.efo.EFOExpansionTerms;
 import uk.ac.ebi.biostudies.efo.EFOQueryExpander;
 import uk.ac.ebi.biostudies.service.QueryService;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class QueryServiceImpl implements QueryService {

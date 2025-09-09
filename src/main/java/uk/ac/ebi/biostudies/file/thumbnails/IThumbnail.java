@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public interface IThumbnail {
-    public static final int THUMBNAIL_WIDTH = 200;
-    public static final int THUMBNAIL_HEIGHT = 260;
-    void generateThumbnail(InputStream sourceFilePath, File thumbnailFile) throws IOException;
-    String[] getSupportedTypes();
+  int THUMBNAIL_WIDTH = 200;
+  int THUMBNAIL_HEIGHT = 260;
+
+  void generateThumbnail(InputStream sourceFilePath, File thumbnailFile) throws IOException;
+
+  String[] getSupportedTypes();
 }

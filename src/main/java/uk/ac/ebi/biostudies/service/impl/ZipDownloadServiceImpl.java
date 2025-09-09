@@ -1,6 +1,16 @@
 package uk.ac.ebi.biostudies.service.impl;
 
+import static uk.ac.ebi.biostudies.service.file.filter.FileChainFilter.KB;
+
 import com.google.common.collect.Collections2;
+import java.io.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Stack;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,18 +25,6 @@ import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
 import uk.ac.ebi.biostudies.service.ZipDownloadService;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
 import uk.ac.ebi.biostudies.service.file.filter.MageTabFilter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Stack;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import static uk.ac.ebi.biostudies.service.file.filter.FileChainFilter.KB;
-
 
 @Service
 public class ZipDownloadServiceImpl implements ZipDownloadService {
