@@ -6,8 +6,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.biostudies.service.SearchService;
 
-import java.util.stream.Collectors;
-
 @Component
 public class AppEventListener {
 

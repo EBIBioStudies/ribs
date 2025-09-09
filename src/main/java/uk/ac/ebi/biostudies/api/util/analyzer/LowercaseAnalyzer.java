@@ -26,15 +26,14 @@ import org.apache.lucene.analysis.util.CharTokenizer;
 
 public final class LowercaseAnalyzer extends Analyzer {
 
-    @Override
-    protected TokenStreamComponents createComponents(String fieldName) {
-        Tokenizer source = new LetterTokenizer();
-        return new TokenStreamComponents(source);
-    }
+  @Override
+  protected TokenStreamComponents createComponents(String fieldName) {
+    Tokenizer source = new LetterTokenizer();
+    return new TokenStreamComponents(source);
+  }
 
-    @Override
-    protected TokenStream normalize(String fieldName, TokenStream in) {
-        return new LowerCaseFilter(in);
-    }
-
+  @Override
+  protected TokenStream normalize(String fieldName, TokenStream in) {
+    return new LowerCaseFilter(in);
+  }
 }

@@ -1,5 +1,8 @@
 package uk.ac.ebi.biostudies.auth;
 
+import java.io.IOException;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -7,17 +10,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import uk.ac.ebi.biostudies.api.util.HttpTools;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-
 /**
  * Created by ehsan on 15/03/2017.
  */
 @Component
 public class CookieFilter implements Filter {
 
-    private Logger logger = LogManager.getLogger(CookieFilter.class.getName());
+    private final Logger logger = LogManager.getLogger(CookieFilter.class.getName());
 
 
     @Override

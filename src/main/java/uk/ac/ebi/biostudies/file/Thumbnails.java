@@ -17,6 +17,12 @@
 
 package uk.ac.ebi.biostudies.file;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileDeleteStrategy;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -29,19 +35,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.api.util.HttpTools;
-import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.file.thumbnails.*;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
 import uk.ac.ebi.biostudies.service.impl.FileService;
 import uk.ac.ebi.biostudies.service.impl.FireService;
-
-import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class Thumbnails implements InitializingBean, DisposableBean {

@@ -1,15 +1,14 @@
 package uk.ac.ebi.biostudies.service.file.filter;
 
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.service.ZipDownloadService;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
 
 @Service
 public class NfsFilter implements FileChainFilter{

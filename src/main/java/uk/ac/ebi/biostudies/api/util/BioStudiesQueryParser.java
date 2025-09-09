@@ -1,15 +1,13 @@
 package uk.ac.ebi.biostudies.api.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Map;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.Query;
-import org.springframework.context.annotation.Lazy;
 import uk.ac.ebi.biostudies.config.IndexManager;
-
-import java.util.Map;
 
 /**
  * Created by awais on 16/02/2017.
@@ -21,7 +19,7 @@ public class BioStudiesQueryParser extends MultiFieldQueryParser {
 
     public BioStudiesQueryParser(String[] fields, Analyzer analyzer, IndexManager indexManager) {
         super(fields, analyzer);
-        this.indexManager = indexManager;
+        BioStudiesQueryParser.indexManager = indexManager;
     }
 
     @Override

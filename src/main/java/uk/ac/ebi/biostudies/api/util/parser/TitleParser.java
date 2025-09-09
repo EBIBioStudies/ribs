@@ -2,13 +2,12 @@ package uk.ac.ebi.biostudies.api.util.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.ReadContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import uk.ac.ebi.biostudies.api.util.Constants;
-
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import uk.ac.ebi.biostudies.api.util.Constants;
 
 /**
  * unfortunately there are two titles in json in similar paths therefore it is hard to parse it automatically

@@ -1,5 +1,12 @@
 package uk.ac.ebi.biostudies.efo.index;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -15,14 +22,6 @@ import uk.ac.ebi.biostudies.config.EFOConfig;
 import uk.ac.ebi.biostudies.efo.EFONode;
 import uk.ac.ebi.biostudies.efo.IEFO;
 import uk.ac.ebi.biostudies.efo.SynonymsFileReader;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 @Service
 public class EFOExpanderIndex {
@@ -127,9 +126,7 @@ public class EFOExpanderIndex {
                     }
                 }
             }
-            if (synonyms.contains(term)) {
-                synonyms.remove(term);
-            }
+          synonyms.remove(term);
 
             // just to remove ridiculously long terms/synonyms from the list
 

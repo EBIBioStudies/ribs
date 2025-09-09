@@ -6,12 +6,12 @@ import com.jayway.jsonpath.ReadContext;
 import java.util.Map;
 
 public abstract class AbstractParser {
-    protected JsonNode indexEntry;
+  protected JsonNode indexEntry;
 
-    public abstract String parse(Map<String, Object> valueMap, JsonNode submission, ReadContext jsonPathContext);
+  public abstract String parse(
+      Map<String, Object> valueMap, JsonNode submission, ReadContext jsonPathContext);
 
-    public void setIndexEntry(JsonNode indexEntry) {
-        this.indexEntry = indexEntry;
-    }
-
+  public void setIndexEntry(JsonNode indexEntry) {
+    this.indexEntry = indexEntry;
+  }
 }

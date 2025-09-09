@@ -6,6 +6,14 @@ import uk.ac.ebi.biostudies.api.util.DataTableColumnInfo;
 import java.util.Map;
 
 public interface ExtractedLinkPaginationService {
-    ObjectNode getExtractedLinkList(String accession, int start, int pageSize, String search, int draw, boolean metadata, Map<Integer, DataTableColumnInfo> dataTableUiResult, String secretKey) throws SubmissionNotAccessibleException;
-
+  ObjectNode getExtractedLinkList(
+      String accession,
+      int start,
+      int pageSize,
+      String search,
+      int draw,
+      boolean metadata,
+      Map<Integer, DataTableColumnInfo> dataTableUiResult,
+      String secretKey)
+      throws SubmissionNotAccessibleException;
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,9 +31,6 @@ import uk.ac.ebi.biostudies.file.Thumbnails;
 import uk.ac.ebi.biostudies.service.FilePaginationService;
 import uk.ac.ebi.biostudies.service.SearchService;
 import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
-
-import java.io.IOException;
-import java.util.*;
 
 @Service
 public class FilePaginationServiceImpl implements FilePaginationService {

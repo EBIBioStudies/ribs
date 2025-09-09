@@ -1,5 +1,11 @@
 package uk.ac.ebi.biostudies.efo;
 
+import java.io.InputStream;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
@@ -9,13 +15,6 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /*
  * Copyright 2009-2014 European Molecular Biology Laboratory
@@ -46,8 +45,8 @@ public class EFOLoader
     private final static IRI IRI_PART_OF = IRI.create("http://www.obofoundry.org/ro/ro.owl#part_of");
     private final static IRI IRI_VERSION_INFO = IRI.create("http://www.w3.org/2002/07/owl#versionInfo");
 
-    private Map<String, Set<String>> reverseSubClassOfMap = new HashMap<String, Set<String>>();
-    private Map<String, Set<String>> reversePartOfMap = new HashMap<String, Set<String>>();
+    private final Map<String, Set<String>> reverseSubClassOfMap = new HashMap<String, Set<String>>();
+    private final Map<String, Set<String>> reversePartOfMap = new HashMap<String, Set<String>>();
 
     public EFOLoader()
     {

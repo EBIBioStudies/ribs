@@ -2,11 +2,10 @@ package uk.ac.ebi.biostudies.api.util.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.ReadContext;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.biostudies.api.util.Constants;
-
-import java.util.Map;
 
 public class EUToxRiskDataTypeParser extends AbstractParser{
     private static final Logger LOGGER = LogManager.getLogger(EUToxRiskDataTypeParser.class.getName());

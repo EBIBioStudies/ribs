@@ -7,7 +7,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import uk.ac.ebi.biostudies.efo.EFOExpansionTerms;
 
-
-public interface QueryService{
-    Pair<Query, EFOExpansionTerms> makeQuery(String queryString, String collectionName, JsonNode selectedFields);
+public interface QueryService {
+  Pair<Query, EFOExpansionTerms> makeQuery(
+      String queryString, String collectionName, JsonNode selectedFields);
 }

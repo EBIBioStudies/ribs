@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.facet.*;
@@ -19,10 +22,6 @@ import uk.ac.ebi.biostudies.config.TaxonomyManager;
 import uk.ac.ebi.biostudies.service.FacetService;
 import uk.ac.ebi.biostudies.service.QueryService;
 import uk.ac.ebi.biostudies.service.TextService;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by ehsan on 09/03/2017.
@@ -45,7 +44,7 @@ public class FacetServiceImpl implements FacetService {
     AnalyzerManager analyzerManager;
     @Autowired
     QueryService queryService;
-    private Logger logger = LogManager.getLogger(FacetServiceImpl.class.getName());
+    private final Logger logger = LogManager.getLogger(FacetServiceImpl.class.getName());
 
     public static DrillDownQuery addFacetDrillDownFilters(FacetsConfig facetsConfig, Query primaryQuery, Map<JsonNode, List<String>> userSelectedDimValues) {
         /*

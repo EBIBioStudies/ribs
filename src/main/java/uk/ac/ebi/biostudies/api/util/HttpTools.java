@@ -17,27 +17,24 @@
 
 package uk.ac.ebi.biostudies.api.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import uk.ac.ebi.biostudies.service.file.FileMetaData;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 import java.net.http.HttpClient;
-import java.nio.file.Path;
-import java.time.Duration;
-import java.util.Arrays;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.stream.Collectors;
+import java.nio.file.Path;
+import java.time.Duration;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import uk.ac.ebi.biostudies.service.file.FileMetaData;
 
 public class HttpTools {
 
@@ -205,7 +202,7 @@ public class HttpTools {
         }
         File uploadedFile = new File(sourceLocation, fileName);
         try (FileOutputStream out = new FileOutputStream(uploadedFile);
-             InputStream fileContent = filePart.getInputStream();
+             InputStream fileContent = filePart.getInputStream()
         ) {
             //logger.debug("File {} will be uploaded to {}", fileName, uploadedFile.getAbsolutePath());
             int read;

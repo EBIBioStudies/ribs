@@ -1,6 +1,5 @@
 package uk.ac.ebi.biostudies.service.impl;
 
-import java.io.File;
 import java.util.Collection;
 
 public interface IndexTransferer {

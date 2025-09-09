@@ -1,6 +1,11 @@
 package uk.ac.ebi.biostudies.controller;
 
 
+import static uk.ac.ebi.biostudies.api.util.HttpTools.sendRedirect;
+
+import java.net.URLEncoder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +18,6 @@ import uk.ac.ebi.biostudies.auth.RestBasedAuthenticationProvider;
 import uk.ac.ebi.biostudies.auth.Session;
 import uk.ac.ebi.biostudies.auth.User;
 import uk.ac.ebi.biostudies.auth.UserSecurityService;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
-
-import static uk.ac.ebi.biostudies.api.util.HttpTools.sendRedirect;
 
 /**
  * Created by ehsan on 15/03/2017.

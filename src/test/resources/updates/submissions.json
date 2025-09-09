@@ -1971,7 +1971,6 @@
       "accessTags": [
         "p"
       ],
-
       "attributes": [
         {
           "name": "Title",
@@ -2008,23 +2007,29 @@
           },
           {
             "accno": "o1",
-            "attributes": [{
-              "name": "Name",
-              "value": "Beijing Genomics Institute (BGI)"
-            }],
+            "attributes": [
+              {
+                "name": "Name",
+                "value": "Beijing Genomics Institute (BGI)"
+              }
+            ],
             "type": "Organization"
           }
         ],
         "accno": "",
-        "files": [{
-          "path": "SubmissionMap.txt",
-          "size": 45014314,
-          "attributes": [{
-            "name": "Description",
-            "value": "example"
-          }],
-          "type": "file"
-        }],
+        "files": [
+          {
+            "path": "SubmissionMap.txt",
+            "size": 45014314,
+            "attributes": [
+              {
+                "name": "Description",
+                "value": "example"
+              }
+            ],
+            "type": "file"
+          }
+        ],
         "attributes": [
           {
             "name": "Title",
@@ -2035,19 +2040,21 @@
             "value": "Test DEscriptuionTest DEscriptuionTest DEscriptuionTest DEscriptuion"
           }
         ],
-        "links": [{
-          "attributes": [
-            {
-              "name": "Description",
-              "value": "asdasdsadsad"
-            },
-            {
-              "name": "Type",
-              "value": ""
-            }
-          ],
-          "url": "http://mikunbk.com"
-        }],
+        "links": [
+          {
+            "attributes": [
+              {
+                "name": "Description",
+                "value": "asdasdsadsad"
+              },
+              {
+                "name": "Type",
+                "value": ""
+              }
+            ],
+            "url": "http://mikunbk.com"
+          }
+        ],
         "type": "Study"
       },
       "type": "submission"

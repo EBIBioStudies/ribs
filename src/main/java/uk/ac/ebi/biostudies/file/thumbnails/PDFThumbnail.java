@@ -30,28 +30,32 @@ import java.io.InputStream;
 
 public class PDFThumbnail implements IThumbnail {
 
-    private static String[] supportedTypes = {"pdf"};
+  private static final String[] supportedTypes = {"pdf"};
 
-    @Override
-    public String[] getSupportedTypes() {
-        return supportedTypes;
-    }
+  @Override
+  public String[] getSupportedTypes() {
+    return supportedTypes;
+  }
 
-    @Override
-    public void generateThumbnail(InputStream inputStream, File thumbnailFile) throws IOException {
-        PDDocument pdf = null;
-        try {
-            pdf = PDDocument.load(inputStream);
-            PDFRenderer pdfRenderer = new PDFRenderer(pdf);
-            BufferedImage image = pdfRenderer.renderImageWithDPI (BufferedImage.TYPE_INT_RGB, 96);
-            float inverseAspectRatio = ((float) image.getHeight()) / image.getWidth();
-            BufferedImageOp resampler = new ResampleOp(THUMBNAIL_WIDTH, Math.round(inverseAspectRatio * THUMBNAIL_WIDTH), ResampleOp.FILTER_LANCZOS);
-            BufferedImage output = resampler.filter(image, null);
-            ImageIO.write(output, "png", thumbnailFile);
-        } finally {
-            if(pdf!=null) {
-                pdf.close();
-            }
-        }
+  @Override
+  public void generateThumbnail(InputStream inputStream, File thumbnailFile) throws IOException {
+    PDDocument pdf = null;
+    try {
+      pdf = PDDocument.load(inputStream);
+      PDFRenderer pdfRenderer = new PDFRenderer(pdf);
+      BufferedImage image = pdfRenderer.renderImageWithDPI(BufferedImage.TYPE_INT_RGB, 96);
+      float inverseAspectRatio = ((float) image.getHeight()) / image.getWidth();
+      BufferedImageOp resampler =
+          new ResampleOp(
+              THUMBNAIL_WIDTH,
+              Math.round(inverseAspectRatio * THUMBNAIL_WIDTH),
+              ResampleOp.FILTER_LANCZOS);
+      BufferedImage output = resampler.filter(image, null);
+      ImageIO.write(output, "png", thumbnailFile);
+    } finally {
+      if (pdf != null) {
+        pdf.close();
+      }
     }
+  }
 }

@@ -21,13 +21,13 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class EFOExpansionTerms {
-    public String term;
-    public Set<String> synonyms;
-    public Set<String> efo;
+  public String term;
+  public Set<String> synonyms;
+  public Set<String> efo;
 
-    public EFOExpansionTerms() {
-        term = "";
-        synonyms = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-        efo = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-    }
+  public EFOExpansionTerms() {
+    term = "";
+    synonyms = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+    efo = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+  }
 }

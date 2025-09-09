@@ -1,5 +1,10 @@
 package uk.ac.ebi.biostudies.integration;
 
+import static org.junit.Assert.*;
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.document.Document;
 import org.junit.Test;
@@ -19,12 +24,6 @@ import uk.ac.ebi.biostudies.auth.UserSecurityService;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.integration.utils.IntegrationTestProperties;
 import uk.ac.ebi.biostudies.service.SearchService;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

@@ -1,5 +1,6 @@
 package uk.ac.ebi.biostudies.service.impl;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,6 @@ import uk.ac.ebi.biostudies.config.TaxonomyManager;
 import uk.ac.ebi.biostudies.efo.index.EFOManager;
 import uk.ac.ebi.biostudies.service.IndexManagementService;
 import uk.ac.ebi.biostudies.service.RabbitMQStompService;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @Scope("singleton")

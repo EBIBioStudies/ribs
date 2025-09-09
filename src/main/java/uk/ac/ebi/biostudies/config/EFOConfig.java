@@ -1,14 +1,13 @@
 package uk.ac.ebi.biostudies.config;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by ehsan on 02/03/2017.
@@ -37,9 +36,9 @@ public class EFOConfig implements InitializingBean, DisposableBean {
     @Value("${efo.updateUrl}")
     private String url;
 
-    private String localOwlFilename = "efo.owl";
+    private final String localOwlFilename = "efo.owl";
 
-    private Set<String> stopWordsSet = new HashSet<>();
+    private final Set<String> stopWordsSet = new HashSet<>();
 
     @Override
     public void afterPropertiesSet() {

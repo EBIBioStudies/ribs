@@ -22,9 +22,9 @@ import org.apache.lucene.search.Query;
 import java.io.IOException;
 
 public interface IQueryExpander {
-    // returns special kind of query info that holds expansions etc
-    public Query newQueryInfo();
+  // returns special kind of query info that holds expansions etc
+  Query newQueryInfo();
 
-    // does query expansion
-    public Query expandQuery(Query info) throws IOException;
+  // does query expansion
+  Query expandQuery(Query info) throws IOException;
 }

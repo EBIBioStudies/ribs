@@ -3,6 +3,15 @@ package uk.ac.ebi.biostudies.config;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.Executors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.facet.DrillSideways;
@@ -25,16 +34,6 @@ import uk.ac.ebi.biostudies.api.util.analyzer.AnalyzerManager;
 import uk.ac.ebi.biostudies.api.util.analyzer.LowercaseAnalyzer;
 import uk.ac.ebi.biostudies.api.util.parser.ParserManager;
 import uk.ac.ebi.biostudies.service.impl.IndexTransferer;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.Executors;
 
 /**
  * Created by ehsan on 27/02/2017.
@@ -221,7 +220,7 @@ public class IndexManager implements DisposableBean {
         boolean shouldRefresh = false;
         try {
             taxoDirectory = FSDirectory.open(Paths.get(indexConfig.getFacetDirectory()));
-            if (facetWriter == null || facetWriter.isOpen() == false) {
+            if (facetWriter == null || !facetWriter.isOpen()) {
                 facetWriter = new SnapshotAwareDirectoryTaxonomyWriter(taxoDirectory, IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
                 shouldRefresh = true;
             }
@@ -254,13 +253,13 @@ public class IndexManager implements DisposableBean {
         fileIndexWriterConfig.setIndexDeletionPolicy(fileIndexSnapShot);
         extractedLinkIndexWriterConfig.setIndexDeletionPolicy(extractedLinkIndexSnapShot);
         pagetabIndexWriterConfig.setIndexDeletionPolicy(pagetabIndexSnapShot);
-        if (searchIndexWriter == null || searchIndexWriter.isOpen() == false)
+        if (searchIndexWriter == null || !searchIndexWriter.isOpen())
             searchIndexWriter = new IndexWriter(getSearchIndexDirectory(), getSearchIndexWriterConfig());
-        if (fileIndexWriter == null || fileIndexWriter.isOpen() == false)
+        if (fileIndexWriter == null || !fileIndexWriter.isOpen())
             fileIndexWriter = new IndexWriter(fileIndexDirectory, fileIndexWriterConfig);
-        if (extractedLinkIndexWriter == null || extractedLinkIndexWriter.isOpen() == false)
+        if (extractedLinkIndexWriter == null || !extractedLinkIndexWriter.isOpen())
             extractedLinkIndexWriter = new IndexWriter(extractedLinkIndexDirectory, extractedLinkIndexWriterConfig);
-        if (pagetabIndexWriter == null || pagetabIndexWriter.isOpen() == false)
+        if (pagetabIndexWriter == null || !pagetabIndexWriter.isOpen())
             pagetabIndexWriter = new IndexWriter(pagetabDirectory, pagetabIndexWriterConfig);
         if (searchIndexReader != null)
             searchIndexReader.close();
@@ -286,7 +285,7 @@ public class IndexManager implements DisposableBean {
         efoIndexWriterConfig.setIndexDeletionPolicy(efoIndexSnapShot);
         efoIndexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         setEfoIndexDirectory(FSDirectory.open(Paths.get(eFOConfig.getIndexLocation())));
-        if (efoIndexWriter == null || efoIndexWriter.isOpen() == false)
+        if (efoIndexWriter == null || !efoIndexWriter.isOpen())
             efoIndexWriter = new IndexWriter(getEfoIndexDirectory(), efoIndexWriterConfig);
         if (efoIndexReader != null)
             efoIndexReader.close();
@@ -334,7 +333,7 @@ public class IndexManager implements DisposableBean {
 
     public void refreshTaxonomyReader() {
         try {
-            if (facetWriter == null || facetWriter.isOpen() == false)
+            if (facetWriter == null || !facetWriter.isOpen())
                 facetWriter = new SnapshotAwareDirectoryTaxonomyWriter(taxoDirectory, IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
             facetReader = new DirectoryTaxonomyReader(facetWriter);
         } catch (IOException e) {

@@ -1,6 +1,9 @@
 package uk.ac.ebi.biostudies.integration;
 
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.doReturn;
+
 import org.apache.lucene.document.Document;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -17,10 +20,6 @@ import uk.ac.ebi.biostudies.auth.UserSecurityService;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.integration.utils.IntegrationTestProperties;
 import uk.ac.ebi.biostudies.service.SearchService;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.doReturn;
-
 
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

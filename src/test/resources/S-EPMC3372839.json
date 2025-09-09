@@ -1,171 +1,242 @@
 {
-  "accno" : "S-EPMC3372839",
-  "seckey":"test12345",
-  "accessTags":["Public"],
-  "attributes" : [ {
-    "name" : "Title",
-    "value" : "Polymorphisms of ADORA2A modulate psychomotor vigilance and the effects of caffeine on neurobehavioural performance and sleep EEG after sleep deprivation."
-  }, {
-    "name" : "DataSource",
-    "value" : "Europe PMC"
-  }, {
-    "name" : "AttachTo",
-    "value" : "EuropePMC"
-  }, {
-    "name" : "ReleaseDate",
-    "value" : "2012-01-01"
-  } ],
-  "section" : {
-    "type" : "Study",
-    "attributes" : [ {
-      "name" : "Title",
-      "value" : "Polymorphisms of ADORA2A modulate psychomotor vigilance and the effects of caffeine on neurobehavioural performance and sleep EEG after sleep deprivation."
-    }, {
-      "name" : "Abstract",
-      "value" : "Prolonged wakefulness impairs sustained vigilant attention, measured with the psychomotor vigilance task (PVT), and induces a compensatory increase in sleep intensity in recovery sleep, quantified by slow-wave activity (SWA) in the sleep electroencephalogram (EEG). These effects of sleep deprivation are counteracted by the adenosine receptor antagonist caffeine, implying involvement of the adenosine neuromodulator/receptor system. To examine a role for adenosine A(2A) receptors, we investigated whether variation of the A(2A) receptor gene (ADORA2A) modified effects of caffeine on PVT and SWA after sleep deprivation.A haplotype analysis of eight single-nucleotide polymorphisms of ADORA2A was performed in 82 volunteers. In 45 young men carrying five different allele combinations, we investigated the effects of prolonged waking and 2 × 200 mg caffeine or 2 × 100 mg modafinil on psychomotor vigilance, sleepiness, and the waking and sleep EEG.Throughout extended wakefulness, the carriers of haplotype HT4 performed faster on the PVT than carriers of non-HT4 haplotype alleles. In haplotype HT4, caffeine failed to counteract the waking-induced impairment of PVT performance and the rebound of SWA in recovery sleep. However, caffeine was effective in non-HT4 allele carriers, and modafinil reduced the consequences of prolonged waking, independently of ADORA2A haplotype.Common genetic variation of ADORA2A is an important determinant of psychomotor vigilance in rested and sleep-deprived state. It also modulates individual responses to caffeine after sleep deprivation. These findings demonstrate a role for adenosine A(2A) receptors in the effects of prolonged wakefulness on vigilant attention and the sleep EEG."
-    } ],
-    "files" : [ {
-      "path" : "bph0165-1904-SD1.doc",
-      "size" : 379904,
-      "type" : "file"
-    } ],
-    "links" : [ {
-      "url" : "rs2236624",
-      "attributes" : [ {
-        "name" : "Type",
-        "value" : "refsnp"
-      } ]
-    } ],
-    "subsections" : [ {
-      "type" : "Funding",
-      "attributes" : [ {
-        "name" : "Agency",
-        "value" : "Swiss National Science Foundation"
-      }, {
-        "name" : "grant_id",
-        "value" : "107874"
-      } ]
-    }, {
-      "type" : "Publication",
-      "attributes" : [ {
-        "name" : "Journal",
-        "value" : "British journal of pharmacology"
-      }, {
-        "name" : "Volume",
-        "value" : "165(6)"
-      }, {
-        "name" : "Pages",
-        "value" : "1904-1913"
-      }, {
-        "name" : "Publication date",
-        "value" : "2012 Mar"
-      } ],
-      "links" : [ [ {
-        "url" : "10.1111/j.1476-5381.2011.01689.x ",
-        "attributes" : [ {
-          "name" : "Type",
-          "value" : "DOI"
-        } ]
-      }, {
-        "url" : "PMC3372839",
-        "attributes" : [ {
-          "name" : "Type",
-          "value" : "PMC"
-        } ]
-      }, {
-        "url" : "21950736",
-        "attributes" : [ {
-          "name" : "Type",
-          "value" : "PMID"
-        } ]
-      } ] ]
-    }, {
-      "accno" : "a1",
-      "type" : "Author",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "Bodenmann S"
-      }, {
-        "name" : "affiliation",
-        "value" : "o1",
-        "reference" : true
-      } ]
-    }, {
-      "accno" : "a2",
-      "type" : "Author",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "Hohoff C"
-      }, {
-        "name" : "affiliation",
-        "value" : "o1",
-        "reference" : true
-      } ]
-    }, {
-      "accno" : "a3",
-      "type" : "Author",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "Freitag C"
-      }, {
-        "name" : "affiliation",
-        "value" : "o1",
-        "reference" : true
-      } ]
-    }, {
-      "accno" : "a4",
-      "type" : "Author",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "Deckert J"
-      }, {
-        "name" : "affiliation",
-        "value" : "o1",
-        "reference" : true
-      } ]
-    }, {
-      "accno" : "a5",
-      "type" : "Author",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "Retey JV"
-      }, {
-        "name" : "affiliation",
-        "value" : "o1",
-        "reference" : true
-      } ]
-    }, {
-      "accno" : "a6",
-      "type" : "Author",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "Bachmann V"
-      }, {
-        "name" : "affiliation",
-        "value" : "o1",
-        "reference" : true
-      } ]
-    }, {
-      "accno" : "a7",
-      "type" : "Author",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "Landolt HP"
-      }, {
-        "name" : "ORCID",
-        "value" : "0000-0003-0887-9403"
-      }, {
-        "name" : "affiliation",
-        "value" : "o1",
-        "reference" : true
-      } ]
-    }, {
-      "accno" : "o1",
-      "type" : "Organization",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "Institute of Pharmacology and Toxicology, University of Zürich, Zürich, SwitzerlandDepartment of Psychiatry, University of Münster, Münster, GermanyDepartment of Child and Adolescent Psychiatry, Psychosomatics and Psychotherapy, Johann-Wolfgang Goethe University, Frankfurt am Main, GermanyDepartment of Psychiatry, University of Würzburg, Würzburg, GermanyZürich Center for Integrative Human Physiology, University of Zürich, Zürich, Switzerland."
-      } ]
-    } ]
+  "accno": "S-EPMC3372839",
+  "seckey": "test12345",
+  "accessTags": [
+    "Public"
+  ],
+  "attributes": [
+    {
+      "name": "Title",
+      "value": "Polymorphisms of ADORA2A modulate psychomotor vigilance and the effects of caffeine on neurobehavioural performance and sleep EEG after sleep deprivation."
+    },
+    {
+      "name": "DataSource",
+      "value": "Europe PMC"
+    },
+    {
+      "name": "AttachTo",
+      "value": "EuropePMC"
+    },
+    {
+      "name": "ReleaseDate",
+      "value": "2012-01-01"
+    }
+  ],
+  "section": {
+    "type": "Study",
+    "attributes": [
+      {
+        "name": "Title",
+        "value": "Polymorphisms of ADORA2A modulate psychomotor vigilance and the effects of caffeine on neurobehavioural performance and sleep EEG after sleep deprivation."
+      },
+      {
+        "name": "Abstract",
+        "value": "Prolonged wakefulness impairs sustained vigilant attention, measured with the psychomotor vigilance task (PVT), and induces a compensatory increase in sleep intensity in recovery sleep, quantified by slow-wave activity (SWA) in the sleep electroencephalogram (EEG). These effects of sleep deprivation are counteracted by the adenosine receptor antagonist caffeine, implying involvement of the adenosine neuromodulator/receptor system. To examine a role for adenosine A(2A) receptors, we investigated whether variation of the A(2A) receptor gene (ADORA2A) modified effects of caffeine on PVT and SWA after sleep deprivation.A haplotype analysis of eight single-nucleotide polymorphisms of ADORA2A was performed in 82 volunteers. In 45 young men carrying five different allele combinations, we investigated the effects of prolonged waking and 2 × 200 mg caffeine or 2 × 100 mg modafinil on psychomotor vigilance, sleepiness, and the waking and sleep EEG.Throughout extended wakefulness, the carriers of haplotype HT4 performed faster on the PVT than carriers of non-HT4 haplotype alleles. In haplotype HT4, caffeine failed to counteract the waking-induced impairment of PVT performance and the rebound of SWA in recovery sleep. However, caffeine was effective in non-HT4 allele carriers, and modafinil reduced the consequences of prolonged waking, independently of ADORA2A haplotype.Common genetic variation of ADORA2A is an important determinant of psychomotor vigilance in rested and sleep-deprived state. It also modulates individual responses to caffeine after sleep deprivation. These findings demonstrate a role for adenosine A(2A) receptors in the effects of prolonged wakefulness on vigilant attention and the sleep EEG."
+      }
+    ],
+    "files": [
+      {
+        "path": "bph0165-1904-SD1.doc",
+        "size": 379904,
+        "type": "file"
+      }
+    ],
+    "links": [
+      {
+        "url": "rs2236624",
+        "attributes": [
+          {
+            "name": "Type",
+            "value": "refsnp"
+          }
+        ]
+      }
+    ],
+    "subsections": [
+      {
+        "type": "Funding",
+        "attributes": [
+          {
+            "name": "Agency",
+            "value": "Swiss National Science Foundation"
+          },
+          {
+            "name": "grant_id",
+            "value": "107874"
+          }
+        ]
+      },
+      {
+        "type": "Publication",
+        "attributes": [
+          {
+            "name": "Journal",
+            "value": "British journal of pharmacology"
+          },
+          {
+            "name": "Volume",
+            "value": "165(6)"
+          },
+          {
+            "name": "Pages",
+            "value": "1904-1913"
+          },
+          {
+            "name": "Publication date",
+            "value": "2012 Mar"
+          }
+        ],
+        "links": [
+          [
+            {
+              "url": "10.1111/j.1476-5381.2011.01689.x ",
+              "attributes": [
+                {
+                  "name": "Type",
+                  "value": "DOI"
+                }
+              ]
+            },
+            {
+              "url": "PMC3372839",
+              "attributes": [
+                {
+                  "name": "Type",
+                  "value": "PMC"
+                }
+              ]
+            },
+            {
+              "url": "21950736",
+              "attributes": [
+                {
+                  "name": "Type",
+                  "value": "PMID"
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      {
+        "accno": "a1",
+        "type": "Author",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "Bodenmann S"
+          },
+          {
+            "name": "affiliation",
+            "value": "o1",
+            "reference": true
+          }
+        ]
+      },
+      {
+        "accno": "a2",
+        "type": "Author",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "Hohoff C"
+          },
+          {
+            "name": "affiliation",
+            "value": "o1",
+            "reference": true
+          }
+        ]
+      },
+      {
+        "accno": "a3",
+        "type": "Author",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "Freitag C"
+          },
+          {
+            "name": "affiliation",
+            "value": "o1",
+            "reference": true
+          }
+        ]
+      },
+      {
+        "accno": "a4",
+        "type": "Author",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "Deckert J"
+          },
+          {
+            "name": "affiliation",
+            "value": "o1",
+            "reference": true
+          }
+        ]
+      },
+      {
+        "accno": "a5",
+        "type": "Author",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "Retey JV"
+          },
+          {
+            "name": "affiliation",
+            "value": "o1",
+            "reference": true
+          }
+        ]
+      },
+      {
+        "accno": "a6",
+        "type": "Author",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "Bachmann V"
+          },
+          {
+            "name": "affiliation",
+            "value": "o1",
+            "reference": true
+          }
+        ]
+      },
+      {
+        "accno": "a7",
+        "type": "Author",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "Landolt HP"
+          },
+          {
+            "name": "ORCID",
+            "value": "0000-0003-0887-9403"
+          },
+          {
+            "name": "affiliation",
+            "value": "o1",
+            "reference": true
+          }
+        ]
+      },
+      {
+        "accno": "o1",
+        "type": "Organization",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "Institute of Pharmacology and Toxicology, University of Zürich, Zürich, SwitzerlandDepartment of Psychiatry, University of Münster, Münster, GermanyDepartment of Child and Adolescent Psychiatry, Psychosomatics and Psychotherapy, Johann-Wolfgang Goethe University, Frankfurt am Main, GermanyDepartment of Psychiatry, University of Würzburg, Würzburg, GermanyZürich Center for Integrative Human Physiology, University of Zürich, Zürich, Switzerland."
+          }
+        ]
+      }
+    ]
   }
 }

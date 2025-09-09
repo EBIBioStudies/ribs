@@ -3,14 +3,13 @@ package uk.ac.ebi.biostudies.api.util.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPathException;
 import com.jayway.jsonpath.ReadContext;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import net.minidev.json.JSONArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import uk.ac.ebi.biostudies.api.util.Constants;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class NodeCountingParser extends AbstractParser {
 

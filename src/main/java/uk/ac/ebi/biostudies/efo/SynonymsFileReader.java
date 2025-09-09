@@ -18,12 +18,11 @@
 package uk.ac.ebi.biostudies.efo;
 
 import au.com.bytecode.opencsv.CSVReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SynonymsFileReader extends CSVReader {
     // logging machinery

@@ -23,23 +23,23 @@ import org.apache.lucene.analysis.util.CharTokenizer;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 
 public class AttributeFieldAnalyzer extends Analyzer {
-    @Override
-    protected TokenStreamComponents createComponents(String fieldName) {
-        Tokenizer source = new AttributeFieldTokenizer();
-        TokenStream filter = new StopFilter(new ASCIIFoldingFilter(source), IndexConfig.STOP_WORDS);
-        filter = new LowerCaseFilter(filter);
-        return new TokenStreamComponents(source, filter);
-    }
+  @Override
+  protected TokenStreamComponents createComponents(String fieldName) {
+    Tokenizer source = new AttributeFieldTokenizer();
+    TokenStream filter = new StopFilter(new ASCIIFoldingFilter(source), IndexConfig.STOP_WORDS);
+    filter = new LowerCaseFilter(filter);
+    return new TokenStreamComponents(source, filter);
+  }
 
-    @Override
-    protected TokenStream normalize(String fieldName, TokenStream in) {
-        return new LowerCaseFilter(in);
-    }
+  @Override
+  protected TokenStream normalize(String fieldName, TokenStream in) {
+    return new LowerCaseFilter(in);
+  }
 
-    private static class AttributeFieldTokenizer extends CharTokenizer {
-        @Override
-        protected boolean isTokenChar(int c) {
-            return !Character.isWhitespace(c) && !(',' == c || ';' == c || '(' == c || ')' == c);
-        }
+  private static class AttributeFieldTokenizer extends CharTokenizer {
+    @Override
+    protected boolean isTokenChar(int c) {
+      return !Character.isWhitespace(c) && !(',' == c || ';' == c || '(' == c || ')' == c);
     }
+  }
 }

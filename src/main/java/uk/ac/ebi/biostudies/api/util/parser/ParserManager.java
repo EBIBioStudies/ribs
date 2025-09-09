@@ -1,22 +1,21 @@
 package uk.ac.ebi.biostudies.api.util.parser;
 
+import static uk.ac.ebi.biostudies.api.util.Constants.IndexEntryAttributes;
+
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static uk.ac.ebi.biostudies.api.util.Constants.IndexEntryAttributes;
 
 @Component
 @Scope("singleton")
 public class ParserManager {
 
     private Map<String, AbstractParser>  parserPool;
-    private Logger logger = LogManager.getLogger(ParserManager.class.getName());
+    private final Logger logger = LogManager.getLogger(ParserManager.class.getName());
 
 
     public void init(Map<String, JsonNode> fieldMap){

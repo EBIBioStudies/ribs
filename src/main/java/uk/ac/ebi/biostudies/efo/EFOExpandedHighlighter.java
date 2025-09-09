@@ -24,10 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.biostudies.api.util.analyzer.ExperimentTextAnalyzer;
 import uk.ac.ebi.biostudies.config.IndexConfig;
+
 @Component
 public class EFOExpandedHighlighter {
     // logging machinery
-    private org.apache.logging.log4j.Logger logger = LogManager.getLogger(EFOExpandedHighlighter.class.getName());
+    private final org.apache.logging.log4j.Logger logger = LogManager.getLogger(EFOExpandedHighlighter.class.getName());
 
     @Autowired
     IndexConfig indexConfig;

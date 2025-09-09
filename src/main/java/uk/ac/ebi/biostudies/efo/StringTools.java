@@ -18,7 +18,6 @@
 package uk.ac.ebi.biostudies.efo;
 
 import com.google.common.io.CharStreams;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

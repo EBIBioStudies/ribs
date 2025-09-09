@@ -17,6 +17,15 @@
 
 package uk.ac.ebi.biostudies.service.impl;
 
+import java.io.FileNotFoundException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,16 +41,6 @@ import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
 import uk.ac.ebi.biostudies.service.ZipDownloadService;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
 import uk.ac.ebi.biostudies.service.file.filter.*;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class FileDownloadServiceImpl implements FileDownloadService {
