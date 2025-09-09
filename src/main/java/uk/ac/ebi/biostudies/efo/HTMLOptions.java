@@ -18,15 +18,14 @@
 package uk.ac.ebi.biostudies.efo;
 
 
-import org.apache.commons.text.StringEscapeUtils;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.apache.commons.text.StringEscapeUtils;
 
 public class HTMLOptions {
     private class Option {
-        private String value;
-        private String label;
+        private final String value;
+        private final String label;
 
         public Option(String value, String label) {
             this.value = value;
@@ -43,7 +42,7 @@ public class HTMLOptions {
         }
     }
 
-    private Set<Option> options;
+    private final Set<Option> options;
 
     public HTMLOptions() {
         this.options = new LinkedHashSet<>();

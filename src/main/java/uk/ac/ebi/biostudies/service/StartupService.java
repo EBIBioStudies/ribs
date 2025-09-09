@@ -10,27 +10,22 @@ import uk.ac.ebi.biostudies.config.IndexManager;
 
 @Service
 public class StartupService implements InitializingBean {
-    private static Logger LOGGER = LogManager.getLogger(StartupService.class.getName());
+  private static final Logger LOGGER = LogManager.getLogger(StartupService.class.getName());
 
-    @Autowired
-    IndexManager indexManager;
-    @Autowired
-    IndexService indexService;
-    @Autowired
-    IndexManagementService indexManagementService;
-    @Autowired
-    IndexConfig indexConfig;
+  @Autowired IndexManager indexManager;
+  @Autowired IndexService indexService;
+  @Autowired IndexManagementService indexManagementService;
+  @Autowired IndexConfig indexConfig;
 
-    @Override
-    public void afterPropertiesSet() {
-        LOGGER.debug("Initializing IndexManagerService");
-        try {
-            indexManager.refreshIndexWriterAndWholeOtherIndices();
-            if (indexConfig.isApiEnabled()) indexService.processFileForIndexing();
-            indexManagementService.openWebsocket();
-        }
-        catch (Throwable ex){
-            LOGGER.error("problem in initiating indices", ex);
-        }
+  @Override
+  public void afterPropertiesSet() {
+    LOGGER.debug("Initializing IndexManagerService");
+    try {
+      indexManager.refreshIndexWriterAndWholeOtherIndices();
+      if (indexConfig.isApiEnabled()) indexService.processFileForIndexing();
+      indexManagementService.openWebsocket();
+    } catch (Throwable ex) {
+      LOGGER.error("problem in initiating indices", ex);
     }
+  }
 }

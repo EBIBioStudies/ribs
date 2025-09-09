@@ -1,19 +1,18 @@
 package uk.ac.ebi.biostudies.api.util.parser;
 
+import static uk.ac.ebi.biostudies.api.util.Constants.PUBLIC;
+import static uk.ac.ebi.biostudies.api.util.Constants.RELEASE_DATE;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.ReadContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.lucene.document.DateTools;
-import uk.ac.ebi.biostudies.api.util.Constants;
-
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-
-import static uk.ac.ebi.biostudies.api.util.Constants.PUBLIC;
-import static uk.ac.ebi.biostudies.api.util.Constants.RELEASE_DATE;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.lucene.document.DateTools;
+import uk.ac.ebi.biostudies.api.util.Constants;
 
 public class DateParser extends AbstractParser {
     private static final Logger logger = LogManager.getLogger(DateParser.class.getName());

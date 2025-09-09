@@ -1,5 +1,9 @@
 package uk.ac.ebi.biostudies.auth;
 
+import java.util.Arrays;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +14,6 @@ import org.springframework.security.web.authentication.rememberme.CookieTheftExc
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.biostudies.api.util.HttpTools;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 
 @Service
 public class CustomRememberMeCookieService implements RememberMeServices {

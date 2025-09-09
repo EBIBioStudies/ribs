@@ -1,5 +1,10 @@
 package uk.ac.ebi.biostudies.integration;
 
+import static junit.framework.TestCase.assertEquals;
+import static org.mockito.Mockito.doReturn;
+
+import java.util.List;
+import java.util.Scanner;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,14 +28,6 @@ import uk.ac.ebi.biostudies.auth.UserSecurityService;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.integration.utils.IntegrationTestProperties;
 import uk.ac.ebi.biostudies.service.SearchService;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Scanner;
-
-import static junit.framework.TestCase.assertEquals;
-import static org.mockito.Mockito.doReturn;
-
 
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

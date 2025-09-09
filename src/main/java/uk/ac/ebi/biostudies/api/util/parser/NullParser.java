@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 public class NullParser extends AbstractParser {
-    @Override
-    public String parse(Map<String, Object> valueMap, JsonNode submission, ReadContext jsonPathContext) {
-        return null;
-    }
+  @Override
+  public String parse(
+      Map<String, Object> valueMap, JsonNode submission, ReadContext jsonPathContext) {
+    return null;
+  }
 }

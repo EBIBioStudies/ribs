@@ -7,6 +7,14 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,20 +29,10 @@ import org.apache.lucene.util.BytesRef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
-import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.service.FileDownloadService;
 import uk.ac.ebi.biostudies.service.FileIndexService;
 import uk.ac.ebi.biostudies.service.file.FileMetaData;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 @Service
 public class FileIndexServiceImpl implements FileIndexService {
@@ -112,7 +110,8 @@ public class FileIndexServiceImpl implements FileIndexService {
         doc.add(new StringField(Constants.File.OWNER, accession, Field.Store.YES));
 
         // add section field if file is not global
-        if ((parent.has("accno") || parent.has("accNo")) && (!parent.has("type") || !parent.get("type").textValue().toLowerCase().equalsIgnoreCase("study"))) {
+        if ((parent.has("accno") || parent.has("accNo")) && (!parent.has("type") || !parent.get("type").textValue()
+            .equalsIgnoreCase("study"))) {
             String section = parent.get(parent.has("accno") ? "accno" : "accNo").asText("").replaceAll("/", "").replaceAll(" ", "");
             if (!StringUtils.isEmpty(section)) {
                 //to lower case for search should be case insensitive
@@ -334,14 +333,12 @@ public class FileIndexServiceImpl implements FileIndexService {
             if (doc.get(Constants.File.SECTION) != null) {
                 IndexableField[] sectionFields = doc.getFields(Constants.File.SECTION);
                 //To take stored section field from lucene doc instead of indexedField for case sensivity difference in search and UI presentation
-                if (sectionFields.length > 0) {
-                    for (IndexableField secField : sectionFields) {
-                        if (secField.fieldType().stored() && secField.stringValue() != null) {
-                            sectionsWithFiles.add(secField.stringValue());
-                            break;
-                        }
-                    }
-                }
+              for (IndexableField secField : sectionFields) {
+                  if (secField.fieldType().stored() && secField.stringValue() != null) {
+                      sectionsWithFiles.add(secField.stringValue());
+                      break;
+                  }
+              }
             }
         } catch (Throwable ex) {
             LOGGER.error("problem in parsing the attached file of submission, file id: {} file name: {} ", docId, fileName, ex);

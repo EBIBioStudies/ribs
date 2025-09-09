@@ -28,25 +28,20 @@ import uk.ac.ebi.biostudies.service.IndexService;
 
 @Service
 public class ReloadStudiesJob {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    IndexConfig indexConfig;
+  @Autowired IndexConfig indexConfig;
 
-    @Autowired
-    IndexService indexService;
+  @Autowired IndexService indexService;
 
-    @Scheduled(cron = "${bs.studies.reload}")
-    public void doExecute() throws Exception {
-        try {
-            logger.info("Reloading index from scratch");
-            indexService.getIndexFileQueue().put(Constants.SUBMISSIONS_JSON);
-        } catch (Exception x) {
-            logger.error("Error reloading index",x);
-            throw new RuntimeException(x);
-        }
+  @Scheduled(cron = "${bs.studies.reload}")
+  public void doExecute() throws Exception {
+    try {
+      logger.info("Reloading index from scratch");
+      indexService.getIndexFileQueue().put(Constants.SUBMISSIONS_JSON);
+    } catch (Exception x) {
+      logger.error("Error reloading index", x);
+      throw new RuntimeException(x);
     }
-
-
-
+  }
 }

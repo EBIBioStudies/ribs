@@ -1,5 +1,16 @@
 package uk.ac.ebi.biostudies.efo.index;
 
+import static uk.ac.ebi.biostudies.api.util.Constants.OWL;
+import static uk.ac.ebi.biostudies.service.impl.IndexServiceImpl.TYPE_NOT_ANALYZED;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
@@ -21,18 +32,6 @@ import uk.ac.ebi.biostudies.efo.EFOLoader;
 import uk.ac.ebi.biostudies.efo.EFONode;
 import uk.ac.ebi.biostudies.efo.IEFO;
 import uk.ac.ebi.biostudies.efo.StringTools;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.HashSet;
-import java.util.Set;
-
-import static uk.ac.ebi.biostudies.api.util.Constants.OWL;
-import static uk.ac.ebi.biostudies.service.impl.IndexServiceImpl.TYPE_NOT_ANALYZED;
 
 @Service
 public class EFOManager {

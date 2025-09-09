@@ -1,15 +1,14 @@
 package uk.ac.ebi.biostudies.service.file;
 
 import com.amazonaws.services.s3.model.S3Object;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import uk.ac.ebi.biostudies.api.util.Constants;
-import uk.ac.ebi.biostudies.api.util.HttpTools;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import uk.ac.ebi.biostudies.api.util.Constants;
+import uk.ac.ebi.biostudies.api.util.HttpTools;
 
 public class FileMetaData {
     private static final Logger LOGGER = LogManager.getLogger(FileMetaData.class.getName());

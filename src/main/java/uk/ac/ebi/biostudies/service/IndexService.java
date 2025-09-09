@@ -8,26 +8,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.BlockingQueue;
 
-/**
- * Created by ehsan on 27/02/2017.
- */
+/** Created by ehsan on 27/02/2017. */
 public interface IndexService extends DisposableBean {
-    @Async
-    void indexAll(InputStream inputStream, boolean removeFileDocuments) throws IOException;
+  @Async
+  void indexAll(InputStream inputStream, boolean removeFileDocuments) throws IOException;
 
-    @Async
-    void indexOne(JsonNode submisison, boolean removeFileDocuments) throws IOException;
+  @Async
+  void indexOne(JsonNode submisison, boolean removeFileDocuments) throws IOException;
 
-    void deleteDoc(String accession) throws Exception;
+  void deleteDoc(String accession) throws Exception;
 
-    void clearIndex(boolean commit) throws IOException;
+  void clearIndex(boolean commit) throws IOException;
 
-    BlockingQueue<String> getIndexFileQueue();
+  BlockingQueue<String> getIndexFileQueue();
 
-    void makePagetabIndex();
+  void makePagetabIndex();
 
-    void processFileForIndexing();
+  void processFileForIndexing();
 
-    void scheduleFixedDelayTask();
-
+  void scheduleFixedDelayTask();
 }

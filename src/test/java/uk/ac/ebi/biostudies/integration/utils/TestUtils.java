@@ -1,14 +1,14 @@
 package uk.ac.ebi.biostudies.integration.utils;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import uk.ac.ebi.biostudies.integration.WebDriverTest;
-
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.startsWith;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import uk.ac.ebi.biostudies.integration.WebDriverTest;
 
 /**
  * Created by awais on 18/08/2015.

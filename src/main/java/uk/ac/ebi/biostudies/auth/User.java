@@ -17,12 +17,11 @@
 
 package uk.ac.ebi.biostudies.auth;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class User {
     protected String login;

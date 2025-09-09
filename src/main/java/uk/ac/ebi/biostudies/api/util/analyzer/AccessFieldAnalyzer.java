@@ -23,24 +23,30 @@ import org.apache.lucene.analysis.util.CharTokenizer;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 
 public final class AccessFieldAnalyzer extends Analyzer {
+  @Override
+  protected TokenStreamComponents createComponents(String fieldName) {
+    Tokenizer source = new AccessFieldAnalyzerTextTokenizer();
+    TokenStream filter = new StopFilter(new ASCIIFoldingFilter(source), IndexConfig.STOP_WORDS);
+    filter = new LowerCaseFilter(filter);
+    return new TokenStreamComponents(source, filter);
+  }
+
+  @Override
+  protected TokenStream normalize(String fieldName, TokenStream in) {
+    return new LowerCaseFilter(in);
+  }
+
+  private static class AccessFieldAnalyzerTextTokenizer extends CharTokenizer {
     @Override
-    protected TokenStreamComponents createComponents(String fieldName) {
-        Tokenizer source = new AccessFieldAnalyzerTextTokenizer();
-        TokenStream filter = new StopFilter(new ASCIIFoldingFilter(source), IndexConfig.STOP_WORDS);
-        filter = new LowerCaseFilter(filter);
-        return new TokenStreamComponents(source, filter);
+    protected boolean isTokenChar(int c) {
+      return Character.isLetter(c)
+          | Character.isDigit(c)
+          | c == '@'
+          | c == '.'
+          | c == '~'
+          | c == '#'
+          | c == '-'
+          | c == '_';
     }
-
-    @Override
-    protected TokenStream normalize(String fieldName, TokenStream in) {
-        return new LowerCaseFilter(in);
-    }
-
-    private static class AccessFieldAnalyzerTextTokenizer extends CharTokenizer {
-        @Override
-        protected boolean isTokenChar(int c) {
-            return Character.isLetter(c) | Character.isDigit(c) | c=='@' | c=='.' | c=='~' | c=='#'| c=='-' | c=='_';
-        }
-
-    }
+  }
 }

@@ -1,12 +1,11 @@
 package uk.ac.ebi.biostudies.integration;
 
+import java.io.File;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-
-import java.io.File;
 
 public class WebDriverTest {
 

@@ -2,7 +2,6 @@ package uk.ac.ebi.biostudies.api.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-
 import java.util.ArrayList;
 import java.util.List;
 

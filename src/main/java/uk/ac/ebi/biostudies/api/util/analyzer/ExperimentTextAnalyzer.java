@@ -23,25 +23,23 @@ import org.apache.lucene.analysis.util.CharTokenizer;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 
 public final class ExperimentTextAnalyzer extends Analyzer {
+  @Override
+  protected TokenStreamComponents createComponents(String fieldName) {
+    Tokenizer source = new ExperimentTextTokenizer();
+    TokenStream filter = new StopFilter(new ASCIIFoldingFilter(source), IndexConfig.STOP_WORDS);
+    filter = new LowerCaseFilter(filter);
+    return new TokenStreamComponents(source, filter);
+  }
+
+  @Override
+  protected TokenStream normalize(String fieldName, TokenStream in) {
+    return new LowerCaseFilter(in);
+  }
+
+  private static class ExperimentTextTokenizer extends CharTokenizer {
     @Override
-    protected TokenStreamComponents createComponents(String fieldName) {
-        Tokenizer source = new ExperimentTextTokenizer();
-        TokenStream filter = new StopFilter(new ASCIIFoldingFilter(source), IndexConfig.STOP_WORDS);
-        filter = new LowerCaseFilter(filter);
-        return new TokenStreamComponents(source, filter);
+    protected boolean isTokenChar(int c) {
+      return Character.isLetter(c) | Character.isDigit(c) | ('-' == c);
     }
-
-    @Override
-    protected TokenStream normalize(String fieldName, TokenStream in) {
-        return new LowerCaseFilter(in);
-    }
-
-
-    private static class ExperimentTextTokenizer extends CharTokenizer {
-        @Override
-        protected boolean isTokenChar(int c) {
-            return Character.isLetter(c) | Character.isDigit(c) | ('-' == c);
-        }
-
-    }
+  }
 }

@@ -1,24 +1,23 @@
 package uk.ac.ebi.biostudies.api.util.parser;
 
+import static uk.ac.ebi.biostudies.api.util.Constants.NA;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.ReadContext;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import uk.ac.ebi.biostudies.api.util.Constants;
-
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import static uk.ac.ebi.biostudies.api.util.Constants.NA;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import uk.ac.ebi.biostudies.api.util.Constants;
 
 public class SimpleAttributeParser extends AbstractParser {
     private final static Logger LOGGER = LogManager.getLogger(SimpleAttributeParser.class.getName());
 
-    private static String jpath = "$.section.attributes[?(@.name=~ /%s/i)].value";
+    private static final String jpath = "$.section.attributes[?(@.name=~ /%s/i)].value";
     @Override
     public String parse(Map<String, Object> valueMap, JsonNode submission, ReadContext jsonPathContext) {
         Object result= NA;
@@ -40,7 +39,7 @@ public class SimpleAttributeParser extends AbstractParser {
                     result =  String.join(Constants.Facets.DELIMITER, resultData);
                     break;
                 case Constants.IndexEntryAttributes.FieldTypeValues.LONG:
-                    result =  resultData.size()==1 ? Long.parseLong(resultData.get(0).toString()) :  resultData.stream().collect(Collectors.counting());
+                    result =  resultData.size()==1 ? Long.parseLong(resultData.get(0)) :  resultData.stream().collect(Collectors.counting());
                     break;
                 default:
                     result =  String.join (" ", resultData);

@@ -15,32 +15,38 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-/**
- * Created by ehsan on 10/04/2017.
- */
+/** Created by ehsan on 10/04/2017. */
 @ControllerAdvice
 public class GeneralPurposeExceptionHandler extends ResponseEntityExceptionHandler {
-    private Logger logger = LogManager.getLogger(GeneralPurposeExceptionHandler.class.getName());
+  private final Logger logger = LogManager.getLogger(GeneralPurposeExceptionHandler.class.getName());
 
-    @ExceptionHandler(value = { SubmissionNotAccessibleException.class })
-    @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Forbidden")
-    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, SubmissionNotAccessibleException ex) {
-        logger.error(ex.getMessage(), ex);
-        return new ModelAndView("detail");
-    }
+  @ExceptionHandler(value = {SubmissionNotAccessibleException.class})
+  @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Forbidden")
+  public ModelAndView resolveException(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      Object handler,
+      SubmissionNotAccessibleException ex) {
+    logger.error(ex.getMessage(), ex);
+    return new ModelAndView("detail");
+  }
 
-    @ExceptionHandler(value = { FileNotFoundException.class })
-    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "File not found")
-    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, FileNotFoundException ex) {
-        logger.error(ex.getMessage(), ex);
-        return new ModelAndView("detail");
-    }
+  @ExceptionHandler(value = {FileNotFoundException.class})
+  @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "File not found")
+  public ModelAndView resolveException(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      Object handler,
+      FileNotFoundException ex) {
+    logger.error(ex.getMessage(), ex);
+    return new ModelAndView("detail");
+  }
 
-    @ExceptionHandler(value = {Exception.class })
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Internal Server Error")
-    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        logger.error(ex.getMessage(), ex);
-        return new ModelAndView("detail");
-    }
-
+  @ExceptionHandler(value = {Exception.class})
+  @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Internal Server Error")
+  public ModelAndView resolveException(
+      HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    logger.error(ex.getMessage(), ex);
+    return new ModelAndView("detail");
+  }
 }

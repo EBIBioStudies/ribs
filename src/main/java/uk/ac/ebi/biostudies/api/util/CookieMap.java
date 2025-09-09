@@ -21,18 +21,18 @@ import javax.servlet.http.Cookie;
 import java.util.HashMap;
 
 public class CookieMap extends HashMap<String, Cookie> {
-    public CookieMap(Cookie[] cookies) {
-        if (null != cookies) {
-            for (Cookie c : cookies) {
-                this.put(c.getName(), c);
-            }
-        }
+  public CookieMap(Cookie[] cookies) {
+    if (null != cookies) {
+      for (Cookie c : cookies) {
+        this.put(c.getName(), c);
+      }
     }
+  }
 
-    public String getCookieValue(String name) {
-        if (this.containsKey(name)) {
-            return this.get(name).getValue();
-        }
-        return null;
+  public String getCookieValue(String name) {
+    if (this.containsKey(name)) {
+      return this.get(name).getValue();
     }
+    return null;
+  }
 }

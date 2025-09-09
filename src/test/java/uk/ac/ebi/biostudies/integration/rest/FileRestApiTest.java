@@ -1,10 +1,18 @@
 package uk.ac.ebi.biostudies.integration.rest;
 
 
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
+import java.util.Arrays;
+import java.util.List;
 import net.minidev.json.JSONArray;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -31,14 +39,6 @@ import uk.ac.ebi.biostudies.auth.UserSecurityService;
 import uk.ac.ebi.biostudies.config.IndexConfig;
 import uk.ac.ebi.biostudies.integration.utils.IntegrationTestProperties;
 import uk.ac.ebi.biostudies.service.SearchService;
-
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -78,7 +78,10 @@ public class FileRestApiTest {
         doReturn(new InputStreamResource(getClass().getClassLoader().getResource(ACCESSION + ".json").openStream()))
                 .when(searchServiceMock).getStudyAsStream(anyString(), anyString(), Mockito.anyBoolean(), any(), Mockito.anyBoolean(), any());
         String baseUrl = integrationTestProperties.getBaseUrl(randomPort);
+        System.out.println("URL: " + baseUrl + "api/v1/studies/" + ACCESSION);
         String result = testRestTemplate.getForObject(baseUrl + "api/v1/studies/" + ACCESSION, String.class);
+        System.out.println("@@@result@@@");
+        System.out.println(result);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode responseJSON = mapper.readTree(result);
         assertNotNull(responseJSON);
@@ -190,7 +193,7 @@ public class FileRestApiTest {
      */
     public void fileGetDownloadRestApi() throws Exception {
         String baseUrl = integrationTestProperties.getBaseUrl(randomPort);
-        when(studyUtils.modifyRelativePathForPrivateStudies(anyString(), anyString())).thenReturn("");
+        when(StudyUtils.modifyRelativePathForPrivateStudies(anyString(), anyString())).thenReturn("");
         String pathToFile = getClass().getClassLoader().getResource(ACCESSION + ".json").getPath().replaceAll("/S-EPMC3372839.json", "");
         if ((pathToFile.charAt(0) == '\\' || pathToFile.charAt(0) == '/') && pathToFile.charAt(2) == ':')
             pathToFile = pathToFile.substring(1);
@@ -242,7 +245,7 @@ public class FileRestApiTest {
         if ((pathToFile.charAt(0) == '\\' || pathToFile.charAt(0) == '/') && pathToFile.charAt(2) == ':')
             pathToFile = pathToFile.substring(1);
         doReturn(pathToFile).when(indexConfigMock).getFileRootDir();
-        when(studyUtils.modifyRelativePathForPrivateStudies(anyString(), anyString())).thenReturn("");
+        when(StudyUtils.modifyRelativePathForPrivateStudies(anyString(), anyString())).thenReturn("");
         Document privateLuceneDoc = new Document();
         privateLuceneDoc.add(new StringField(Constants.Fields.ACCESS, "test1", Field.Store.YES));
         privateLuceneDoc.add(new StringField(Constants.Fields.ACCESSION, ACCESSION, Field.Store.YES));
@@ -274,7 +277,7 @@ public class FileRestApiTest {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setAccept(Arrays.asList(MediaType.ALL));
+        headers.setAccept(List.of(MediaType.ALL));
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
         testRestTemplate.getRestTemplate().getMessageConverters().add(new ByteArrayHttpMessageConverter());

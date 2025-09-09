@@ -14,6 +14,9 @@
 
 package net.jawr.web.autoconfigure;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import net.jawr.web.JawrConstant;
 import net.jawr.web.servlet.JawrSpringController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +32,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * {@link EnableAutoConfiguration Auto configuration} for Jawr support.

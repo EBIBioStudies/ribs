@@ -1,139 +1,197 @@
 {
-  "accno" : "S-EPMC6160819",
-  "attributes" : [ {
-    "name" : "Title",
-    "value" : "Plurality in multi-disciplinary research: multiple institutional affiliations are associated with increased citations."
-  }, {
-    "name" : "ReleaseDate",
-    "value" : "2018-01-01"
-  } ],
-  "section" : {
-    "type" : "Study",
-    "attributes" : [ {
-      "name" : "Title",
-      "value" : "Plurality in multi-disciplinary research: multiple institutional affiliations are associated with increased citations."
-    }, {
-      "name" : "Abstract",
-      "value" : "Background:The institutional affiliations and associated collaborative networks that scientists foster during their research careers are salient in the production of high-quality science. The phenomenon of multiple institutional affiliations and its relationship to research output remains relatively unexplored in the literature. Methods:We examined 27,612 scientific articles, modelling the normalized citation counts received against the number of authors and affiliations held. Results:In agreement with previous research, we found that teamwork is an important factor in high impact papers, with average citations received increasing concordant with the number of co-authors listed. For articles with more than five co-authors, we noted an increase in average citations received when authors with more than one institutional affiliation contributed to the research. Discussion:Multiple author affiliations may play a positive role in the production of high-impact science. This increased researcher mobility should be viewed by institutional boards as meritorious in the pursuit of scientific discovery."
-    } ],
-    "links" : [ [ {
-      "url" : "10.6084/m9.figshare.7033631.v1",
-      "attributes" : [ {
-        "name" : "Type",
-        "value" : "doi"
-      } ]
-    } ] ],
-    "subsections" : [ {
-      "type" : "Publication",
-      "attributes" : [ {
-        "name" : "Journal",
-        "value" : "PeerJ"
-      }, {
-        "name" : "Volume",
-        "value" : "6"
-      }, {
-        "name" : "Pages",
-        "value" : "e5664"
-      }, {
-        "name" : "Publication date",
-        "value" : "2018"
-      } ],
-      "links" : [ [ {
-        "url" : "10.7717/peerj.5664",
-        "attributes" : [ {
-          "name" : "Type",
-          "value" : "DOI"
-        } ]
-      }, {
-        "url" : "PMC6160819",
-        "attributes" : [ {
-          "name" : "Type",
-          "value" : "PMC"
-        } ]
-      }, {
-        "url" : "30280036",
-        "attributes" : [ {
-          "name" : "Type",
-          "value" : "PMID"
-        } ]
-      } ] ]
-    }, {
-      "accno" : "a1",
-      "type" : "Author",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "Sanfilippo P"
-      }, {
-        "name" : "affiliation",
-        "value" : "o1",
-        "reference" : true
-      }, {
-        "name" : "affiliation",
-        "value" : "o2",
-        "reference" : true
-      } ]
-    }, {
-      "accno" : "a2",
-      "type" : "Author",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "Hewitt AW"
-      }, {
-        "name" : "ORCID",
-        "value" : "0000-0002-5123-5999"
-      }, {
-        "name" : "affiliation",
-        "value" : "o1",
-        "reference" : true
-      }, {
-        "name" : "affiliation",
-        "value" : "o2",
-        "reference" : true
-      }, {
-        "name" : "affiliation",
-        "value" : "o3",
-        "reference" : true
-      } ]
-    }, {
-      "accno" : "a3",
-      "type" : "Author",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "Mackey DA"
-      }, {
-        "name" : "affiliation",
-        "value" : "o1",
-        "reference" : true
-      }, {
-        "name" : "affiliation",
-        "value" : "o2",
-        "reference" : true
-      }, {
-        "name" : "affiliation",
-        "value" : "o3",
-        "reference" : true
-      } ]
-    }, {
-      "accno" : "o1",
-      "type" : "Organization",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "University of Melbourne, Royal Victorian Eye and Ear Hospital, Centre for Eye Research Australia, Melbourne, Australia."
-      } ]
-    }, {
-      "accno" : "o2",
-      "type" : "Organization",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "University of Western Australia, Lions Eye Institute, Centre for Ophthalmology and Visual Science, Perth, Australia"
-      } ]
-    }, {
-      "accno" : "o3",
-      "type" : "Organization",
-      "attributes" : [ {
-        "name" : "Name",
-        "value" : "School of Medicine, University of Tasmania, Menzies Institute for Medical Research, Hobart, Tasmania, Australia"
-      } ]
-    } ]
+  "accno": "S-EPMC6160819",
+  "attributes": [
+    {
+      "name": "Title",
+      "value": "Plurality in multi-disciplinary research: multiple institutional affiliations are associated with increased citations."
+    },
+    {
+      "name": "ReleaseDate",
+      "value": "2018-01-01"
+    }
+  ],
+  "section": {
+    "type": "Study",
+    "attributes": [
+      {
+        "name": "Title",
+        "value": "Plurality in multi-disciplinary research: multiple institutional affiliations are associated with increased citations."
+      },
+      {
+        "name": "Abstract",
+        "value": "Background:The institutional affiliations and associated collaborative networks that scientists foster during their research careers are salient in the production of high-quality science. The phenomenon of multiple institutional affiliations and its relationship to research output remains relatively unexplored in the literature. Methods:We examined 27,612 scientific articles, modelling the normalized citation counts received against the number of authors and affiliations held. Results:In agreement with previous research, we found that teamwork is an important factor in high impact papers, with average citations received increasing concordant with the number of co-authors listed. For articles with more than five co-authors, we noted an increase in average citations received when authors with more than one institutional affiliation contributed to the research. Discussion:Multiple author affiliations may play a positive role in the production of high-impact science. This increased researcher mobility should be viewed by institutional boards as meritorious in the pursuit of scientific discovery."
+      }
+    ],
+    "links": [
+      [
+        {
+          "url": "10.6084/m9.figshare.7033631.v1",
+          "attributes": [
+            {
+              "name": "Type",
+              "value": "doi"
+            }
+          ]
+        }
+      ]
+    ],
+    "subsections": [
+      {
+        "type": "Publication",
+        "attributes": [
+          {
+            "name": "Journal",
+            "value": "PeerJ"
+          },
+          {
+            "name": "Volume",
+            "value": "6"
+          },
+          {
+            "name": "Pages",
+            "value": "e5664"
+          },
+          {
+            "name": "Publication date",
+            "value": "2018"
+          }
+        ],
+        "links": [
+          [
+            {
+              "url": "10.7717/peerj.5664",
+              "attributes": [
+                {
+                  "name": "Type",
+                  "value": "DOI"
+                }
+              ]
+            },
+            {
+              "url": "PMC6160819",
+              "attributes": [
+                {
+                  "name": "Type",
+                  "value": "PMC"
+                }
+              ]
+            },
+            {
+              "url": "30280036",
+              "attributes": [
+                {
+                  "name": "Type",
+                  "value": "PMID"
+                }
+              ]
+            }
+          ]
+        ]
+      },
+      {
+        "accno": "a1",
+        "type": "Author",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "Sanfilippo P"
+          },
+          {
+            "name": "affiliation",
+            "value": "o1",
+            "reference": true
+          },
+          {
+            "name": "affiliation",
+            "value": "o2",
+            "reference": true
+          }
+        ]
+      },
+      {
+        "accno": "a2",
+        "type": "Author",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "Hewitt AW"
+          },
+          {
+            "name": "ORCID",
+            "value": "0000-0002-5123-5999"
+          },
+          {
+            "name": "affiliation",
+            "value": "o1",
+            "reference": true
+          },
+          {
+            "name": "affiliation",
+            "value": "o2",
+            "reference": true
+          },
+          {
+            "name": "affiliation",
+            "value": "o3",
+            "reference": true
+          }
+        ]
+      },
+      {
+        "accno": "a3",
+        "type": "Author",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "Mackey DA"
+          },
+          {
+            "name": "affiliation",
+            "value": "o1",
+            "reference": true
+          },
+          {
+            "name": "affiliation",
+            "value": "o2",
+            "reference": true
+          },
+          {
+            "name": "affiliation",
+            "value": "o3",
+            "reference": true
+          }
+        ]
+      },
+      {
+        "accno": "o1",
+        "type": "Organization",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "University of Melbourne, Royal Victorian Eye and Ear Hospital, Centre for Eye Research Australia, Melbourne, Australia."
+          }
+        ]
+      },
+      {
+        "accno": "o2",
+        "type": "Organization",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "University of Western Australia, Lions Eye Institute, Centre for Ophthalmology and Visual Science, Perth, Australia"
+          }
+        ]
+      },
+      {
+        "accno": "o3",
+        "type": "Organization",
+        "attributes": [
+          {
+            "name": "Name",
+            "value": "School of Medicine, University of Tasmania, Menzies Institute for Medical Research, Hobart, Tasmania, Australia"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -3,6 +3,7 @@ package uk.ac.ebi.biostudies.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
@@ -22,8 +23,6 @@ import uk.ac.ebi.biostudies.config.IndexManager;
 import uk.ac.ebi.biostudies.service.ExtractedLinkPaginationService;
 import uk.ac.ebi.biostudies.service.SearchService;
 import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
-
-import java.util.*;
 
 @Component
 public class ExtractedLinkPaginationServiceImpl implements ExtractedLinkPaginationService {

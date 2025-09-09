@@ -18,13 +18,12 @@
 package uk.ac.ebi.biostudies.file.thumbnails;
 
 import com.twelvemonkeys.image.ResampleOp;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.imageio.ImageIO;
 
 public class ImageThumbnail implements IThumbnail{
 

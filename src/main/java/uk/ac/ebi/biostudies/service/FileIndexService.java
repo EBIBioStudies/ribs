@@ -10,5 +10,14 @@ import java.util.Map;
 import java.util.Set;
 
 public interface FileIndexService {
-    Map<String, Object> indexSubmissionFiles(String accession, String relativePath, JsonNode json, IndexWriter writer, Set<String> attributeColumns, boolean removeFileDocuments, boolean isPublicStudy, String secretKey) throws IOException ;
+  Map<String, Object> indexSubmissionFiles(
+      String accession,
+      String relativePath,
+      JsonNode json,
+      IndexWriter writer,
+      Set<String> attributeColumns,
+      boolean removeFileDocuments,
+      boolean isPublicStudy,
+      String secretKey)
+      throws IOException;
 }
