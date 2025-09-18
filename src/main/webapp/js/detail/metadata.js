@@ -300,6 +300,7 @@ var Metadata = (function (_self) {
         linksTable = $("#link-list").DataTable({
             "lengthMenu": [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
             "dom": "rlftpi",
+            "order": [],
             "infoCallback": function( settings, start, end, max, total, out ) {
                 return (total== max) ? out : out +' <a class="section-button" id="clear-filter" onclick="Metadata.clearLinkFilter();return false;">' +
                     '<span class="fa-layers fa-fw">'
