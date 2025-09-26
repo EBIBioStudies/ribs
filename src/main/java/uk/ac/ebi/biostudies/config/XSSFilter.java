@@ -126,6 +126,11 @@ public class XSSFilter implements Filter {
         @Override
         public String[] getParameterValues(String parameter) {
             String[] values = super.getParameterValues(parameter);
+
+            if ("query".equals(parameter) && values != null) {
+                return values;  // Return raw array without escaping
+            }
+
             if (values == null) {
                 return null;
             }
@@ -140,6 +145,12 @@ public class XSSFilter implements Filter {
         @Override
         public String getParameter(String parameter) {
             String value = super.getParameter(parameter);
+
+            if ("query".equals(parameter) && value != null) {
+                // Return raw value to avoid double escaping
+                return value;
+            }
+
             return sanitizeInput(value);
         }
 
@@ -168,14 +179,20 @@ public class XSSFilter implements Filter {
             Map<String, String[]> sanitizedMap = new HashMap<>();
 
             for (Map.Entry<String, String[]> entry : originalMap.entrySet()) {
+                String key = entry.getKey();
                 String[] originalValues = entry.getValue();
                 String[] sanitizedValues = new String[originalValues.length];
 
                 for (int i = 0; i < originalValues.length; i++) {
-                    sanitizedValues[i] = sanitizeInput(originalValues[i]);
+                    if ("query".equals(key)) {
+                        // Bypass sanitization for 'query' parameter - return raw values
+                        sanitizedValues[i] = originalValues[i];
+                    } else {
+                        sanitizedValues[i] = sanitizeInput(originalValues[i]);
+                    }
                 }
 
-                sanitizedMap.put(entry.getKey(), sanitizedValues);
+                sanitizedMap.put(key, sanitizedValues);
             }
 
             return sanitizedMap;
