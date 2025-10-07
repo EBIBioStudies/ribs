@@ -73,7 +73,6 @@ public class StudyUtils {
         String filePath = (basePath.endsWith("/") || relativePath.startsWith("/")) ? basePath+relativePath : (basePath+"/"+relativePath);
         Path pagetabFilePath = Paths.get(filePath, accession+".json");
         if(Files.exists(pagetabFilePath)) {
-            LOGGER.debug("Reading pagetab file from NFS cache accession: {} filename: {}", accession, pagetabFilePath.getFileName());
             return  Files.readString(pagetabFilePath, Charsets.UTF_8);
         }
         return null;

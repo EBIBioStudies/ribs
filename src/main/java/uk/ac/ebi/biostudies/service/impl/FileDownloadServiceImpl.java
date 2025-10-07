@@ -116,7 +116,6 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 for (FileChainFilter fileFilter : fileChainFilters) {
                     if (fileFilter.handleFile(fileMetaData, request, response)) break;
                 }
-                logger.debug("Download of [{}] completed - {}", fileMetaData.getUiRequestedPath(), request.getMethod());
             } catch (Exception exception) {
                 fileMetaData.close();
                 logger.error(exception);
