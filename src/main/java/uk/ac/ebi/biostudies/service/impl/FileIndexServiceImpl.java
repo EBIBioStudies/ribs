@@ -328,8 +328,6 @@ public class FileIndexServiceImpl implements FileIndexService {
             docId = accession + "-" + position;
             fileName = doc.get(Constants.File.NAME);
             writer.updateDocument(new Term(Constants.Fields.ID, docId), doc);
-            if (position % 10000 == 0)
-                LOGGER.info("library file parsed: {}", position);
             if (doc.get(Constants.File.SECTION) != null) {
                 IndexableField[] sectionFields = doc.getFields(Constants.File.SECTION);
                 //To take stored section field from lucene doc instead of indexedField for case sensivity difference in search and UI presentation

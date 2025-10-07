@@ -177,8 +177,6 @@ public class SendFileFilter implements FileChainFilter{
 
                 // Copy full range.
                 copy(input, output, full.start, full.length);
-                logger.info("Full download of [{}] completed, sent [{}] bytes", fileName, full.length);
-
 
             } else if (ranges.size() == 1) {
 

@@ -32,7 +32,6 @@ public class FileService {
             Path path = Paths.get(indexConfig.getNfsCachePath(), fileMetaData.getRelativePath(), "Files", fileMetaData.getUiRequestedPath());
             if(Files.exists(path)){
                 try {
-                    logger.debug("Accessing library filelist {} from NFS cache, accession: {}", path.getFileName(), fileMetaData.getAccession());
                     fileMetaData.setPath(path);
                     fileMetaData.setInputStream(Files.newInputStream(path));
                     return;
@@ -100,7 +99,6 @@ public class FileService {
             path = fileMetaData.getRelativePath() + "/" + fileMetaData.getUiRequestedPath();
         }
         try {
-            logger.debug("accessing s3DownloadClient {}", path);
             s3Object = fireService.getFireObjectByPath(path);
         } catch (Exception ex1) {
             try {
@@ -112,7 +110,6 @@ public class FileService {
                     path = path + ".zip";
                 }
                 // For folders
-                logger.debug("accessing s3DownloadClient {}", path);
                 s3Object = fireService.getFireObjectByPath(path);
             } catch (Exception ex4) {
                 try {
