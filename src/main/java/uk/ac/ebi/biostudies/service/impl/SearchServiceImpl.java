@@ -180,7 +180,6 @@ public class SearchServiceImpl implements SearchService {
                     docs.add(docNode);
                 }
                 response.set("hits", docs);
-                logger.debug(hits.totalHits + " hits");
             } else if (queryString != null && !queryString.isEmpty()) {
                 String[] spells = indexManager.getSpellChecker().suggestSimilar(queryString, 5);
                 response.set("suggestion", mapper.valueToTree(Arrays.asList(spells)));
@@ -235,7 +234,6 @@ public class SearchServiceImpl implements SearchService {
             Query queryAfterSecurity = resultPair.getKey();
             if (selectedFacets != null) {
                 queryAfterSecurity = facetService.applyFacets(queryAfterSecurity, selectedFacets);
-                logger.debug("Lucene after facet query: {}", queryAfterSecurity.toString());
             }
             response = applySearchOnQuery(queryAfterSecurity, page, pageSize, sortBy, sortOrder, doHighlight, queryString);
 

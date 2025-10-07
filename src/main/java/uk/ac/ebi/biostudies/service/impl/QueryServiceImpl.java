@@ -74,7 +74,6 @@ public class QueryServiceImpl implements QueryService {
 
         Pair<Query, EFOExpansionTerms> finalQuery = null;
         try {
-            logger.debug("User queryString: {}", queryString);
             Query query = parser.parse(queryString);
             Query expandedQuery = null;
             Pair<Query, EFOExpansionTerms> queryEFOExpansionTermsPair = expandQuery(query);
