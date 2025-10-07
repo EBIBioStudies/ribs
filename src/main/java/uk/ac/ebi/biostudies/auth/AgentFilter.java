@@ -52,7 +52,10 @@ public class AgentFilter implements Filter {
 
                 if (blocked) {
                     httpRes.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    httpRes.setContentType("text/plain;charset=UTF-8");
+                    httpRes.setHeader("X-Content-Type-Options", "nosniff");
                     httpRes.getWriter().write("403 Forbidden – User-Agent blocked");
+                    httpRes.getWriter().flush();
                     return;
                 }
             }
