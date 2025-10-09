@@ -137,6 +137,8 @@ public class View {
       if (collection != null) {
         mav.setViewName("redirect:" + view + "/studies");
       }
+    } else {
+      mav.setViewName(view.toLowerCase());
     }
     return mav;
   }
