@@ -236,6 +236,7 @@ function handleArrayExpressUI() {
 }
 
 function handleBioAIRepoUI(){
+    $('.menu.float-left li:contains("Home") a').text('BioAIRepo Home').attr('href',contextPath + '/bioairepo');
     $('#local-title').html(
         '<h1><img src="' + contextPath + '/images/collections/bioairepo/logo.svg" width="50%" height="50%"/></h1>'
     );
