@@ -65,14 +65,14 @@
             <section class="columns medium-3">&nbsp;</section>
         </div>
         <section class="columns medium-6"><h4><i class="icon icon-generic" data-icon="L"></i> Other model repositories</h4>
-			<p><a href=”https://bioimage.io”>BioImage.IO</a>: a collaborative platform bringing AI models to the bioimaging community</p>
-			<p><a href=”https://kipoi.org/”>Kipoi</a>: an API and a repository of ready-to-use trained models for genomics</p>
-			<p>FAIR ML <a href=”https://www.ebi.ac.uk/biostudies/biomodels/studies?facet.biomodels.model_tags=fair-aiml”>model collection</a> in the BioModels database</p>
+			<p><a href="https://bioimage.io">BioImage.IO</a>: a collaborative platform bringing AI models to the bioimaging community</p>
+			<p><a href="https://kipoi.org/">Kipoi</a>: an API and a repository of ready-to-use trained models for genomics</p>
+			<p>FAIR ML <a href="https://www.ebi.ac.uk/biostudies/biomodels/studies?facet.biomodels.model_tags=fair-aiml">model collection</a> in the BioModels database</p>
 		</section>
         <section class="columns medium-6 last"><h4><i class="icon icon-generic" data-icon="L"></i> Relevant guidelines and standards</h4>
-			<p><a href=”https://dome-ml.org/”>DOME</a>: the life sciences community standard for transparent machine learning</p>
-			<p><a href=”https://research.google/blog/croissant-a-metadata-format-for-ml-ready-datasets/”>Croissant</a>: metadata format for ML-ready datasets</p>
-			<p><a herf=”https://github.com/RDA-FAIR4ML/FAIR4ML-schema”>FAIR4ML</a>: metadata schema for describing machine learning model metadata</p>
+			<p><a href="https://dome-ml.org/">DOME</a>: the life sciences community standard for transparent machine learning</p>
+			<p><a href="https://research.google/blog/croissant-a-metadata-format-for-ml-ready-datasets/">Croissant</a>: metadata format for ML-ready datasets</p>
+			<p><a href="https://github.com/RDA-FAIR4ML/FAIR4ML-schema">FAIR4ML</a>: metadata schema for describing machine learning model metadata</p>
 		</section>
     </jsp:body>
 </t:generic>
