@@ -9,6 +9,7 @@
 
 <t:generic>
         <jsp:attribute name="head">
+            <link rel="stylesheet" href="https://ebi.emblstatic.net/web_guidelines/EBI-Icon-fonts/v1.3/fonts.css">
             <jwr:script src="/js/common.min.js"/>
             <style>
                 .imglink {
@@ -18,6 +19,10 @@
                 }
                 .imglink a:focus-visible {
                     outline: none;
+                }
+                .imglink .icon {
+                  font-size: 50px;
+                  vertical-align: middle;
                 }
             </style>
         </jsp:attribute>
@@ -52,13 +57,13 @@
             <section class="columns medium-3">&nbsp;</section>
             <section class="columns medium-3">
                 <a class="imglink" href="${contextPath}/BioAiRepo/studies">
-                    <img src="${contextPath}/images/collections/bioairepo/search.svg"><br/>
+                    <i class="icon icon-common icon-search"></i><br/>
                     Browse BioAIrepo
                 </a>
             </section>
             <section class="columns medium-3">
                 <a class="imglink" href="${contextPath}/submit">
-                    <img width="50" src="${contextPath}/images/collections/bioairepo/submit.svg"><br/>
+                    <i class="icon icon-common icon-submit"></i><br/>
                     Submit
                 </a>
             </section>
