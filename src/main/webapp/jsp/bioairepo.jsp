@@ -37,7 +37,7 @@
     <jsp:body>
 
         <div class="row">
-            <h3>BioAIrepo - AI model repository
+            <h3>BioAIrepo - AI model repository</h3>
         </div>
         <div class="row">
             <p>

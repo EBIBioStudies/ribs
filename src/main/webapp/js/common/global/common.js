@@ -1,5 +1,5 @@
 $(function() {
-    const specialCollections = ['bioimages', 'arrayexpress', 'biomodels'];
+    const specialCollections = ['bioimages', 'arrayexpress', 'biomodels', 'bioairepo'];
 
     function updateMenuForCollection(data) {
         if ($.inArray(collection.toLowerCase(), specialCollections)<0 &&
@@ -10,20 +10,6 @@ $(function() {
                 + '" title="' + data.title
                 + '">' + data.title + '</a></li>');
         }
-        if (collection.toLowerCase()==='bioairepo') {
-            reorderRepoTab(data)
-        }
-    }
-
-    function reorderRepoTab(data) {
-        var $navMenu = $('nav ul[data-description="navigational"]');
-        var $repoLi = $navMenu.find('a[title="' + data.title + '"]').closest('li');
-        // Move it to the end of the menu
-        $repoLi.appendTo($navMenu);
-        $repoLi.find('a').css({
-            'color': 'white',
-            'background-color': '#006dcc'
-        });
     }
 
     function showCollectionBanner(data, logoBaseUrl) {
@@ -237,6 +223,9 @@ function handleArrayExpressUI() {
 
 function handleBioAIRepoUI(){
     $('.menu.float-left li:contains("Home") a').text('BioAIRepo Home').attr('href',contextPath + '/bioairepo');
+    $('.menu.float-left li:contains("Browse") a').attr('href',contextPath + '/bioairepo/studies').attr('title','Browse BioAIRepo');
+    //$('.menu.float-left li a:contains("Submit")').attr('href','/bioimage-archive/submit');
+    $('.menu.float-left li:contains("Submit") a').attr('href', contextPath +'/bioairepo-submit')
     $('#local-title').html(
         '<h1><img src="' + contextPath + '/images/collections/bioairepo/logo.svg" width="50%" height="50%"/></h1>'
     );
