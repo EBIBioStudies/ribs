@@ -110,6 +110,10 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                     storageMode, (" " + document.get(Constants.Fields.ACCESS) + " ").toLowerCase().contains(" public "
             ), (key != null && !key.isEmpty()), collection);
 
+            if (fileMetaData.getHasKey()) {
+                fileMetaData.setSecKey(key);
+            }
+
             try {
                 fileMetaData.setThumbnail(false);
                 fileService.getDownloadFile(fileMetaData);

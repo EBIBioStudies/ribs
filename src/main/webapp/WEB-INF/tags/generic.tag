@@ -16,6 +16,9 @@
 <c:if test="${pathname.toLowerCase().endsWith('/arrayexpress') || pathname.toLowerCase().endsWith('/arrayexpress/')}">
     <c:set var="collection" value="arrayexpress"></c:set>
 </c:if>
+<c:if test="${pathname.toLowerCase().contains('bioairepo')}">
+    <c:set var="collection" value="bioairepo"></c:set>
+</c:if>
 <!doctype html>
 <html lang="en">
 <head>
