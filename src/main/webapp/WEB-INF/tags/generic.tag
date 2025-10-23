@@ -130,9 +130,9 @@
                 <!-- local-nav -->
                 <nav>
                     <ul class="dropdown menu float-left" data-description="navigational">
-                        <li class="${pagename.equals('/jsp/index.jsp')||pagename.equals('/jsp/arrayexpress.jsp')? 'active':''}" title="BioStudies v1.2.<spring:eval expression="@externalServicesConfig.gitCommitIdAbbrev"/>"><a href="${contextPath}/">Home</a></li>
+                        <li class="${pagename.equals('/jsp/index.jsp') || pagename.equals('/jsp/arrayexpress.jsp') || pagename.equals('/jsp/bioairepo.jsp') ? 'active':''}" title="BioStudies v1.2.<spring:eval expression="@externalServicesConfig.gitCommitIdAbbrev"/>"><a href="${contextPath}/">Home</a></li>
                         <li class="${pagename.equals('/jsp/search.jsp')? 'active':''}"><a href="${contextPath}/studies/" title="Browse BioStudies">Browse</a></li>
-                        <li class="${pagename.equals('/jsp/submit.jsp')? 'active':''}"><a href="${contextPath}/submit" title="Submit a study">Submit</a></li>
+                        <li class="${pagename.equals('/jsp/submit.jsp') || pagename.equals('/jsp/bioairepo-submit.jsp') ? 'active':''}"><a href="${contextPath}/submit" title="Submit a study">Submit</a></li>
                         <li class="${pagename.equals('/jsp/help.jsp')? 'active':''}"><a href="${contextPath}/${collection !=null ? collection.concat("/") : ''}help" title="Help">Help</a></li>
                         <li class="${pagename.equals('/jsp/about.jsp')? 'active':''}"><a id="about-link" href="${contextPath}/about" title="About BioStudies">About BioStudies</a></li>
                     </ul>
