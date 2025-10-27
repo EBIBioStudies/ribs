@@ -311,13 +311,13 @@ var Metadata = (function (_self) {
                     link.forEach(innerLink => {
                         const type = findTypeAttribute(innerLink.attributes);
                         if (type) {
-                            uniqueLinkTypes.add(type.toLowerCase());
+                            uniqueLinkTypes.add(type.trim().toLowerCase());
                         }
                     });
                 } else {
                     const type = findTypeAttribute(link.attributes);
                     if (type) {
-                        uniqueLinkTypes.add(type.toLowerCase());
+                        uniqueLinkTypes.add(type.trim().toLowerCase());
                     }
                 }
             });
