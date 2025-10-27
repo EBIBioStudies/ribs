@@ -2,6 +2,7 @@ var DetailPage = (function (_self) {
     _self.linkMap = {
         'pmc': 'https://europepmc.org/articles/{0}',
         'pmid': 'https://europepmc.org/abstract/MED/{0}',
+        'pubmed': 'https://europepmc.org/abstract/MED/{0}',
         'doi': 'https://dx.doi.org/{0}',
         'chembl': 'https://www.ebi.ac.uk/chembldb/compound/inspect/{0}',
         'ega': 'https://www.ebi.ac.uk/ega/studies/{0}',

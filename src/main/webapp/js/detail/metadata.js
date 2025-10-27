@@ -1,3 +1,6 @@
+// A global cache to keep the resources URL by resource, used to enrich links
+window.resolverCache = window.resolverCache || {};
+
 var Metadata = (function (_self) {
 
     var sectionTables=[];
@@ -167,9 +170,11 @@ var Metadata = (function (_self) {
         Extractedlinktable.render(data.accno, params);
         $('body').append('<div id="blocker"/><div id="tooltip"/>');
         drawSubsections();
-        createMainLinkTable();
+        preloadCache(data).then(() => {
+            createMainLinkTable();
+            handleLinkFilters();
+        });
         createDataTables();
-        handleLinkFilters();
         showRightColumn();
         handleSectionArtifacts();
         handleTableExpansion();
@@ -274,24 +279,134 @@ var Metadata = (function (_self) {
         });
     }
 
-     function createMainLinkTable() {
+    /**
+     * Preloads the global resolver cache with URLs for unique resource types found in the provided study data.
+     *
+     * This asynchronous function extracts all unique 'Type' attributes from links within subsections of the data,
+     * then queries the identifiers.org registry to fetch resource URLs associated with those types.
+     * It populates `window.resolverCache` with these URLs to optimize future lookups.
+     *
+     * @async
+     * @param {Object} data - The study metadata object expected to include subsections with links array.
+     * @returns {Promise<void>} Resolves once the cache is fully populated.
+     *
+     * @example
+     * await preloadCache(studyData);
+     * createMainLinkTable(); // safely run after cache is ready
+     */
+    async function preloadCache(data) {
+        const findTypeAttribute = (attributes) => {
+            if (!attributes) {
+                return undefined;
+            }
+            return attributes.find(a => "Type" === a.name)?.value;
+        }
+
+        const processLinks = (links) => {
+            if (!links) {
+                return;
+            }
+            links.forEach(link => {
+                if (Array.isArray(link)) {
+                    link.forEach(innerLink => {
+                        const type = findTypeAttribute(innerLink.attributes);
+                        if (type) {
+                            uniqueLinkTypes.add(type.trim().toLowerCase());
+                        }
+                    });
+                } else {
+                    const type = findTypeAttribute(link.attributes);
+                    if (type) {
+                        uniqueLinkTypes.add(type.trim().toLowerCase());
+                    }
+                }
+            });
+        }
+
+        const uniqueLinkTypes = new Set();
+
+        if (data?.links) {
+            processLinks(data.links)
+        }
+        if (data?.subsections) {
+            data.subsections.forEach(subsection => {
+                processLinks(subsection?.links)
+            })
+        }
+
+        window.resolverCache = window.resolverCache || {};
+
+        for (const type of uniqueLinkTypes) {
+            const cacheKey = type;
+
+            if (!window.resolverCache[cacheKey]) {
+                try {
+                    const data = await $.getJSON(
+                        `https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=${type}`
+                    );
+                    const resourcesUrl = data?._links?.resources?.href;
+                    if (!resourcesUrl) {
+                        console.warn(`No resources URL found for type: ${type}`);
+                        continue;
+                    }
+
+                    const resourceData = await $.getJSON(resourcesUrl);
+                    const resolvedResources = resourceData?._embedded?.resources || [];
+                    const ebi = resolvedResources.find(r => r?.providerCode === 'ebi');
+                    let url = ebi?.urlPattern;
+                    if (!url) {
+                        // No url found for EBI. Then use the first one available
+                        if (resolvedResources.length > 0) {
+                            url = resolvedResources[0].urlPattern;
+                        }
+                    }
+                    if (url) {
+                        window.resolverCache[cacheKey] = url;
+                    } else {
+                        console.warn(`No EBI resource URL found for type: ${type}`);
+                    }
+                } catch (error) {
+                    console.error(`Error preloading cache for type ${type}:`, error);
+                }
+            }
+        }
+    }
+
+    function createMainLinkTable() {
         //create external links for known link types
+
         var typeIndex = $('thead tr th',$("#link-list")).map(function(i,v) {if ( $(v).text().toLowerCase()==='type') return i;}).filter(isFinite)[0];
         $("tr",$("#link-list")).each( function (i,row) {
             if (i==0) return;
             var type =  $($('td',row)[typeIndex]).text().toLowerCase();
             var name = $($('td',row)[0]).text();
+            const cacheKey = type.trim().toLowerCase();
+
             var url = getURL(name, type);
+
             if (url) {
                 $($('td',row)[0]).wrapInner('<a href="'+ url.url +'" target="_blank">');
             } else {
-                $.getJSON( 'https://resolver.api.identifiers.org/'+type+':'+name , function (data) {
-                    if (data && data.payload && data.payload.resolvedResources) {
-                        var ebiResources = data.payload.resolvedResources.filter(function(o){return o?.providerCode==='ebi'});
-                        var url = (ebiResources.length ? ebiResources : data.payload.resolvedResources)[0].compactIdentifierResolvedUrl;
-                        $($('td',row)[0]).wrapInner('<a href="'+ url +'" target="_blank">');
-                    }
-                })
+                const cached = window.resolverCache[cacheKey];
+                if (cached) {
+                    const url = cached.replace("{$id}", name);
+                    $($('td',row)[0]).wrapInner(`<a href="${url}" target="_blank">`);
+                } else {
+                    $.getJSON( 'https://resolver.api.identifiers.org/'+type+':'+name , function (data) {
+                        if (data && data.payload && data.payload.resolvedResources) {
+
+                            const resolvedResources = data.payload.resolvedResources;
+                            const ebiResources = resolvedResources.filter(r => r?.providerCode==='ebi')
+                            const ebiResource = ebiResources.length > 0 ? ebiResources[0] : undefined;
+                            const ebiUrlPattern = ebiResource?.urlPattern
+                            if (ebiUrlPattern) {
+                                resolverCache[cacheKey] = ebiUrlPattern;
+                                const url = ebiUrlPattern.replace("{$id}", name);
+                                $($('td',row)[0]).wrapInner(`<a href="${url}" target="_blank">`);
+                            }
+                        }
+                    })
+                }
             }
             $($('td',row)[0]).addClass("overflow-name-column");
         });
