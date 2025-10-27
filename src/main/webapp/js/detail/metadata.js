@@ -302,27 +302,37 @@ var Metadata = (function (_self) {
             return attributes.find(a => "Type" === a.name)?.value;
         }
 
-        const uniqueLinkTypes = new Set();
-        if (!data?.subsections) {
-            console.warn("No subsections found in data");
-            return;
+        const processLinks = (links) => {
+            if (!links) {
+                return;
+            }
+            links.forEach(link => {
+                if (Array.isArray(link)) {
+                    link.forEach(innerLink => {
+                        const type = findTypeAttribute(innerLink.attributes);
+                        if (type) {
+                            uniqueLinkTypes.add(type.toLowerCase());
+                        }
+                    });
+                } else {
+                    const type = findTypeAttribute(link.attributes);
+                    if (type) {
+                        uniqueLinkTypes.add(type.toLowerCase());
+                    }
+                }
+            });
         }
 
-        data.subsections.forEach(subsection => {
-            if (subsection.links) {
-                subsection.links.forEach(link => {
-                    if (Array.isArray(link)) {
-                        link.forEach(innerLink => {
-                            const type = findTypeAttribute(innerLink.attributes);
-                            if (type) uniqueLinkTypes.add(type.toLowerCase());
-                        });
-                    } else {
-                        const type = findTypeAttribute(link.attributes);
-                        if (type) uniqueLinkTypes.add(type.toLowerCase());
-                    }
-                });
-            }
-        });
+        const uniqueLinkTypes = new Set();
+
+        if (data?.links) {
+            processLinks(data.links)
+        }
+        if (data?.subsections) {
+            data.subsections.forEach(subsection => {
+                processLinks(subsection?.links)
+            })
+        }
 
         window.resolverCache = window.resolverCache || {};
 
@@ -343,7 +353,13 @@ var Metadata = (function (_self) {
                     const resourceData = await $.getJSON(resourcesUrl);
                     const resolvedResources = resourceData?._embedded?.resources || [];
                     const ebi = resolvedResources.find(r => r?.providerCode === 'ebi');
-                    const url = ebi?.resourceHomeUrl;
+                    let url = ebi?.urlPattern;
+                    if (!url) {
+                        // No url found for EBI. Then use the first one available
+                        if (resolvedResources.length > 0) {
+                            url = resolvedResources[0].urlPattern;
+                        }
+                    }
                     if (url) {
                         window.resolverCache[cacheKey] = url;
                     } else {
@@ -365,6 +381,7 @@ var Metadata = (function (_self) {
             var type =  $($('td',row)[typeIndex]).text().toLowerCase();
             var name = $($('td',row)[0]).text();
             const cacheKey = type.trim().toLowerCase();
+
             var url = getURL(name, type);
 
             if (url) {
@@ -372,7 +389,8 @@ var Metadata = (function (_self) {
             } else {
                 const cached = window.resolverCache[cacheKey];
                 if (cached) {
-                    $($('td',row)[0]).wrapInner(`<a href="${cached}${name}" target="_blank">`);
+                    const url = cached.replace("{$id}", name);
+                    $($('td',row)[0]).wrapInner(`<a href="${url}" target="_blank">`);
                 } else {
                     $.getJSON( 'https://resolver.api.identifiers.org/'+type+':'+name , function (data) {
                         if (data && data.payload && data.payload.resolvedResources) {
@@ -380,11 +398,11 @@ var Metadata = (function (_self) {
                             const resolvedResources = data.payload.resolvedResources;
                             const ebiResources = resolvedResources.filter(r => r?.providerCode==='ebi')
                             const ebiResource = ebiResources.length > 0 ? ebiResources[0] : undefined;
-                            console.log("ebiResource", ebiResource)
-                            ebiResourceHomeUrl = ebiResource?.resourceHomeUrl
-                            if (ebiResourceHomeUrl) {
-                                resolverCache[cacheKey] = ebiResourceHomeUrl;
-                                $($('td',row)[0]).wrapInner(`<a href="${ebiResourceHomeUrl}${name}" target="_blank">`);
+                            const ebiUrlPattern = ebiResource?.urlPattern
+                            if (ebiUrlPattern) {
+                                resolverCache[cacheKey] = ebiUrlPattern;
+                                const url = ebiUrlPattern.replace("{$id}", name);
+                                $($('td',row)[0]).wrapInner(`<a href="${url}" target="_blank">`);
                             }
                         }
                     })
