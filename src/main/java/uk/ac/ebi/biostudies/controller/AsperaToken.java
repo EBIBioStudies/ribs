@@ -20,12 +20,8 @@ public class AsperaToken {
 
   @Autowired AsperaTokenGenerator tokenGenerator;
 
-  @RequestMapping(
-      value = "/aspera",
-      produces = STRING_UNICODE_MEDIA_TYPE,
-      method = RequestMethod.POST)
-  public ResponseEntity generateAsperaToken(
-      @RequestParam(value = "paths", required = true) String requestFiles) {
+  @RequestMapping(value = "/aspera", produces = STRING_UNICODE_MEDIA_TYPE, method = RequestMethod.POST)
+  public ResponseEntity generateAsperaToken(@RequestBody String requestFiles) {
     try {
       ObjectMapper mapper = new ObjectMapper();
       ArrayNode reqFileObject = (ArrayNode) mapper.readTree(requestFiles);

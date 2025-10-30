@@ -119,12 +119,19 @@ public class XSSFilter implements Filter {
      */
     public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
+        private final boolean isJson;
+
         public XSSRequestWrapper(HttpServletRequest request) {
             super(request);
+            String contentType = request.getContentType();
+            isJson = contentType != null && contentType.contains("application/json");
         }
 
         @Override
         public String[] getParameterValues(String parameter) {
+            if (isJson) {
+                return super.getParameterValues(parameter); // skip sanitizing for JSON requests
+            }
             String[] values = super.getParameterValues(parameter);
 
             if ("query".equals(parameter) && values != null) {
@@ -144,6 +151,9 @@ public class XSSFilter implements Filter {
 
         @Override
         public String getParameter(String parameter) {
+            if (isJson) {
+                return super.getParameter(parameter); // skip sanitizing for JSON requests
+            }
             String value = super.getParameter(parameter);
 
             if ("query".equals(parameter) && value != null) {
@@ -175,6 +185,10 @@ public class XSSFilter implements Filter {
 
         @Override
         public Map<String, String[]> getParameterMap() {
+            if (isJson) {
+                return super.getParameterMap(); // skip sanitizing for JSON requests
+            }
+
             Map<String, String[]> originalMap = super.getParameterMap();
             Map<String, String[]> sanitizedMap = new HashMap<>();
 
@@ -200,6 +214,9 @@ public class XSSFilter implements Filter {
 
         @Override
         public String getQueryString() {
+            if (isJson) {
+                return super.getQueryString();
+            }
             String queryString = super.getQueryString();
             return sanitizeInput(queryString);
         }
