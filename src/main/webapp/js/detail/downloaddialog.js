@@ -208,9 +208,11 @@ var DownloadDialog = (function (_self) {
     };
 
     fileControls.getTokenBeforeTransfer = function (transferSpec, connectSettings, download) {
-        $.post({
+        $.ajax({
             url: contextPath + '/api/v1/aspera',
-            data: {"paths": JSON.stringify(allPaths)},//
+            type: 'POST',
+            contentType: 'application/json',  // set content type for JSON body
+            data: JSON.stringify(allPaths),    // send JSON array/string as raw body
             success: function (response) {
                 token = response;
                 if (token != '')
