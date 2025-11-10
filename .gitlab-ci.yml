@@ -5,7 +5,7 @@ cache:
 
 stages:
   - build
-  - dockerify
+#  - dockerify
   - deploy
 
 variables:
@@ -75,20 +75,20 @@ build-branch:
     - mvn -Dmaven.test.skip=true clean install spring-boot:repackage
   when: manual
 
-push-docker-image:
-  image: docker
-  stage: dockerify
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  script:
-    - docker build --build-arg RUN_AS_USER=${RUN_AS_USER} --build-arg RUN_AS_GROUP=${RUN_AS_GROUP} -t ${DOCKER_IMAGE} -t ${CI_REGISTRY_IMAGE}:latest --no-cache .
-    - docker push ${DOCKER_IMAGE}
-    - docker push ${CI_REGISTRY_IMAGE}:latest
-    - docker rmi ${DOCKER_IMAGE}
-    - docker rmi ${CI_REGISTRY_IMAGE}:latest
-    - docker logout $CI_REGISTRY
-  only:
-    - master
+#push-docker-image:
+#  image: docker
+#  stage: dockerify
+#  before_script:
+#    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#  script:
+#    - docker build --build-arg RUN_AS_USER=${RUN_AS_USER} --build-arg RUN_AS_GROUP=${RUN_AS_GROUP} -t ${DOCKER_IMAGE} -t ${CI_REGISTRY_IMAGE}:latest --no-cache .
+#    - docker push ${DOCKER_IMAGE}
+#    - docker push ${CI_REGISTRY_IMAGE}:latest
+#    - docker rmi ${DOCKER_IMAGE}
+#    - docker rmi ${CI_REGISTRY_IMAGE}:latest
+#    - docker logout $CI_REGISTRY
+#  only:
+#    - master
 
 .deploy-k8s:
   stage: deploy
