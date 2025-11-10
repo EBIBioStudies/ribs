@@ -17,7 +17,7 @@ public class FtpRedirectFilter implements FileChainFilter{
     private IndexConfig indexConfig;
     @Override
     public boolean handleFile(FileMetaData fileMetaData, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (fireConfig.isFtpRedirectEnabled() && fileMetaData.isPublic() && !StudyUtils.isPageTabFile(fileMetaData.getAccession(), fileMetaData.getUiRequestedPath()) ) {
+        if (fireConfig.isFtpRedirectEnabled() && !StudyUtils.isPageTabFile(fileMetaData.getAccession(), fileMetaData.getUiRequestedPath()) ) {
             String url = indexConfig.getFtpOverHttpUrl(fileMetaData.getStorageMode());
             response.sendRedirect( url +"/" + fileMetaData.getRelativePath() + "/Files/" + (fileMetaData.getUnDecodedRequestedPath()!=null?fileMetaData.getUnDecodedRequestedPath(): fileMetaData.getUiRequestedPath()) );
             return true;
