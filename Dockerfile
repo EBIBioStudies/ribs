@@ -1,4 +1,4 @@
-FROM openjdk:12-alpine
+FROM amazoncorretto:17
 ARG RUN_AS_USER
 ARG RUN_AS_GROUP
 ENV USER=docker
