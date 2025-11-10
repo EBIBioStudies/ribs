@@ -5,7 +5,7 @@ cache:
 
 stages:
   - build
-  - dockerify
+#  - dockerify
   - deploy
 
 variables:
