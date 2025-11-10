@@ -4,7 +4,8 @@ ARG RUN_AS_GROUP
 ENV USER=docker
 ENV UID=$RUN_AS_USER
 ENV GID=$RUN_AS_GROUP
-RUN addgroup --gid "$GID" "$USER" \
+RUN yum install -y shadow-utils \
+   && addgroup --gid "$GID" "$USER" \
    && adduser \
    --disabled-password \
    --gecos "" \
