@@ -16,6 +16,11 @@ public class ExtractedLink {
     private String value;
     private String link;
 
+    /**
+     * This method used to process links from the direct response of the mining API.
+     * Now we use the data from a Link List
+     */
+    @Deprecated
     public static List<ExtractedLink> parseLinks(JsonNode msg){
         List<ExtractedLink> allLinks = new ArrayList<>();
         if(msg==null) return allLinks;
