@@ -57,8 +57,8 @@ public class IndexServiceImpl implements IndexService {
 
     public static final FieldType TYPE_NOT_ANALYZED = new FieldType();
     private static final BlockingQueue<String> indexFileQueue = new LinkedBlockingQueue<>();
-    public static AtomicInteger ActiveExecutorService = new AtomicInteger(0);
     private static final AtomicBoolean INDEX_SEARCHER_NEED_REFRESH = new AtomicBoolean(false);
+    public static AtomicInteger ActiveExecutorService = new AtomicInteger(0);
 
     static {
         TYPE_NOT_ANALYZED.setIndexOptions(IndexOptions.DOCS);
@@ -85,6 +85,8 @@ public class IndexServiceImpl implements IndexService {
     ParserManager parserManager;
     @Autowired
     ViewCountLoader viewCountLoader;
+    @Autowired
+    LinkListIndexService linkListIndexService;
 
 
     @Override
@@ -116,7 +118,7 @@ public class IndexServiceImpl implements IndexService {
                 }
 
                 JsonNode submission = mapper.readTree(parser);
-                executorService.execute(new JsonDocumentIndexer(submission, taxonomyManager, indexManager, fileIndexService, removeFileDocuments, parserManager));
+                executorService.execute(new JsonDocumentIndexer(submission, taxonomyManager, indexManager, fileIndexService, removeFileDocuments, parserManager, linkListIndexService));
                 if (++counter % 10000 == 0) {
                     logger.info("{} docs indexed", counter);
                 }
@@ -137,6 +139,7 @@ public class IndexServiceImpl implements IndexService {
             indexManager.commitTaxonomy();
             indexManager.getSearchIndexWriter().commit();
             indexManager.getFileIndexWriter().commit();
+            indexManager.getExtractedLinkIndexWriter().commit();
             indexManager.refreshIndexSearcherAndReader();
             indexManager.refreshTaxonomyReader();
             logger.info("Indexing lasted {} seconds", (System.currentTimeMillis() - startTime) / 1000);
@@ -166,7 +169,7 @@ public class IndexServiceImpl implements IndexService {
         ExecutorService executorService = new ThreadPoolExecutor(indexConfig.getThreadCount(), indexConfig.getThreadCount(),
                 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(indexConfig.getQueueSize()), new ThreadPoolExecutor.CallerRunsPolicy());
         ActiveExecutorService.incrementAndGet();
-        executorService.execute(new JsonDocumentIndexer(submission, taxonomyManager, indexManager, fileIndexService, removeFileDocuments, parserManager));
+        executorService.execute(new JsonDocumentIndexer(submission, taxonomyManager, indexManager, fileIndexService, removeFileDocuments, parserManager, linkListIndexService));
         executorService.shutdown();
         try {
             Map<String, String> commitData = new HashMap<>();
@@ -338,14 +341,17 @@ public class IndexServiceImpl implements IndexService {
         private final FileIndexService fileIndexService;
         private final boolean removeFileDocuments;
         private final ParserManager parserManager;
+        private final LinkListIndexService linkListIndexService;
 
-        public JsonDocumentIndexer(JsonNode json, TaxonomyManager taxonomyManager, IndexManager indexManager, FileIndexService fileIndexService, boolean removeFileDocuments, ParserManager parserManager) {
+        public JsonDocumentIndexer(JsonNode json, TaxonomyManager taxonomyManager, IndexManager indexManager, FileIndexService fileIndexService, boolean removeFileDocuments, ParserManager parserManager,
+            LinkListIndexService linkListIndexService) {
             this.json = json;
             this.taxonomyManager = taxonomyManager;
             this.indexManager = indexManager;
             this.removeFileDocuments = removeFileDocuments;
             this.parserManager = parserManager;
             this.fileIndexService = fileIndexService;
+          this.linkListIndexService = linkListIndexService;
         }
 
         @Override
@@ -394,7 +400,17 @@ public class IndexServiceImpl implements IndexService {
                     appendFileAttsToContent(valueMap);
                 }
                 valueMap.put(Constants.File.FILE_ATTS, columnSet);
-                updateDocument(valueMap);
+                Document indexedDocument = updateDocument(valueMap);
+
+                // Index the extracted links
+                linkListIndexService.indexExtractedLinkList(accession,
+                    indexedDocument,
+                    (String) valueMap.get(Fields.RELATIVE_PATH),
+                    json,
+                    null,
+                    valueMap.getOrDefault(Fields.ACCESS, "").toString().toLowerCase().contains(PUBLIC),
+                    valueMap.getOrDefault(Fields.SECRET_KEY, "").toString()
+                    );
 
             } catch (Exception ex) {
                 logger.debug("problem in parser for parsing accession: {}!", accession, ex);
@@ -421,7 +437,7 @@ public class IndexServiceImpl implements IndexService {
             }
         }
 
-        private void updateDocument(Map<String, Object> valueMap) throws IOException {
+        private Document updateDocument(Map<String, Object> valueMap) throws IOException {
             Document doc = new Document();
 
             //TODO: replace by classes if possible
@@ -471,6 +487,9 @@ public class IndexServiceImpl implements IndexService {
 
             indexManager.getPagetabIndexWriter().deleteDocuments(new Term(Fields.ACCESSION, valueMap.get(Fields.ACCESSION).toString().toLowerCase()));
             indexManager.getSearchIndexWriter().updateDocument(new Term(Fields.ID, valueMap.get(Fields.ACCESSION).toString()), facetedDocument);
+
+            // Return the document that was just indexed
+            return facetedDocument;
 
         }
 
