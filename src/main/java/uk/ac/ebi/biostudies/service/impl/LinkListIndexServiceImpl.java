@@ -14,9 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.biostudies.api.util.ExtractedLink;
 import uk.ac.ebi.biostudies.service.LinkListIndexService;
+import uk.ac.ebi.biostudies.service.TextMiningLinkUpdater;
 
 /**
  * Implementation of {@link LinkListIndexService} responsible for indexing link lists associated
@@ -39,15 +42,19 @@ import uk.ac.ebi.biostudies.service.LinkListIndexService;
  * @see ExtractedLink
  * @see LinkListExtractor
  */
+@Component
 public class LinkListIndexServiceImpl implements LinkListIndexService {
 
   private static final Logger LOGGER =
       LogManager.getLogger(LinkListIndexServiceImpl.class.getName());
 
   private final LinkListExtractor linkListExtractor;
+  private final TextMiningLinkUpdater textMiningLinkUpdater;
 
-  public LinkListIndexServiceImpl(LinkListExtractor linkListExtractor) {
+  public LinkListIndexServiceImpl(
+      LinkListExtractor linkListExtractor, TextMiningLinkUpdater textMiningLinkUpdater) {
     this.linkListExtractor = linkListExtractor;
+    this.textMiningLinkUpdater = textMiningLinkUpdater;
   }
 
   /**
@@ -72,6 +79,7 @@ public class LinkListIndexServiceImpl implements LinkListIndexService {
    * processes each extracted link for indexing.
    *
    * @param accession the accession identifier of the submission
+   * @param ownerDocument the document that was just indexed (may not be committed yet)
    * @param relativePath the path relative to the submission where the extracted links file is
    *     located
    * @param json submission metadata as a JSON node
@@ -82,6 +90,7 @@ public class LinkListIndexServiceImpl implements LinkListIndexService {
   @Override
   public void indexExtractedLinkList(
       String accession,
+      Document ownerDocument,
       String relativePath,
       JsonNode json,
       IndexWriter writer,
@@ -89,18 +98,21 @@ public class LinkListIndexServiceImpl implements LinkListIndexService {
       String secretKey) {
     LOGGER.info("Indexing extracted link lists for accession {}", accession);
 
+    if (accession == null || accession.trim().isEmpty()) {
+      throw new IllegalArgumentException("Accession cannot be null or empty");
+    }
+    if (ownerDocument == null) {
+      throw new IllegalArgumentException("Owner document cannot be null");
+    }
+
     try {
       List<ExtractedLink> extractedLinks =
           readExtractedLinks(accession, relativePath, json, isPublicStudy, secretKey);
-      for (ExtractedLink extractedLink : extractedLinks) {
-        // TODO: Actual logic to index
-        System.out.println(
-            extractedLink.getLink()
-                + " - "
-                + extractedLink.getType()
-                + " - "
-                + extractedLink.getValue());
+
+      if (!extractedLinks.isEmpty()) {
+        textMiningLinkUpdater.indexExtractedLinks(accession, ownerDocument, extractedLinks);
       }
+
     } catch (FileNotFoundException fnfe) {
       LOGGER.error("Unable to find extracted link list file for accession {}", accession, fnfe);
     } catch (Exception e) {
@@ -129,8 +141,8 @@ public class LinkListIndexServiceImpl implements LinkListIndexService {
             accession, relativePath, json, isPublicStudy, secretKey);
 
     if (input == null) {
-      throw new FileNotFoundException(
-          String.format("Extracted links input stream is null for accession %s", accession));
+      // No extracted links file for the accession
+      return allLinks;
     }
 
     populateLinks(input, allLinks);
@@ -187,6 +199,7 @@ public class LinkListIndexServiceImpl implements LinkListIndexService {
     String typeValue = null;
     String valueValue = null;
     String filenameValue = null;
+    String linkValue = null;
 
     if (attributes != null && attributes.isArray()) {
       for (JsonNode attr : attributes) {
@@ -207,6 +220,12 @@ public class LinkListIndexServiceImpl implements LinkListIndexService {
       }
     }
 
+    linkValue = jsonNode.path("url").asText();
+
+    if (linkValue == null) {
+      throw new IllegalArgumentException("linkValue is null");
+    }
+
     if (typeValue == null) {
       throw new IllegalArgumentException("typeValue is null");
     }
@@ -220,7 +239,9 @@ public class LinkListIndexServiceImpl implements LinkListIndexService {
     ExtractedLink extractedLink = new ExtractedLink();
     extractedLink.setType(typeValue);
     extractedLink.setValue(valueValue);
-    extractedLink.setLink(filenameValue);
+    extractedLink.setLink(linkValue);
+
+    extractedLink.setFileName(filenameValue);
 
     return extractedLink;
   }

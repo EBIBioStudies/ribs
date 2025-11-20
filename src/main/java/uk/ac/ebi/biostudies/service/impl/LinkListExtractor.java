@@ -22,11 +22,10 @@ import uk.ac.ebi.biostudies.service.file.FileMetaData;
 public class LinkListExtractor {
 
   /**
-   * JSONPath to locate the filename of the link list containing the extracted links. Searches
-   * subsections for type "ExtractedLinks" and the attribute named "Link List".
+   * JSONPath to locate the filename of the link list containing the extracted links..
    */
   private static final String EXTRACTED_LINKS_JSON_PATH =
-      "$.section.subsections[*][*][?(@.type=='ExtractedLinks')].attributes[?(@.name=='Link List')].value";
+      "$.section.sections[?(@.type=='ExtractedLinks')].linkList.fileName";
 
   private static final Logger LOGGER = LogManager.getLogger(LinkListExtractor.class.getName());
 
@@ -109,6 +108,12 @@ public class LinkListExtractor {
       return null;
     }
     String name = values.get(0);
+
+    // Check if name is null or empty before processing
+    if (name == null || name.trim().isEmpty()) {
+      return null;
+    }
+
     // Make sure file ends with '.json'
     return name.toLowerCase().endsWith(".json") ? name : name + ".json";
   }

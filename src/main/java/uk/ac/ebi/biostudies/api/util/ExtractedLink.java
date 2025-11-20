@@ -15,6 +15,7 @@ public class ExtractedLink {
     private String type;
     private String value;
     private String link;
+    private String fileName;
 
     /**
      * This method used to process links from the direct response of the mining API.
@@ -62,5 +63,13 @@ public class ExtractedLink {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

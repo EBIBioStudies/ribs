@@ -1,7 +1,9 @@
 package uk.ac.ebi.biostudies.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
+import org.springframework.stereotype.Component;
 
 /**
  * Defines the contract for indexing link lists.
@@ -11,6 +13,7 @@ import org.apache.lucene.index.IndexWriter;
  * links. Implementations of this interface should provide logic to index the links represented in
  * this format.
  */
+@Component
 public interface LinkListIndexService {
   /**
    * Locates and indexes all link lists attached to the given submission, except for the "Extracted
@@ -31,6 +34,7 @@ public interface LinkListIndexService {
    * index accordingly.
    *
    * @param accession the accession identifier for the submission
+   * @param ownerDocument the document that was just indexed (may not be committed yet)
    * @param relativePath the path (relative to the submission) to the extracted links file
    * @param json the metadata of the submission as a JSON node
    * @param writer the index writer used for indexing operations
@@ -39,6 +43,7 @@ public interface LinkListIndexService {
    */
   void indexExtractedLinkList(
       String accession,
+      Document ownerDocument,
       String relativePath,
       JsonNode json,
       IndexWriter writer,
