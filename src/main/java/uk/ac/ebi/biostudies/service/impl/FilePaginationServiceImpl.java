@@ -298,16 +298,72 @@ public class FilePaginationServiceImpl implements FilePaginationService {
         return logicQueryBuilder.build();
     }
 
+    /**
+     * Adds the secret key to the study information JSON if the requester has permission to access
+     * private study data.
+     *
+     * <p>This method checks access permissions using {@link #canShareStudy(ObjectNode, Document, String)}
+     * and, if access is granted, adds the study's secret key to the {@code studyInfo} object. The secret
+     * key enables privileged operations such as viewing unreleased data or modifying the study.
+     *
+     * <p>The secret key is only added if it exists in the document. If access is denied or the secret
+     * key field is not present, the {@code studyInfo} object remains unchanged.
+     *
+     * @param studyInfo the JSON object representing study metadata that will be enriched with the
+     *                  secret key if access is granted
+     * @param doc the Lucene document containing the indexed study data, including the secret key field
+     * @param secretKey the secret key provided by the requester for validation (may be null for
+     *                  authentication-based access)
+     */
     private void setPrivateData(ObjectNode studyInfo, Document doc, String secretKey) {
-        User currentUser = Session.getCurrentUser();
-        if (studyInfo.has("released") && studyInfo.get("released").asLong() > new Date().getTime() && currentUser != null
-            || (doc.get("seckey").equals(secretKey) )
-        ) {
+        if (canShareStudy(studyInfo, doc, secretKey)) {
             IndexableField key = doc.getField(Constants.Fields.SECRET_KEY);
             if (key != null) {
                 studyInfo.put(Constants.Fields.SECRET_KEY, key.stringValue());
             }
         }
+    }
+
+    /**
+     * Determines if the current user or requester can access and share private study information.
+     *
+     * <p>Access is granted under the following conditions:
+     * <ul>
+     *   <li>The provided secret key matches the document's secret key (grants access to anyone)</li>
+     *   <li>The current user is authenticated AND the study is unreleased (no release date set,
+     *       release date is null, or release date is in the future)</li>
+     * </ul>
+     *
+     * @param studyInfo the JSON object containing study metadata, particularly the "released" field
+     * @param doc the Lucene document containing the indexed study data with the secret key
+     * @param secretKey the secret key provided by the requester (may be null for public access attempts)
+     * @return {@code true} if the study's private information can be shared with the requester,
+     *         {@code false} otherwise
+     */
+    private boolean canShareStudy(ObjectNode studyInfo, Document doc, String secretKey) {
+        User currentUser = Session.getCurrentUser();
+
+        // Anyone with the correct secret key can access the study
+        String docSecretKey = doc.get("seckey");
+        if (secretKey != null && secretKey.equals(docSecretKey)) {
+            return true;
+        }
+
+        // For authenticated users, check release date conditions
+        if (currentUser != null) {
+            // Grant access if no release date is set or if it's null
+            // (indicates study is not yet ready for public release)
+            if (!studyInfo.hasNonNull("released")) {
+                return true;
+            }
+
+            // Grant access if the release date is in the future
+            // (study is scheduled for future release but not yet public)
+            return studyInfo.get("released").asLong() > new Date().getTime();
+        }
+
+        // No access for unauthenticated users without secret key
+        return false;
     }
 
     private void generateDownloadAllFilePaths(TopDocs hits, ArrayNode filePaths, IndexReader reader) {
