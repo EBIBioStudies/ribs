@@ -1,0 +1,19 @@
+[
+  {
+    "url": "http://purl.uniprot.org/uniprot/O14735",
+    "attributes": [
+      {
+        "name": "type",
+        "value": "Gene/Protein"
+      },
+      {
+        "name": "value",
+        "value": "Interleukin-6"
+      },
+      {
+        "name": "filename",
+        "value": "12284_2021_524_MOESM1_ESM.docx"
+      }
+    ]
+  }
+]

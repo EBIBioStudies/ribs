@@ -15,7 +15,13 @@ public class ExtractedLink {
     private String type;
     private String value;
     private String link;
+    private String fileName;
 
+    /**
+     * This method used to process links from the direct response of the mining API.
+     * Now we use the data from a Link List
+     */
+    @Deprecated
     public static List<ExtractedLink> parseLinks(JsonNode msg){
         List<ExtractedLink> allLinks = new ArrayList<>();
         if(msg==null) return allLinks;
@@ -57,5 +63,13 @@ public class ExtractedLink {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

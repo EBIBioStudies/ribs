@@ -71,7 +71,15 @@ public class FileIndexServiceImpl implements FileIndexService {
             doc.add(new StoredField(Constants.File.SIZE, size));
         } else if (fNode.has(Constants.File.FILE_SIZE)) {
             // parse format mongodb
-            size = Long.valueOf(fNode.get(Constants.File.FILE_SIZE).asText());
+            if (fNode.get(Constants.File.FILE_SIZE).isObject()) {
+                if (fNode.get(Constants.File.FILE_SIZE).hasNonNull("$numberLong")) {
+                    size = Long.valueOf(fNode.get(Constants.File.FILE_SIZE).get("$numberLong").asText());
+                } else {
+                    size = 0L;
+                }
+            } else {
+                size = Long.valueOf(fNode.get(Constants.File.FILE_SIZE).asText());
+            }
             doc.add(new SortedNumericDocValuesField(Constants.File.SIZE, size));
             doc.add(new StoredField(Constants.File.SIZE, size));
         }
