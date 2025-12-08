@@ -62,13 +62,16 @@
         </h5>
         <p class="justify">We welcome submissions of life sciences AI models and the associated
             datasets.
-            Specialised BioAIrepo submission support is in development - at the moment please
-            use the "Default" BioStudies submission template, set the dataset release in future
-            so that it immediately does not become public, and write to <a
-                    href="mailto:biostudies@ebi.ac.uk">biostudies@ebi.ac.uk</a>.
-            More information on BioStudies submissions is available at
-            <a href="https://www.ebi.ac.uk/biostudies/submit">https://www.ebi.ac.uk/biostudies/submit.</a>
         </p>
+        <p class="justify">While dedicated BioAIrepo submission support is still in development, please follow these steps:
+        </p>
+        <ol>
+            <li>Use the "Default" BioStudies submission template</li>
+            <li>Set the dataset release date in the future so that your submission does not become public immediately</li>
+            <li>After submitting, email <a
+                    href="mailto:biostudies@ebi.ac.uk">biostudies@ebi.ac.uk</a> and request including your submission into BioAIrepo</li>
+            <li>For general guidance, visit the <a href="https://www.ebi.ac.uk/biostudies/submit">BioStudies submissions page</a></li>
+        </ol>
 
         <p class="justify">
             Alternatively, contact us at <a
