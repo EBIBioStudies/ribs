@@ -814,14 +814,23 @@ var Metadata = (function (_self) {
                 thorApplicationNamespace.loadClaimingInfo();
             });
     }
-
+    
     function handleImageURLs() {
-// handle image URLs
-        $(".sub-attribute:contains('Image URL')").each(function () {
-            var url = $(this).parent().clone().children().remove().end().text();
-            $(this).parent().html('<img class="url-image" src="' + url + '"/>');
+        // Find all spans whose data-type is "Image URL"
+        $("span.bs-value span[data-type='Image%20URL']").each(function () {
+            // The anchor inside holds the image URL
+            var $link = $(this).find("a").first();
+            var url = $link.attr("href");
+
+            if (url) {
+                // Replace the whole bs-value content with an image
+                $(this)
+                .closest(".bs-value")
+                .html('<img class="url-image" src="' + url + '" alt="Image" />');
+            }
         });
     }
+
     _self.clearLinkFilter = clearLinkFilter;
     return _self;
 })(Metadata || {});
