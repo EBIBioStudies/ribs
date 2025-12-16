@@ -65,7 +65,7 @@ var DownloadDialog = (function (_self) {
         for (let filename of filelist) {
             const url = (loadByServer ? (window.contextPath + '/files/' + acc + '/') : (ftpURL + "Files/"))   + unescape(encodeURIComponent(filename)).replaceAll('#', '%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
                     .replaceAll("[", "%5B").replaceAll("]", "%5D")
-                // + (key ? '?key=' + key : '');
+                 + (key ? '?key=' + key : '');
             $('#downloadMessage').text("Downloading " + filename + " (0%)");
             abortController = new AbortController();
             const response = await fetch(url, {signal: abortController.signal}).catch(function (err) {
