@@ -11,6 +11,12 @@ var Metadata = (function (_self) {
     var sectionLinkCount = {};
     let sectionColIndex = -1;
 
+    function getAccession() {
+        const pathname = window.location.pathname;
+        const slashOffset = pathname[pathname.length - 1] === '/';
+        const parts = pathname.split('/');
+        return parts[parts.length - 1 - (slashOffset ? 1 : 0)].toUpperCase();
+    }
 
     function handlePageData(pageData, params, accession, template) {
 
@@ -113,9 +119,7 @@ var Metadata = (function (_self) {
         // Prepare template
         var templateSource = $('script#study-template').html();
         var template = Handlebars.compile(templateSource);
-        var slashOffset = window.location.pathname[window.location.pathname.length - 1] === '/';
-        var parts = window.location.pathname.split('/');
-        var accession = parts[parts.length - 1 - slashOffset].toUpperCase();
+        const accession = getAccession();
         var url = contextPath + '/api/v2/' + (accession.startsWith("A-") ? 'arrays/' : accession.startsWith("C-") ? 'compounds/' : 'studies/') + accession;
         var params = getParams();
 
@@ -185,6 +189,7 @@ var Metadata = (function (_self) {
         handleORCIDIntegration();
         handleSimilarStudies(data.type);
         handleImageURLs();
+        handleImageFiles(params, data);
         handleCollectionBasedScriptInjection();
         handleTableCentering();
         handleCitation(data.accno);
@@ -827,6 +832,27 @@ var Metadata = (function (_self) {
                 $(this)
                 .closest(".bs-value")
                 .html('<img class="url-image" src="' + url + '" alt="Image" />');
+            }
+        });
+    }
+
+    function handleImageFiles(params, data) {
+        const accession = getAccession();
+
+        // Find all spans whose data-type is "Image file"
+        $("span.bs-value span[data-type='Image%20file']").each(function () {
+            // Get the text content inside the span (e.g., "cover.png")
+            const fileName = $(this).text().trim();
+
+            if (fileName) {
+                const href=
+                    (loadByServer? (window.contextPath + '/files/' + accession + '/') : (ftpURL + 'Files/')) + unescape(encodeURIComponent(fileName)).replaceAll('#', '%23').replaceAll("+", "%2B").replaceAll("=", "%3D").replaceAll("@", "%40").replaceAll("$", "%24")
+                    .replaceAll("[", "%5B").replaceAll("]", "%5D")
+                    + (params.key ? '?key=' + params.key : '');
+                // Replace the whole bs-value content with an image
+                $(this)
+                .closest(".bs-value")
+                .html('<img class="url-image" src="' + href + '" alt="Image" />');
             }
         });
     }
