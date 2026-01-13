@@ -90,18 +90,18 @@ build-branch:
 #  only:
 #    - master
 
-.deploy-k8s:
-  stage: deploy
-  image: alpine:latest
-  script:
-    - apk add --no-cache curl gettext
-    - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-    - chmod +x ./kubectl
-    - mv ./kubectl /usr/local/bin/kubectl
-    - cd ci
-    - cat "$APP_CONFIG" | kubectl apply -f -
-    - envsubst < deployment.tmpl | kubectl apply -f -
-    - kubectl rollout restart statefulset "$LABEL" -n "$NAMESPACE"
+#.deploy-k8s:
+#  stage: deploy
+#  image: alpine:latest
+#  script:
+#    - apk add --no-cache curl gettext
+#    - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+#    - chmod +x ./kubectl
+#    - mv ./kubectl /usr/local/bin/kubectl
+#    - cd ci
+#    - cat "$APP_CONFIG" | kubectl apply -f -
+#    - envsubst < deployment.tmpl | kubectl apply -f -
+#    - kubectl rollout restart statefulset "$LABEL" -n "$NAMESPACE"
 
 deploy-branch:
     <<: *deploy-template
