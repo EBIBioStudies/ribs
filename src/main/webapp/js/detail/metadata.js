@@ -269,20 +269,40 @@ var Metadata = (function (_self) {
     }
 
     function createDataTables() {
-        $(".section-table").each(function () {
-            var dt = $(this).DataTable({
-                "dom": "t",
+
+        $(".section-table").each(function (idx) {
+            var $table = $(this);
+            var theadThCount = $table.find("thead th").length;
+
+            // Skip tables that didn't render any headers – prevents DataTables_Table_0
+            if (theadThCount === 0) {
+                console.warn("Skipping DataTable init for section-table without headers", idx);
+                return;
+            }
+
+            // Remove any previous DT instance on this exact table, if present
+            if ($.fn.dataTable.isDataTable($table)) {
+                $table.DataTable().destroy(true);
+            }
+
+            var dt = $table.DataTable({
+                dom: "t",
                 paging: false,
-                "initComplete": function(settings) {
-                    var api = new $.fn.dataTable.Api( settings );
+                initComplete: function (settings) {
+                    var api = new $.fn.dataTable.Api(settings);
                     api.columns().every(function () {
-                        if (this.data().join('')==='' ) this.visible(false)
+                        var joined = this.data().join('');
+                        if (joined === '') {
+                            this.visible(false);
+                        }
                     });
                 }
             });
+
             sectionTables.push(dt);
         });
     }
+
 
     /**
      * Preloads the global resolver cache with URLs for unique resource types found in the provided study data.
