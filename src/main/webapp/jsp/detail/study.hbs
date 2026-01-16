@@ -69,7 +69,7 @@
                                                 </ul>
                                             {{/ifCond}}
                                         {{else}}
-                                            <b>{{@key}}:</b> {{this}}<br/>
+                                          {{#if (notEmpty this)}}<b>{{@key}}:</b> {{this}}<br/>{{/if}}
                                         {{/ifCond}}
                                     {{/ifCond}}
                                 {{/each}}
