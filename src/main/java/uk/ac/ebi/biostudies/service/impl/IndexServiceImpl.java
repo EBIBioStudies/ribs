@@ -361,6 +361,7 @@ public class IndexServiceImpl implements IndexService {
             try {
                 ReadContext jsonPathContext = JsonPath.parse(json.toString());
                 accession = parserManager.getParser(Fields.ACCESSION).parse(valueMap, json, jsonPathContext);
+                logger.info("Indexing single submission {} ", accession);
                 parserManager.getParser(Fields.SECRET_KEY).parse(valueMap, json, jsonPathContext);
                 for (JsonNode fieldMetadataNode : indexManager.getIndexDetails().findValue(PUBLIC)) {//parsing common "public" facet and fields
                     AbstractParser abstractParser = parserManager.getParser(fieldMetadataNode.get("name").asText());
@@ -411,6 +412,7 @@ public class IndexServiceImpl implements IndexService {
                     valueMap.getOrDefault(Fields.ACCESS, "").toString().toLowerCase().contains(PUBLIC),
                     valueMap.getOrDefault(Fields.SECRET_KEY, "").toString()
                     );
+                logger.info("Indexing single submission {} completed", accession);
 
             } catch (Exception ex) {
                 logger.debug("problem in parser for parsing accession: {}!", accession, ex);
