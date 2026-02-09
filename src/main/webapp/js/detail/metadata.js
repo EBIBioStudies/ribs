@@ -18,82 +18,134 @@ var Metadata = (function (_self) {
         return parts[parts.length - 1 - (slashOffset ? 1 : 0)].toUpperCase();
     }
 
+    function cleanSectionAttributes(section) {
+        if (!section) return section;
+
+        // Filter attributes at current level
+        if (section.attributes && Array.isArray(section.attributes)) {
+            section.attributes = section.attributes.filter(attr =>
+                attr.value !== null &&
+                attr.value !== undefined &&
+                attr.value !== ""
+            );
+        }
+
+        // Recursively clean subsections - check both "subsections" and "sections"
+        const childSections = section.subsections || section.sections;
+        if (childSections && Array.isArray(childSections)) {
+            childSections.forEach(childSection => {
+                cleanSectionAttributes(childSection);
+            });
+        }
+
+        return section;
+    }
+
+
+
     function handlePageData(pageData, params, accession, template) {
+        // Normalize v0 format
+        if (!pageData.accno && pageData.submissions) {
+            pageData = pageData.submissions[0];
+        }
 
-        if (!pageData.accno && pageData.submissions) pageData = pageData.submissions[0]; // for v0, when everything was a submission
-
-        // Redirect to collection page if accession is a collection
-        if (pageData.section.type.toLowerCase() === 'collection' || pageData.section.type.toLowerCase() === 'project') {
-            location.href = contextPath + '/' + pageData.accno + '/studies' + (params.key ? '?key=' + params.key : '');
+        // Redirect to collection page if needed
+        if (['collection', 'project'].includes(pageData.section.type.toLowerCase())) {
+            location.href = `${contextPath}/${pageData.accno}/studies${params.key ? '?key=' + params.key : ''}`;
             return;
         }
 
+        // Set key parameter
         if (params.key) {
             pageData.section.keyString = '?key=' + params.key;
         }
 
-        // Set accession
-        if (pageData.accNo && !pageData.accno) pageData.accno = pageData.accNo; // copy accession attribute
+        // Normalize accession
+        if (pageData.accNo && !pageData.accno) {
+            pageData.accno = pageData.accNo;
+        }
         $('#accession').text(pageData.accno);
         pageData.section.accno = pageData.accno;
         pageData.section.accessTags = pageData.accessTags;
 
-        var title = pageData.accno, releaseDate = '';
-        var isCollectionCorrect = false;
-        var lastCollection;
+        let title = null;
+        let releaseDate = '';
+        let isCollectionCorrect = false;
+        let lastCollection;
 
-        if (pageData.attributes) { //v1
-            pageData.attributes.forEach(function(v, i) {
-                if (v.name.trim() === 'AttachTo') {
-                    if (v.value.toLowerCase() === collection.toLowerCase())
+        // Process attributes (v1 format)
+        if (pageData.attributes) {
+            // Check collection validity
+            pageData.attributes.forEach(attr => {
+                if (attr.name.trim() === 'AttachTo') {
+                    if (attr.value.toLowerCase() === collection.toLowerCase()) {
                         isCollectionCorrect = true;
-                    lastCollection = v.value;
+                    }
+                    lastCollection = attr.value;
                 }
             });
-            // Redirect if collection of study does not match collection in URL
-            if (!isCollectionCorrect && lastCollection && !accession.startsWith('C-') && !accession[0].startsWith('A-')) {
-                location.href = contextPath + '/' + lastCollection.toLowerCase() + '/studies/' + accession + (params.key ? '?key=' + params.key : '');
+
+            // Handle collection redirects
+            if (!isCollectionCorrect && lastCollection && !accession.startsWith('C-') && !accession.startsWith('A-')) {
+                location.href = `${contextPath}/${lastCollection.toLowerCase()}/studies/${accession}${params.key ? '?key=' + params.key : ''}`;
                 return;
             } else if (collection && collection !== '' && !lastCollection) {
-                location.href = contextPath + '/studies/' + accession + (params.key ? '?key=' + params.key : '');
+                location.href = `${contextPath}/studies/${accession}${params.key ? '?key=' + params.key : ''}`;
                 return;
             }
 
-            if (location.href.toLowerCase().indexOf(collection.toLowerCase()) < 0)
+            if (location.href.toLowerCase().indexOf(collection.toLowerCase()) < 0) {
                 handleProjectSpecificUI();
-            title = pageData?.attributes.filter(function(v, i) {
-                return v.name.trim() === 'Title';
-            });
-            pageData?.attributes.forEach(function(v, i) {
-                if (v.name.trim() === 'ReleaseDate') {
-                    releaseDate = v.value;
-                }
-            });
-        } else { //extended json
+            }
+
+            // Extract title
+            const titleAttrs = pageData.attributes.filter(attr => attr.name.trim() === 'Title');
+            if (titleAttrs.length > 0 && titleAttrs[0].value) {
+                title = titleAttrs[0].value;
+            }
+
+            // Extract release date
+            const releaseDateAttr = pageData.attributes.find(attr => attr.name.trim() === 'ReleaseDate');
+            if (releaseDateAttr?.value) {
+                releaseDate = releaseDateAttr.value;
+            }
+        } else {
+            // Extended JSON format
             if (pageData.releaseTime) {
                 releaseDate = pageData.releaseTime.substr(0, 10);
             }
         }
+
         pageData.section.releaseDate = releaseDate;
 
-        if (pageData.section) {
-            if (!pageData.section.attributes) pageData.section.attributes = [];
-            if (!pageData.section.attributes.filter((v) => v.name.trim() === 'Title').length) {
-                pageData.section.attributes.push({ name: 'Title', value: title[0] ? title[0].value : "" });
-            }
-            // Copy DOI
-            const dois = pageData?.attributes.filter((v) => v.name.trim() === 'DOI');
-            if (dois && dois.length) {
-                pageData.section.doi = dois[0].value;
-            }
-            pageData.section.isFromSubmissionTool = document.referrer.toLowerCase().indexOf("ebi.ac.uk/biostudies/submissions/") > 0
-                && $('#logout-button') && $('#logout-button').text().trim().startsWith("Logout");
+        // Initialize attributes array if needed
+        if (!pageData.section.attributes) {
+            pageData.section.attributes = [];
         }
 
-        if (['', 'bioimages', 'sourcedata'].indexOf(collection.toLowerCase()) >= 0
-            && !pageData.section.attributes.find(attr => attr?.name?.toLowerCase() === 'license')) {
-            if (!pageData.section.attributes) pageData.section.attributes = [];
-            pageData.section?.attributes.push({
+        // Add Title attribute if missing and valid
+        const hasTitle = pageData.section.attributes.some(attr => attr.name.trim() === 'Title');
+        if (!hasTitle && title) {
+            pageData.section.attributes.push({ name: 'Title', value: title });
+        }
+
+        // Copy DOI
+        const doiAttr = pageData.attributes?.find(attr => attr.name.trim() === 'DOI');
+        if (doiAttr?.value) {
+            pageData.section.doi = doiAttr.value;
+        }
+
+        // Check if from submission tool
+        pageData.section.isFromSubmissionTool =
+            document.referrer.toLowerCase().includes("ebi.ac.uk/biostudies/submissions/") &&
+            $('#logout-button').text().trim().startsWith("Logout");
+
+        // Add License for specific collections
+        const needsLicense = ['', 'bioimages', 'sourcedata'].includes(collection.toLowerCase());
+        const hasLicense = pageData.section.attributes.some(attr => attr.name?.toLowerCase() === 'license');
+
+        if (needsLicense && !hasLicense) {
+            pageData.section.attributes.push({
                 name: "License",
                 value: "<span title='Historically the majority of EMBL-EBI data " +
                     "resources use institute&#39;s Terms of Use (see below) detailing our commitment to open science and " +
@@ -103,16 +155,23 @@ var Metadata = (function (_self) {
                     "to this dataset, being most in line with the spirit of EMBL-EBI’s Terms of Use. " +
                     "Contact biostudies@ebi.ac.uk for further clarifications.'>CC0 " +
                     "<i class='fa-solid fa-circle-info'></i></span>",
-                valqual: [{
-                    name: "display", value: "html"
-                }]
+                valqual: [{ name: "display", value: "html" }]
             });
         }
-        if(ftpURL)
-            pageData.section.ftpURL = ftpURL
+
+        // Add FTP URL if available
+        if (ftpURL) {
+            pageData.section.ftpURL = ftpURL;
+        }
+
+        // Recursively clean all attributes in the entire section tree
+        cleanSectionAttributes(pageData.section);
+
+        // Render template
         $('#renderedContent').html(template(pageData.section));
         postRender(params, pageData.section);
     }
+
     _self.render = function() {
         this.registerHelpers();
 
