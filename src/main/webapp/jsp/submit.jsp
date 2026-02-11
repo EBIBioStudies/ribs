@@ -132,7 +132,7 @@
                 the data access interface. If you are an author of a dataset, you can also claim it through the browse
                 interface.</p>
 
-            <h5><i class="fa-solid fa-circle-question"></i> Which file types can I submit?</h5>
+            <h5 id="file-types">><i class="fa-solid fa-circle-question"></i> Which file types can I submit?</h5>
             <div class="justify">BioStudies accepts all file types. However, there are some restrictions in the naming of
                 the files. It is safe to use: <br/>
             <ul>
