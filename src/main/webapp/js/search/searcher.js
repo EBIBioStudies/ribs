@@ -1,62 +1,19 @@
 var Searcher = (function (_self) {
 
-  var collectionScripts = ['arrayexpress'];
-  var responseData;
+  const collectionScripts = ['arrayexpress'];
+  const MAX_VISIBLE_AUTHORS = 10;
+  const AUTHORS_DISPLAY_LIMIT = 9;
+
+  let responseData;
+
+  _self = _self || {};
 
   _self.render = function () {
-    var params = getParams();
+    const params = getParams();
     this.registerHelpers(params);
-    // Prepare template
-    var templateSource = $('script#results-template').html();
-    var template = Handlebars.compile(templateSource);
+    const template = compileTemplate();
 
-    // do search
-    $.getJSON(contextPath + (collection ? "/api/v1/" + collection + "/search"
-        : "/api/v1/search"), params, function (data) {
-      if (params.first && data.hits) {
-        location.href = contextPath + '/studies/' + data.hits[0].accession;
-        return;
-      }
-      if (collection) {
-        data.collection = collection;
-      }
-      responseData = data;
-      var html = template(data);
-      $('#renderedContent').html(html);
-      if (params && params.query && params.query.indexOf(" ") < 0) {
-        $.getJSON(contextPath + "/api/v2/collections/" + params.query,
-            function (mydata) {
-              if (mydata.ftpHttp_link) {
-                $.getJSON(mydata.ftpHttp_link + params.query, function (data) {
-                  if (data && data.accno.toLowerCase()
-                      == params.query.toLowerCase()) {
-                    $('#facets').next().prepend(
-                        $('<div class="collection-hit"><div>' +
-                            '<a href="' + contextPath + '/' + data.accno
-                            + '/studies' + '">' +
-                            'Click here to browse the <b>' + data.accno
-                            + '</b> collection</a></div></div>'));
-                  }
-                });
-              } else {
-                if (mydata && mydata.accno.toLowerCase()
-                    == params.query.toLowerCase()) {
-                  $('#facets').next().prepend(
-                      $('<div class="collection-hit"><div>' +
-                          '<a href="' + contextPath + '/' + mydata.accno
-                          + '/studies' + '">' +
-                          'Click here to browse the <b>' + mydata.accno
-                          + '</b> collection</a></div></div>'));
-                }
-              }
-
-            });
-      }
-      postRender(data, params);
-    }).done(function () {
-      FacetRenderer.render(params);
-    });
-
+    performSearch(params, template);
   };
 
   _self.getResponseData = function () {
@@ -64,35 +21,128 @@ var Searcher = (function (_self) {
   };
 
   _self.setSortParameters = function (data, params) {
-    var collectionPath = contextPath + (collection ? '/' + collection : '');
+    const collectionPath = contextPath + (collection ? `/${collection}` : '');
+
     $('#sort-by').val(data.sortBy);
-    $('#sort-by').change(function (e) {
-      params.sortBy = $(this).val();
+    $('#sort-by').change((e) => {
+      params.sortBy = $(e.currentTarget).val();
       params.sortOrder = 'descending';
-      window.location = collectionPath + '/studies/?' + $.param(params, true);
+      window.location = `${collectionPath}/studies/?${$.param(params, true)}`;
     });
-    if (data.sortOrder == 'ascending') {
+
+    if (data.sortOrder === 'ascending') {
       $('#sort-desc').removeClass('selected');
       $('#sort-asc').addClass('selected');
     } else {
       $('#sort-desc').addClass('selected');
       $('#sort-asc').removeClass('selected');
     }
-    $('#sort-desc').click(function (e) {
-      if ($(this).hasClass('selected')) {
+
+    $('#sort-desc').click((e) => {
+      if ($(e.currentTarget).hasClass('selected')) {
         return;
       }
       params.sortOrder = 'descending';
-      window.location = collectionPath + '/studies/?' + $.param(params, true);
+      window.location = `${collectionPath}/studies/?${$.param(params, true)}`;
     });
-    $('#sort-asc').click(function (e) {
-      if ($(this).hasClass('selected')) {
+
+    $('#sort-asc').click((e) => {
+      if ($(e.currentTarget).hasClass('selected')) {
         return;
       }
       params.sortOrder = 'ascending';
-      window.location = collectionPath + '/studies/?' + $.param(params, true);
+      window.location = `${collectionPath}/studies/?${$.param(params, true)}`;
     });
   };
+
+  function compileTemplate() {
+    const templateSource = $('script#results-template').html();
+    return Handlebars.compile(templateSource);
+  }
+
+  function performSearch(params, template) {
+    const searchUrl = contextPath + (collection ? `/api/v1/${collection}/search`
+        : '/api/v1/search');
+
+    $.getJSON(searchUrl, params)
+    .then((data) => {
+      handleSearchResponse(data, params, template);
+      return params;
+    })
+    .then((params) => {
+      FacetRenderer.render(params);
+    })
+    .catch((error) => {
+      console.error('Search failed:', error);
+    });
+  }
+
+  function handleSearchResponse(data, params, template) {
+    if (params.first && data.hits) {
+      location.href = `${contextPath}/studies/${data.hits[0].accession}`;
+      return;
+    }
+
+    if (collection) {
+      data.collection = collection;
+    }
+
+    responseData = data;
+    const html = template(data);
+    $('#renderedContent').html(html);
+
+    handleCollectionQuery(params);
+    postRender(data, params);
+  }
+
+  function handleCollectionQuery(params) {
+    if (!params?.query || params.query.indexOf(' ') >= 0) {
+      return;
+    }
+
+    $.getJSON(`${contextPath}/api/v2/collections/${params.query}`)
+    .then((mydata) => {
+      processCollectionData(mydata, params.query);
+    })
+    .catch((error) => {
+      console.error('Collection query failed:', error);
+    });
+  }
+
+  function processCollectionData(mydata, query) {
+    if (mydata.ftpHttp_link) {
+      fetchRemoteCollection(mydata.ftpHttp_link, query);
+    } else {
+      displayCollectionHit(mydata, query);
+    }
+  }
+
+  function fetchRemoteCollection(ftpHttpLink, query) {
+    $.getJSON(`${ftpHttpLink}${query}`)
+    .then((data) => {
+      if (data?.accno?.toLowerCase() === query.toLowerCase()) {
+        displayCollectionHit(data, query);
+      }
+    })
+    .catch((error) => {
+      console.error('Remote collection fetch failed:', error);
+    });
+  }
+
+  function displayCollectionHit(data, query) {
+    if (data?.accno?.toLowerCase() === query.toLowerCase()) {
+      const collectionHitHtml = `
+        <div class="collection-hit">
+          <div>
+            <a href="${contextPath}/${data.accno}/studies">
+              Click here to browse the <b>${data.accno}</b> collection
+            </a>
+          </div>
+        </div>
+      `;
+      $('#facets').next().prepend($(collectionHitHtml));
+    }
+  }
 
   function postRender(data, params) {
     addHighlights('#search-results', data);
@@ -103,55 +153,80 @@ var Searcher = (function (_self) {
   }
 
   function handleCollectionBasedScriptInjection(data) {
-    if ($.inArray(data.collection && data.collection.toLowerCase(),
-        collectionScripts) == -1) {
+    const collectionLower = data.collection?.toLowerCase();
+    if (!collectionLower || !collectionScripts.includes(collectionLower)) {
       return;
     }
-    var scriptURL = window.contextPath + '/js/collection/search/'
-        + collection.toLowerCase() + '.js';
-    $.getScript(scriptURL);
+
+    const scriptURL = `${window.contextPath}/js/collection/search/${collection.toLowerCase()}.js`;
+    $.getScript(scriptURL)
+    .catch((error) => {
+      console.error('Failed to load collection script:', error);
+    });
   }
 
   function limitAuthors() {
     $('.authors').each(function () {
-      var authors = $(this).text().split(',');
-      if (authors.length > 10) {
-        $(this).text(authors.slice(0, 9).join(', '));
-        var rest = $('<span/>', {class: 'hidden'}).text(
-            ', ' + authors.slice(10).join(','));
-        var more = $('<span/>', {class: 'more'}).text(
-            '+ ' + (authors.length - 10) + ' more')
+      const authors = $(this).text().split(',');
+      if (authors.length > MAX_VISIBLE_AUTHORS) {
+        $(this).text(authors.slice(0, AUTHORS_DISPLAY_LIMIT).join(', '));
+
+        const rest = $('<span/>', {class: 'hidden'}).text(
+            `, ${authors.slice(MAX_VISIBLE_AUTHORS).join(',')}`);
+        const more = $('<span/>', {class: 'more'}).text(
+            `+ ${authors.length - MAX_VISIBLE_AUTHORS} more`)
         .click(function () {
           $(this).next().show();
           $(this).hide();
-        })
-        $(this).append(more).append(rest)
+        });
+
+        $(this).append(more).append(rest);
       }
-    })
+    });
   }
 
   function getCollectionLogo() {
     $("div[data-type='collection']").each(function () {
-      var $prj = $(this), accession = $(this).data('accession');
-      $('a', $prj).attr('href', contextPath + '/' + accession + '/studies');
-      $.getJSON(contextPath + '/api/v2/studies/' + accession, function (data) {
-        var path = data.section.files.path;
-        if (!path && data.section.files[0]) {
-          path = data.section.files[0].path;
-        }
-        if (!path
-            && data.section.files[0][0]) {
-          path = data.section.files[0][0].path;
-        }
+      const $prj = $(this);
+      const accession = $(this).data('accession');
+
+      $('a', $prj).attr('href', `${contextPath}/${accession}/studies`);
+
+      $.getJSON(`${contextPath}/api/v2/studies/${accession}`)
+      .then((data) => {
+        const path = extractLogoPath(data);
         if (path) {
-          $prj.prepend('<a class="collection-logo" href="' + contextPath + '/'
-              + accession + '/studies">' +
-              '<img src="' + contextPath + '/files/' + accession + '/' + path
-              + '"/>'
-              + '</a>');
+          prependCollectionLogo($prj, accession, path);
         }
       })
+      .catch((error) => {
+        console.error(`Failed to load collection logo for ${accession}:`,
+            error);
+      });
     });
+  }
+
+  function extractLogoPath(data) {
+    let path = data.section.files?.path;
+
+    if (!path && data.section.files?.[0]) {
+      path = data.section.files[0].path;
+    }
+
+    if (!path && data.section.files?.[0]?.[0]) {
+      path = data.section.files[0][0].path;
+    }
+
+    return path;
+  }
+
+  function prependCollectionLogo($prj, accession, path) {
+    const logoHtml = `
+      <a class="collection-logo" href="${contextPath}/${accession}/studies">
+        <img src="${contextPath}/files/${accession}/${path}"/>
+      </a>
+    `;
+    $prj.prepend(logoHtml);
   }
 
   return _self;
