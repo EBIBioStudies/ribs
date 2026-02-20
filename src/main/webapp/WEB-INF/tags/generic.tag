@@ -8,6 +8,7 @@
 <%@ attribute name="head" fragment="true" %>
 <%@ attribute name="breadcrumbs" fragment="true" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
+<c:set var="indexerServiceUrl"><spring:eval expression="@environment.getProperty('indexer.service.url')"/></c:set>
 <c:set var="currentUser" value="${Session.getCurrentUser()}"/>
 <c:set var="pathname" value="${requestScope['javax.servlet.forward.request_uri']}"/>
 <c:set var="pagename" value="${fn:replace(pageContext.request.requestURI,pageContext.request.contextPath,'')}"/>
@@ -42,6 +43,7 @@
         var contextPath = '${contextPath}';
         var collection = '${collection}';
         if (collection==='undefined') collection = undefined;
+        var indexerServiceUrl = "${indexerServiceUrl}";
     </script>
 
     <!-- If you link to any other sites frequently, consider optimising performance with a DNS prefetch -->
