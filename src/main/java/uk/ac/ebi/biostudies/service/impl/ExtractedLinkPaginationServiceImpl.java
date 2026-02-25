@@ -22,7 +22,7 @@ import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.config.IndexManager;
 import uk.ac.ebi.biostudies.service.ExtractedLinkPaginationService;
 import uk.ac.ebi.biostudies.service.SearchService;
-import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
+import uk.ac.ebi.biostudies.exceptions.SubmissionNotAccessibleException;
 
 @Component
 public class ExtractedLinkPaginationServiceImpl implements ExtractedLinkPaginationService {

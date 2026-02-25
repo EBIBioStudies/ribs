@@ -13,7 +13,7 @@ import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.file.Thumbnails;
 import uk.ac.ebi.biostudies.service.FileDownloadService;
 import uk.ac.ebi.biostudies.service.SearchService;
-import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
+import uk.ac.ebi.biostudies.exceptions.SubmissionNotAccessibleException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

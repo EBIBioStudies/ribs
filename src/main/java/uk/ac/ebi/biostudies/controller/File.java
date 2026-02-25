@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.biostudies.api.util.DataTableColumnInfo;
 import uk.ac.ebi.biostudies.service.FilePaginationService;
 import uk.ac.ebi.biostudies.service.ExtractedLinkPaginationService;
-import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
+import uk.ac.ebi.biostudies.exceptions.SubmissionNotAccessibleException;
 
 import java.util.Map;
 

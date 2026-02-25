@@ -8,6 +8,7 @@ import uk.ac.ebi.biostudies.api.util.Constants;
 
 import java.io.IOException;
 import java.io.InputStream;
+import uk.ac.ebi.biostudies.exceptions.SubmissionNotAccessibleException;
 
 /** Created by ehsan on 27/02/2017. */
 public interface SearchService {

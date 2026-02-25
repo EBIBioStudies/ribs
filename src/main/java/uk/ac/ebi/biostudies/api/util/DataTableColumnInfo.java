@@ -1,5 +1,9 @@
 package uk.ac.ebi.biostudies.api.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -116,4 +120,25 @@ public class DataTableColumnInfo {
     public void setSearchValue(String searchValue) {
         this.searchValue = searchValue;
     }
+
+    public static String toIndexerJson(Map<Integer, DataTableColumnInfo> dataTableUiResult)
+        throws IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode columns = mapper.createArrayNode();
+
+        // Convert Map<Integer, DataTableColumnInfo> → List<ColumnSpec>
+        for (DataTableColumnInfo col : dataTableUiResult.values()) {
+            ObjectNode spec = mapper.createObjectNode();
+            spec.put("name", col.getName());
+            if (col.getDir() != null) spec.put("dir", col.getDir());
+            if (col.getSearchValue() != null && !col.getSearchValue().isEmpty()) {
+                spec.put("value", col.getSearchValue());
+            }
+            columns.add(spec);
+        }
+
+        return mapper.writeValueAsString(columns);
+    }
+
 }

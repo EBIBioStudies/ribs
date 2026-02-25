@@ -112,15 +112,80 @@ $(function() {
     };
 
     $("#query").autocomplete(
-        contextPath + "/api/v1/autocomplete/keywords"
+        indexerServiceUrl + "/api/v1/autocomplete/keywords/counts"
         , {
             matchContains: false
             , selectFirst: false
             , scroll: true
             , max: 50
-            , requestTreeUrl: contextPath + "/api/v1/autocomplete/efotree"
+            , requestTreeUrl: indexerServiceUrl + "/api/v1/autocomplete/efotree/counts"
+
+            , dataType: 'text'
+            , parse: function(data) {
+                const parsed = [];
+                const rows = data.split("\n");
+
+                for (let i = 0; i < rows.length; i++) {
+                    const row = $.trim(rows[i]);
+                    if (row) {
+                        const parts = row.split("|");
+
+                        // Format: term|o|efoId|count
+                        if (parts.length >= 4) {
+                            const term = parts[0];
+                            const type = parts[1];
+                            const efoId = parts[2];  // EFO ID (URL) - empty for leaf nodes
+                            const count = parts[3];
+
+                            parsed.push({
+                                data: [term, type, efoId],
+                                value: term,
+                                result: term,
+                                type: type,
+                                fieldName: null,
+                                treeId: efoId || null,  // Only set if not empty (enables expand button)
+                                treeLevel: 0,
+                                treeIsExpanded: false,
+                                count: count
+                            });
+                        }
+                    }
+                }
+
+                return parsed;
+            }
+
+            , formatItem: function(data, pos, max, value, term) {
+                // Start with term value
+                let result = value;
+
+                if ("o" === data.type) {  // Changed from data.data[1] to data.type for clarity
+                    // Add tree control and indentation levels
+                    if (null != data.treeLevel) {
+                        // Only show expand button if treeId exists (has children)
+                        if (data.treeId) {
+                            result = "<a href=\"javascript:void(0);\"><div class=\"ac_tree_control\"><div/></div></a>" + result;
+                        } else if (0 < data.treeLevel) {
+                            // Leaf nodes at deeper levels get spacing
+                            result = "<div class=\"ac_tree_level\"/>" + result;
+                        }
+                        // Add indentation for tree depth
+                        for(let j = 0; j < data.treeLevel; j++) {
+                            result = "<div class=\"ac_tree_level\"/>" + result;
+                        }
+                    }
+                }
+
+                // Append count in gray
+                if (data.count) {
+                    result = result + ' <span style="color: #999; font-size: 0.9em;">(' + data.count + ')</span>';
+                }
+
+                return result;
+            }
         }
     ).focus(autoCompleteFixSet).blur(autoCompleteFixUnset).removeAttr('autocomplete');
+
     updateTitleFromBreadCrumbs();
 });
 

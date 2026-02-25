@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import uk.ac.ebi.biostudies.api.util.DataTableColumnInfo;
 
 import java.util.Map;
+import uk.ac.ebi.biostudies.exceptions.SubmissionNotAccessibleException;
 
 public interface FilePaginationService {
   ObjectNode getFileList(

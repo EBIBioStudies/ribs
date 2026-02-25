@@ -1,7 +1,11 @@
 package uk.ac.ebi.biostudies.controller;
 
+import static uk.ac.ebi.biostudies.api.util.Constants.JSON_UNICODE_MEDIA_TYPE;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,24 +21,22 @@ import uk.ac.ebi.biostudies.api.util.PublicRESTMethod;
 import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.auth.Session;
 import uk.ac.ebi.biostudies.config.IndexConfig;
+import uk.ac.ebi.biostudies.exceptions.SubmissionNotAccessibleException;
 import uk.ac.ebi.biostudies.service.FilePaginationService;
 import uk.ac.ebi.biostudies.service.SearchService;
-import uk.ac.ebi.biostudies.service.SubmissionNotAccessibleException;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-import static uk.ac.ebi.biostudies.api.util.Constants.JSON_UNICODE_MEDIA_TYPE;
+import uk.ac.ebi.biostudies.service.client.IndexerHttpClient;
+import uk.ac.ebi.biostudies.service.client.Study;
 
 /** Created by awais on 14/02/2017. */
 @RestController
 @RequestMapping(value = "/api")
-public class Study {
+public class StudyController {
 
-  private final Logger logger = LogManager.getLogger(Study.class.getName());
+  private final Logger logger = LogManager.getLogger(StudyController.class.getName());
   @Autowired SearchService searchService;
   @Autowired FilePaginationService paginationService;
   @Autowired IndexConfig indexConfig;
+  @Autowired IndexerHttpClient indexerHttpClient;
 
   @RequestMapping(
       value = "/v1/collections/{accession:.+}",
@@ -181,28 +183,29 @@ public class Study {
     if ("null".equalsIgnoreCase(seckey)) {
       seckey = null;
     }
-    Document document = null;
+    Study indexedStudy = null;
     try {
-      document = searchService.getDocumentByAccessionAndType(accession, seckey, type);
+      // Retrieve basic study metadata from the Indexer service
+      indexedStudy = indexerHttpClient.getStudyInfo(accession, seckey, type);
     } catch (SubmissionNotAccessibleException e) {
       return ResponseEntity.status(HttpStatus.FORBIDDEN)
           .body("{\"errorMessage\":\"Study not accessible\"}");
     }
-    if (document == null) {
+    if (indexedStudy.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
           .contentType(MediaType.APPLICATION_JSON)
           .body("{\"errorMessage\":\"Study not found\"}");
     }
-    accession = document.get(Constants.Fields.ACCESSION);
-    boolean isPublicStudy = StudyUtils.isPublicStudy(document);
-    String relativePath = document.get(Constants.Fields.RELATIVE_PATH);
-    String storageModeString = document.get(Constants.Fields.STORAGE_MODE);
+    accession = indexedStudy.getAccNo();
+    boolean isPublicStudy = indexedStudy.isPublic();
+    String relativePath = indexedStudy.getRelPath();
+    String storageModeString = indexedStudy.getStorageMode();
     storageModeString = storageModeString.isEmpty() ? "FIRE" : storageModeString;
     Constants.File.StorageMode storageMode =
         Constants.File.StorageMode.valueOf(
             StringUtils.isEmpty(storageModeString) ? "NFS" : storageModeString);
     String originalSecretKey = seckey;
-    if (Session.getCurrentUser() != null) seckey = document.get(Constants.Fields.SECRET_KEY);
+    if (Session.getCurrentUser() != null) seckey = indexedStudy.getSecretKey();
     String cachedPagetab = null;
     if (indexConfig.getPageTabHasNFSBackup()) {
       try {
