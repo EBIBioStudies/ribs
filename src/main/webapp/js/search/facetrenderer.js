@@ -4,7 +4,7 @@ var FacetRenderer = (function (_self) {
     _self.render = function (params) {
         $('#left-column').slideDown("fast", function () {
             // fill facets
-            $.getJSON(contextPath + "/api/v1/" + (collection||"public") + "/facets", params, function (data) {
+            $.getJSON(indexerServiceUrl + "/api/v1/" + (collection||"public") + "/facets", params, function (data) {
                 var templateSource = $('script#facet-list-template').html();
                 var template = Handlebars.compile(templateSource);
                 data.collection = (collection||"public");
@@ -94,7 +94,7 @@ var FacetRenderer = (function (_self) {
             $('body').append('<div id="blocker" class="blocker"></div>');
             $('body').append('<div id="facet-loader"><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i><div class="sr-only">Loading...</div></div>');
             var thisFacet = $(this).data('facet');
-            $.getJSON(contextPath+"/api/v1/"+(collection? collection : 'public')+'/facets/'+thisFacet+'/',params,
+            $.getJSON(indexerServiceUrl+"/api/v1/"+(collection? collection : 'public')+'/facets/'+thisFacet+'/',params,
                 function(data) { showAllFacets(thisFacet, params, data)});
         });
 
