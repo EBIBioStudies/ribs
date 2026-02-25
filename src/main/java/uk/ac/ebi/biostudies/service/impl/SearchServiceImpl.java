@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -57,15 +58,14 @@ import uk.ac.ebi.biostudies.service.SearchService;
 import uk.ac.ebi.biostudies.exceptions.SubmissionNotAccessibleException;
 
 /** Created by ehsan on 27/02/2017. */
+@Slf4j
 @Service
 public class SearchServiceImpl implements SearchService {
 
   private static final int MAX_PAGE_SIZE = 100;
   private static Cache<String, String> statsCache;
-  private static Query excludeCompound;
   private static QueryParser parser;
   private static Set<String> sectionsToFilter;
-  private final Logger logger = LogManager.getLogger(SearchServiceImpl.class.getName());
   @Autowired IndexConfig indexConfig;
   @Autowired IndexManager indexManager;
   @Autowired EFOQueryExpander efoQueryExpander;
@@ -87,12 +87,6 @@ public class SearchServiceImpl implements SearchService {
     sectionsToFilter.add("organisation");
     sectionsToFilter.add("organization");
     sectionsToFilter.add("publication");
-
-    try {
-      excludeCompound = parser.parse("type:compound");
-    } catch (Exception e) {
-      logger.error(e);
-    }
   }
 
   private ObjectNode applySearchOnQuery(
@@ -188,7 +182,7 @@ public class SearchServiceImpl implements SearchService {
         response.set("suggestion", mapper.valueToTree(Arrays.asList(spells)));
       }
     } catch (Throwable error) {
-      logger.error("problem in searching this query {}", query, error);
+      log.error("problem in searching this query {}", query, error);
     }
     return response;
   }
@@ -204,7 +198,7 @@ public class SearchServiceImpl implements SearchService {
             : SortField.Type.LONG;
       }
     } catch (Exception e) {
-      logger.debug("bad sortby value {}", sortBy);
+      log.debug("bad sortby value {}", sortBy);
     }
     return SortField.Type.SCORE;
   }
@@ -280,7 +274,7 @@ public class SearchServiceImpl implements SearchService {
       response.set(
           "facets", selectedFacets == null || selectedFacets.size() == 0 ? null : selectedFacets);
     } catch (Throwable error) {
-      logger.error("problem in searching this query {}", queryString, error);
+      log.error("problem in searching this query {}", queryString, error);
       response.put("query", queryString.equals("*:*") ? null : queryString);
     }
 
@@ -317,7 +311,7 @@ public class SearchServiceImpl implements SearchService {
       response.set("failedAccessions", failedAccessions);
 
     } catch (Exception e) {
-      logger.error("Error retrieving failed indexing submissions", e);
+      log.error("Error retrieving failed indexing submissions", e);
       response.put("error", "Internal error while retrieving failed submissions");
     }
 
@@ -355,7 +349,7 @@ public class SearchServiceImpl implements SearchService {
         inputStream = getPagetabFromPagetabIndex(accession.toLowerCase());
       } catch (Exception ex) {
         codeIOException = ex;
-        logger.error("problem in searching pagetab index", ex);
+        log.error("problem in searching pagetab index", ex);
       }
     }
     try {
@@ -435,7 +429,7 @@ public class SearchServiceImpl implements SearchService {
           .updateDocument(new Term(Fields.ACCESSION, accession), pagetabDoc);
       indexManager.getPagetabIndexWriter().commit();
     } catch (Exception exception) {
-      logger.error("Problem in adding pagetab to index", exception);
+      log.error("Problem in adding pagetab to index", exception);
     }
   }
 
@@ -450,7 +444,7 @@ public class SearchServiceImpl implements SearchService {
       BytesRef contentBytes = doc.getBinaryValue(Constants.Fields.CONTENT);
       if (contentBytes != null) {
         pagetabStream = new ByteArrayInputStream(contentBytes.bytes);
-        logger.debug("pagetab retrieved from pagetab index for acc: {}", accession);
+        log.debug("pagetab retrieved from pagetab index for acc: {}", accession);
       }
     }
     return pagetabStream;
@@ -548,7 +542,7 @@ public class SearchServiceImpl implements SearchService {
     try {
       return indexManager.getSearchIndexReader().document(docNumber);
     } catch (IOException ex) {
-      logger.error("Problem retrieving " + accession, ex);
+      log.error("Problem retrieving " + accession, ex);
     }
     return null;
   }
@@ -573,7 +567,7 @@ public class SearchServiceImpl implements SearchService {
         return topDocs.scoreDocs[0].doc;
       }
     } catch (Throwable ex) {
-      logger.error("Problem in checking security", ex);
+      log.error("Problem in checking security", ex);
     }
     return null;
   }
@@ -588,7 +582,7 @@ public class SearchServiceImpl implements SearchService {
       TopDocs topDocs = indexManager.getIndexSearcher().search(query, 1);
       return topDocs.totalHits.value == 1;
     } catch (Throwable ex) {
-      logger.error("Problem in checking security", ex);
+      log.error("Problem in checking security", ex);
     }
     return false;
   }
