@@ -1,18 +1,12 @@
 package uk.ac.ebi.biostudies.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.analysis.core.KeywordAnalyzer;
-import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.biostudies.api.util.Constants;
 import uk.ac.ebi.biostudies.api.util.DataTableColumnInfo;
@@ -20,7 +14,6 @@ import uk.ac.ebi.biostudies.api.util.StudyUtils;
 import uk.ac.ebi.biostudies.auth.Session;
 import uk.ac.ebi.biostudies.auth.User;
 import uk.ac.ebi.biostudies.config.IndexConfig;
-import uk.ac.ebi.biostudies.config.IndexManager;
 import uk.ac.ebi.biostudies.exceptions.SubmissionNotAccessibleException;
 import uk.ac.ebi.biostudies.file.Thumbnails;
 import uk.ac.ebi.biostudies.service.FilePaginationService;
@@ -32,12 +25,21 @@ import uk.ac.ebi.biostudies.service.client.Study;
 @Service
 public class FilePaginationServiceImpl implements FilePaginationService {
 
-  @Autowired IndexManager indexManager;
-  @Autowired IndexConfig indexConfig;
-  @Autowired Thumbnails thumbnails;
-  @Autowired IndexerHttpClient indexerHttpClient;
-  @Autowired
-  FileSearcherHttpClient fileSearcherHttpClient;
+  private final IndexConfig indexConfig;
+  private final Thumbnails thumbnails;
+  private final IndexerHttpClient indexerHttpClient;
+  private final FileSearcherHttpClient fileSearcherHttpClient;
+
+  public FilePaginationServiceImpl(
+      IndexConfig indexConfig,
+      Thumbnails thumbnails,
+      IndexerHttpClient indexerHttpClient,
+      FileSearcherHttpClient fileSearcherHttpClient) {
+    this.indexConfig = indexConfig;
+    this.thumbnails = thumbnails;
+    this.indexerHttpClient = indexerHttpClient;
+    this.fileSearcherHttpClient = fileSearcherHttpClient;
+  }
 
   /**
    * Builds the JSON payload returned by the legacy study-info endpoint.
@@ -161,99 +163,6 @@ public class FilePaginationServiceImpl implements FilePaginationService {
     return node;
   }
 
-//  @Override
-//  public ObjectNode getFileList(
-//      String accession,
-//      int start,
-//      int pageSize,
-//      String search,
-//      int draw,
-//      boolean metadata,
-//      Map<Integer, DataTableColumnInfo> dataTableUiResult,
-//      String secretKey)
-//      throws SubmissionNotAccessibleException {
-//    ObjectMapper mapper = new ObjectMapper();
-//    IndexSearcher searcher = indexManager.getFileIndexSearcher();
-//    QueryParser parser = new QueryParser(Constants.Fields.ACCESSION, new KeywordAnalyzer());
-//    IndexReader reader = indexManager.getFileIndexReader();
-//    ObjectNode studyInfo = getStudyInfo(accession, secretKey);
-//    long totalFiles = studyInfo.get(Constants.Fields.FILES).asLong();
-//    if (studyInfo == null) return mapper.createObjectNode();
-//    ArrayNode columns = (ArrayNode) studyInfo.get("columns");
-//    try {
-//      List<SortField> allSortedFields = new ArrayList<>();
-//      List<DataTableColumnInfo> searchedColumns = new ArrayList<>();
-//      for (DataTableColumnInfo ftInfo : dataTableUiResult.values()) {
-//        if (ftInfo.getDir() != null && !ftInfo.getName().equalsIgnoreCase("x")) {
-//          allSortedFields.add(
-//              ftInfo.getName().equalsIgnoreCase("size")
-//                  ? new SortedNumericSortField(
-//                      ftInfo.getName(),
-//                      SortField.Type.LONG,
-//                      ftInfo.getDir().equalsIgnoreCase("desc"))
-//                  : new SortField(
-//                      ftInfo.getName(),
-//                      SortField.Type.STRING,
-//                      ftInfo.getDir().equalsIgnoreCase("desc")));
-//        }
-//        if (ftInfo.getSearchValue() != null && !ftInfo.getSearchValue().isEmpty()) {
-//          searchedColumns.add(ftInfo);
-//        }
-//      }
-//      if (allSortedFields.isEmpty())
-//        allSortedFields.add(new SortField(Constants.File.POSITION, SortField.Type.LONG, false));
-//      Sort sort = new Sort(allSortedFields.toArray(new SortField[allSortedFields.size()]));
-//      Query query = parser.parse(Constants.File.OWNER + ":" + accession);
-//      if (search != null && !search.isEmpty() && hasUnescapedDoubleQuote(search)) {
-//        query = phraseSearch(search, query);
-//      } else if (search != null && !search.isEmpty() && !search.trim().equalsIgnoreCase("**")) {
-//        search = modifySearchText(search);
-//        query = applySearch(search, query, columns);
-//      }
-//      if (searchedColumns.size() > 0) query = applyPerFieldSearch(searchedColumns, query);
-//      TopDocs hits = searcher.search(query, Integer.MAX_VALUE, sort);
-//      ObjectNode response = mapper.createObjectNode();
-//      response.put(Constants.File.DRAW, draw);
-//      response.put(Constants.File.RECORDTOTAL, totalFiles);
-//      response.put(Constants.File.RECORDFILTERED, hits.totalHits.value);
-//      if (hits.totalHits.value >= 0) {
-//        if (pageSize == -1) pageSize = Integer.MAX_VALUE;
-//        ArrayNode docs = mapper.createArrayNode();
-//        for (int i = start; i < start + pageSize && i < hits.totalHits.value; i++) {
-//          ObjectNode docNode = mapper.createObjectNode();
-//          Document doc = reader.document(hits.scoreDocs[i].doc);
-//          if (metadata) {
-//            for (JsonNode field : columns) {
-//              String fName = field.get("name").asText();
-//              docNode.put(
-//                  field.get("name").asText().replaceAll("[\\[\\]\\(\\)\\s]", "_"),
-//                  doc.get(fName) == null ? "" : doc.get(fName));
-//            }
-//          }
-//          docNode.put(
-//              Constants.File.PATH,
-//              doc.get(Constants.File.PATH) == null ? "" : doc.get(Constants.File.PATH));
-//          docNode.put(
-//              Constants.File.TYPE,
-//              doc.get(Constants.File.IS_DIRECTORY) == null
-//                  ? "file"
-//                  : doc.get(Constants.File.IS_DIRECTORY).equalsIgnoreCase("true")
-//                      ? "directory"
-//                      : "file");
-//          docNode.put(
-//              Constants.File.SIZE.toLowerCase(), Long.parseLong(doc.get(Constants.File.SIZE)));
-//          docs.add(docNode);
-//        }
-//        response.set(Constants.File.DATA, docs);
-//        return response;
-//      }
-//
-//    } catch (Exception ex) {
-//      log.debug("problem in file atts preparation", ex);
-//    }
-//    return mapper.createObjectNode();
-//  }
-
   @Override
   public ObjectNode getFileList(
       String accession,
@@ -263,7 +172,8 @@ public class FilePaginationServiceImpl implements FilePaginationService {
       int draw,
       boolean metadata,
       Map<Integer, DataTableColumnInfo> dataTableUiResult,
-      String secretKey) throws SubmissionNotAccessibleException {
+      String secretKey)
+      throws SubmissionNotAccessibleException {
 
     // Convert DataTable params → indexer JSON (your new helper)
     String columnsJson;
@@ -287,85 +197,6 @@ public class FilePaginationServiceImpl implements FilePaginationService {
     empty.put(Constants.File.RECORDFILTERED, 0L);
     empty.set(Constants.File.DATA, mapper.createArrayNode());
     return empty;
-  }
-
-  private Query phraseSearch(String search, Query query) throws Exception {
-    // Todo these lines will be removed after Ahmad update val part of valqual with OR clauses
-    search = search.replaceAll(" or ", " OR ");
-    search = search.replaceAll(" and ", " AND ");
-    search = search.replaceAll(" not ", " NOT ");
-
-    BooleanQuery.Builder finalQueryBuilder = new BooleanQuery.Builder();
-    QueryParser keywordParser = new QueryParser(Constants.File.NAME, new KeywordAnalyzer());
-    Query phrasedQuery = keywordParser.parse(search);
-    finalQueryBuilder.add(phrasedQuery, BooleanClause.Occur.MUST);
-    finalQueryBuilder.add(query, BooleanClause.Occur.MUST);
-    return finalQueryBuilder.build();
-  }
-
-  private Query applySearch(String search, Query firstQuery, ArrayNode columns) {
-    BooleanQuery.Builder builderSecond = new BooleanQuery.Builder();
-    //        BooleanClause.Occur[] occurs = new  BooleanClause.Occur[columns.size()];
-    String[] fields = new String[columns.size()];
-    try {
-      int counter = 0;
-      for (JsonNode field : columns) {
-        String fName = field.get("name").asText();
-        fields[counter] = fName;
-        //               occurs[counter] = BooleanClause.Occur.SHOULD;
-        counter++;
-      }
-      MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, new KeywordAnalyzer());
-
-      parser.setAllowLeadingWildcard(true);
-      // parser.setLowercaseExpandedTerms(false);
-      Query tempSmallQuery = parser.parse(StudyUtils.escape(search));
-      log.debug(tempSmallQuery.toString());
-      builderSecond.add(firstQuery, BooleanClause.Occur.MUST);
-      builderSecond.add(tempSmallQuery, BooleanClause.Occur.MUST);
-    } catch (ParseException e) {
-      log.debug("File Searchable Query Parser Exception", e);
-    }
-    log.debug("query is: {}", builderSecond.build().toString());
-    return builderSecond.build();
-  }
-
-  private String modifySearchText(String search) {
-    search = search.toLowerCase();
-    String[] tokens = search.split(" ");
-    String newQuery = "";
-    if (tokens != null) {
-      for (String token : tokens) {
-        token = " *" + token + "* ";
-        newQuery = newQuery + token;
-      }
-    }
-    if (newQuery.contains(" *and* ")) newQuery = newQuery.replaceAll(" \\*and\\* ", " AND ");
-    if (newQuery.contains(" *or* ")) newQuery = newQuery.replaceAll(" \\*or\\* ", " OR ");
-    if (newQuery.contains(" *not* ")) newQuery = newQuery.replaceAll(" \\*not\\* ", " NOT ");
-    return newQuery;
-  }
-
-  private Query applyPerFieldSearch(
-      List<DataTableColumnInfo> searchedColumns, Query originalQuery) {
-    BooleanQuery.Builder logicQueryBuilder = new BooleanQuery.Builder();
-    logicQueryBuilder.add(originalQuery, BooleanClause.Occur.MUST);
-    for (DataTableColumnInfo info : searchedColumns) {
-      QueryParser parser = new QueryParser(info.getName(), new KeywordAnalyzer());
-      parser.setAllowLeadingWildcard(true);
-      try {
-        Query query =
-            parser.parse(
-                StudyUtils.escape(
-                    (info.getName().equalsIgnoreCase("section")
-                        ? info.getSearchValue().toLowerCase()
-                        : modifySearchText(info.getSearchValue()))));
-        logicQueryBuilder.add(query, BooleanClause.Occur.MUST);
-      } catch (ParseException e) {
-        log.debug("problem in search term {}", info.getSearchValue(), e);
-      }
-    }
-    return logicQueryBuilder.build();
   }
 
   /**
@@ -407,7 +238,8 @@ public class FilePaginationServiceImpl implements FilePaginationService {
    * </ul>
    *
    * @param studyInfo the JSON object containing study metadata, particularly the "released" field
-   * @param indexedSubmission the indexed submission containing the indexed study data with the secret key
+   * @param indexedSubmission the indexed submission containing the indexed study data with the
+   *     secret key
    * @param secretKey the secret key provided by the requester (may be null for public access
    *     attempts)
    * @return {@code true} if the study's private information can be shared with the requester,
@@ -439,7 +271,4 @@ public class FilePaginationServiceImpl implements FilePaginationService {
     return false;
   }
 
-  private boolean hasUnescapedDoubleQuote(String search) {
-    return search.replaceAll("\\Q\\\"\\E", "").contains("\"");
-  }
 }
