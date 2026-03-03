@@ -10,6 +10,10 @@ var Metadata = (function (_self) {
             if (e!==undefined) return new Handlebars.SafeString(e[val]);
         });
 
+        Handlebars.registerHelper('notEmpty', function(value) {
+            return Object.keys(value || {}).length > 0;
+        });
+        
         Handlebars.registerHelper('valueWithName', function(val, obj) {
             if (obj==null) return;
             if (!Array.isArray(obj)) obj = [obj];
