@@ -832,9 +832,9 @@ var Metadata = (function (_self) {
 
             if (ont === 'ncbitaxon') {
                 const taxId = termId.replaceAll('NCBITaxon_', '')
-                const efoBadge= $(`<a title="TaxID:${taxId}" class="ontology-icon" data-tooltip target="_blank" href="https://www.uniprot.org/taxonomy/${taxId}"><i class="fa fa-external-link-alt" aria-hidden="true"></i> Taxonomy (Uniprot)</a>`)
-                $(this).append(efoBadge);
-                efoBadge.foundation();
+                const badge= $(`<a title="TaxID:${taxId}" class="ontology-icon" data-tooltip target="_blank" href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${taxId}"><i class="fa fa-external-link-alt" aria-hidden="true"></i> Taxonomy (NCBI)</a>`)
+                $(this).append(badge);
+                badge.foundation();
             } else {
                 $.ajax({
                     async: true,
