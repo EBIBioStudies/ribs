@@ -100,6 +100,7 @@ dev:
   environment: dev
   only:
     - develop
+    - indexer-service
 
 beta:
   <<: *deploy-template
