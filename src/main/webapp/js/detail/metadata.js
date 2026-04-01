@@ -273,7 +273,7 @@ var Metadata = (function (_self) {
     }
 
     function handleHighlights(params) {
-        var url = contextPath + '/api/v1/search';
+        var url = indexerServiceUrl + '/api/v1/search';
         $.getJSON(url, {query:params.query, pageSize:1}, function (data) {
             addHighlights('#renderedContent', data);
         });

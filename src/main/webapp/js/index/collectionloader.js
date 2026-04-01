@@ -15,7 +15,7 @@ Home.CollectionLoader = (function () {
             $('#CollectionLoader').slideDown();
             return;
         }
-        $.getJSON( contextPath + "/api/v1/search",{type:'collection'}, function( data ) {
+        $.getJSON( indexerServiceUrl + "/api/v1/search",{type:'collection'}, function( data ) {
             if (data && data.totalHits && data.totalHits>0) {
                 data.hits = data.hits.sort(function(a, b) {
                     return a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1

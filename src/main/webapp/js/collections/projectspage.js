@@ -9,7 +9,7 @@ var CollectionsPage = (function (_self) {
         var template = Handlebars.compile(templateSource);
 
         // do search
-        $.getJSON(contextPath+"/api/v1/search?type=collection", params,function (data) {
+        $.getJSON(indexerServiceUrl+"/api/v1/search?type=collection", params,function (data) {
             var html = template(data);
             $('#renderedContent').html(html);
             postRender(data, params);
