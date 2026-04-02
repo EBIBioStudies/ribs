@@ -9,7 +9,7 @@ Home.StatsLoader = (function () {
     };
 
     function getStats() {
-        $.getJSON( contextPath + "/api/v1/stats", function( data ) {
+        $.getJSON( indexerServiceUrl + "/api/v1/stats", function( data ) {
 
             if (data!=undefined && data.files!=undefined && data.links!=undefined) {
                 $('#fileCount').text(formatNumber(data.files)+' files').removeClass('fader');
