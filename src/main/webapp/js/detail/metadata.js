@@ -825,31 +825,35 @@ var Metadata = (function (_self) {
 
     function handleOntologyLinks() {
         // handle ontology links
-        $("span[data-termid][" +
-            "data-ontology]").each(function () {
+        $("span[data-termid][data-ontology]").each(function () {
             var ont = $(this).data('ontology').toLowerCase();
             var termId = $(this).data('termid');
             var name = $(this).data('termname');
-            $.ajax({
-                async: true,
-                context: this,
-                url: "https://www.ebi.ac.uk/ols4/api/ontologies/" + ont + "/terms",
-                data: {short_form: termId, size: 1},
-                success: function (data) {
-                    if (data && data._embedded && data._embedded.terms && data._embedded.terms.length > 0) {
-                        var n = name ? name : data._embedded.terms[0].description ? data._embedded.terms[0].description : null;
-                        const efoBadge= $('<a title="' + data._embedded.terms[0].obo_id +
-                            ( n ? ' - ' + n : '') + '" ' +
-                            'class="ontology-icon" data-tooltip target="_blank" href="https://www.ebi.ac.uk/ols4/ontologies/'
-                            + ont + '/terms?iri=' + data._embedded.terms[0].iri
-                            + '"><i class="fa fa-external-link-alt" aria-hidden="true"></i> '
-                            + ont
-                            +'</a>')
-                        $(this).append(efoBadge);
-                        efoBadge.foundation();
+
+            if (ont === 'ncbitaxon') {
+                const taxId = termId.replaceAll('NCBITaxon_', '')
+                const badge= $(`<a title="TaxID:${taxId}" class="ontology-icon" data-tooltip target="_blank" href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${taxId}"><i class="fa fa-external-link-alt" aria-hidden="true"></i> Taxonomy (NCBI)</a>`)
+                $(this).append(badge);
+                badge.foundation();
+            } else {
+                $.ajax({
+                    async: true,
+                    context: this,
+                    url: "https://www.ebi.ac.uk/ols4/api/ontologies/" + ont + "/terms",
+                    data: {short_form: termId, size: 1},
+                    success: function (data) {
+                        if (data && data._embedded && data._embedded.terms && data._embedded.terms.length > 0) {
+                            var n = name || data._embedded.terms[0].description || null;
+                            const efoBadge= $(
+                                `<a title="${data._embedded.terms[0].obo_id}${n ? ' - ' + n : ''}" class="ontology-icon" data-tooltip target="_blank" href="https://www.ebi.ac.uk/ols4/ontologies/${ont}/terms?iri=${data._embedded.terms[0].iri}">
+                                    <i class="fa fa-external-link-alt" aria-hidden="true"></i> ${ont}
+                                 </a>`)
+                            $(this).append(efoBadge);
+                            efoBadge.foundation();
+                        }
                     }
-                }
-            });
+                });
+            }
 
         });
     }
@@ -898,7 +902,7 @@ var Metadata = (function (_self) {
                 thorApplicationNamespace.loadClaimingInfo();
             });
     }
-    
+
     function handleImageURLs() {
         // Find all spans whose data-type is "Image URL"
         $("span.bs-value span[data-type='Image%20URL']").each(function () {
