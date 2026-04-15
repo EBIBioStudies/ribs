@@ -831,7 +831,10 @@ var Metadata = (function (_self) {
             var name = $(this).data('termname');
 
             if (ont === 'ncbitaxon') {
-                const taxId = termId.replaceAll('NCBITaxon_', '')
+                const taxId = String(termId || '').replace(/^NCBITaxon_/, '').trim();
+                if (!taxId) {
+                    return;
+                }
                 const badge= $(`<a title="TaxID:${taxId}" class="ontology-icon" data-tooltip target="_blank" href="https://www.ncbi.nlm.nih.gov/datasets/taxonomy/${taxId}"><i class="fa fa-external-link-alt" aria-hidden="true"></i> Taxonomy (NCBI)</a>`)
                 $(this).append(badge);
                 badge.foundation();
