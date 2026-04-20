@@ -63,6 +63,7 @@ var Searcher = (function (_self) {
   function performSearch(params, template) {
     const searchUrl = indexerServiceUrl + (collection ? `/api/v1/${collection}/search`
         : '/api/v1/search');
+    console.log("performing search: ", searchUrl, params, "")
 
     $.getJSON(searchUrl, params)
     .then((data) => {
