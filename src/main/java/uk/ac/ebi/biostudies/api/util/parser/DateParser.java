@@ -6,8 +6,10 @@ import static uk.ac.ebi.biostudies.api.util.Constants.RELEASE_DATE;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.ReadContext;
 import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +18,29 @@ import uk.ac.ebi.biostudies.api.util.Constants;
 
 public class DateParser extends AbstractParser {
     private static final Logger logger = LogManager.getLogger(DateParser.class.getName());
+
+    private Long parseFlexibleTimestamp(String rawValue) {
+        if (rawValue == null) {
+            return null;
+        }
+
+        String value = rawValue.trim();
+        if (value.isEmpty() || value.equalsIgnoreCase("null") || value.equals("-1")) {
+            return null;
+        }
+
+        try {
+            return Instant.from(DateTimeFormatter.ISO_INSTANT.parse(value)).toEpochMilli();
+        } catch (DateTimeParseException ignored) {
+            // not ISO
+        }
+
+        try {
+            return new BigDecimal(value).movePointRight(3).longValue();
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
 
     @Override
     public String parse(Map<String, Object> valueMap, JsonNode submission, ReadContext jsonPathContext) {
@@ -30,7 +55,10 @@ public class DateParser extends AbstractParser {
             if (submission.get(Constants.Fields.CREATION_TIME_FULL).isObject() && submission.get(Constants.Fields.CREATION_TIME_FULL).has("$date")) {
                 creationDateLong = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(submission.get(Constants.Fields.CREATION_TIME_FULL).get("$date").textValue())).toEpochMilli();
             } else {
-                creationDateLong = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(submission.get(Constants.Fields.CREATION_TIME_FULL).asText())).toEpochMilli();
+                Long parsed = parseFlexibleTimestamp(submission.get(Constants.Fields.CREATION_TIME_FULL).asText());
+                if (parsed != null) {
+                    creationDateLong = parsed;
+                }
             }
         }
         valueMap.put(Constants.Fields.CREATION_TIME, creationDateLong);
@@ -41,7 +69,10 @@ public class DateParser extends AbstractParser {
             if (submission.get(Constants.Fields.MODIFICATION_TIME_FULL).isObject() && submission.get(Constants.Fields.MODIFICATION_TIME_FULL).has("$date")) {
                 modificationTimeLong = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(submission.get(Constants.Fields.MODIFICATION_TIME_FULL).get("$date").textValue())).toEpochMilli();
             } else {
-                modificationTimeLong = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(submission.get(Constants.Fields.MODIFICATION_TIME_FULL).asText())).toEpochMilli();
+                Long parsed = parseFlexibleTimestamp(submission.get(Constants.Fields.MODIFICATION_TIME_FULL).asText());
+                if (parsed != null) {
+                    modificationTimeLong = parsed;
+                }
             }
         }
         if (modificationTimeLong != 0L) {
@@ -60,13 +91,23 @@ public class DateParser extends AbstractParser {
                 if (submission.get(Constants.Fields.RELEASE_TIME_FULL).get("$date").has("$numberLong")) { // date is before epoch
                     releaseDateLong = Long.parseLong(submission.get(Constants.Fields.RELEASE_TIME_FULL).get("$date").get("$numberLong").textValue());
                 } else {
-                    releaseDateLong = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(submission.get(Constants.Fields.RELEASE_TIME_FULL).get("$date").textValue())).toEpochMilli();
+                    try {
+                        releaseDateLong = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(submission.get(Constants.Fields.RELEASE_TIME_FULL).get("$date").textValue())).toEpochMilli();
+                    } catch (Exception e) {
+                        System.out.println("ok");
+                    }
                 }
-            } else if (!submission.get(Constants.Fields.RELEASE_TIME_FULL).asText().equals("-1") && !submission.get(Constants.Fields.RELEASE_TIME_FULL).asText().equals("null")) {
-                Instant instant = Instant.from(DateTimeFormatter.ISO_INSTANT.parse(submission.get(Constants.Fields.RELEASE_TIME_FULL).asText()));
-                releaseDateLong = instant.toEpochMilli();
-            } else if (String.valueOf(valueMap.get(Constants.Fields.ACCESS)).contains(PUBLIC)) {
-                releaseDateLong = (long) valueMap.get(Constants.Fields.MODIFICATION_TIME);
+            } else {
+                Long parsed = parseFlexibleTimestamp(submission.get(Constants.Fields.RELEASE_TIME_FULL).asText());
+                if (parsed != null) {
+                    releaseDateLong = parsed;
+                } else if (String.valueOf(valueMap.get(Constants.Fields.ACCESS)).contains(PUBLIC)) {
+                    try{
+                        releaseDateLong = (long) valueMap.get(Constants.Fields.MODIFICATION_TIME);
+                    } catch (Exception e){
+                        System.out.println("it is ok");
+                    }
+                }
             }
         }
 
