@@ -1,224 +1,137 @@
 package uk.ac.ebi.biostudies.config;
 
 import java.io.IOException;
-import java.util.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * XSS Filter to sanitize all incoming HTTP requests and prevent XSS attacks.
- * This filter wraps the HttpServletRequest to sanitize parameters, headers, and request URI.
+ * Rejects obviously malicious request targets (URI + query string),
+ * but does not alter request data.
+ *
+ * Real XSS protection must be done with context-aware output encoding
+ * at the rendering layer.
  */
 @Component
 public class XSSFilter implements Filter {
-    private static final Logger logger = LoggerFactory.getLogger(XSSFilter.class);
 
-    // Patterns to detect potential XSS attacks
-    private static final Pattern[] XSS_PATTERNS = {
-        Pattern.compile("<script[^>]*>.*?</script>", Pattern.CASE_INSENSITIVE),
-        Pattern.compile(
-            "src[\r\n]*=[\r\n]*\\'(.*?)\\'", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-        Pattern.compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-        Pattern.compile("</script>", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("<script(.*?)>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-        Pattern.compile("eval\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-        Pattern.compile("expression\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-        Pattern.compile("javascript:", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("vbscript:", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("onload(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-        Pattern.compile("onerror(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-        Pattern.compile("onmouseover(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-        Pattern.compile("onfocus(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-        Pattern.compile("onblur(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-        Pattern.compile("onchange(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-        Pattern.compile("onclick(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-        Pattern.compile("<iframe", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("<object", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("<embed", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("<link", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("<meta", Pattern.CASE_INSENSITIVE)
+    private static final Logger log = LoggerFactory.getLogger(XSSFilter.class);
+
+    private static final int MAX_INSPECTION_LENGTH = 8192;
+
+    private static final Pattern[] SUSPICIOUS_PATTERNS = new Pattern[] {
+        Pattern.compile("(?i)<\\s*/?\\s*(script|iframe|object|embed|link|meta|style|base|svg|math)\\b"),
+        Pattern.compile("(?i)\\bon[a-z]{2,}\\s*="),
+        Pattern.compile("(?i)\\b(?:javascript|vbscript)\\s*:"),
+        Pattern.compile("(?i)\\beval\\s*\\("),
+        Pattern.compile("(?i)\\bexpression\\s*\\("),
+        Pattern.compile("(?i)<\\s*img\\b"),
+        Pattern.compile("(?i)<\\s*svg\\b"),
+        Pattern.compile("(?i)<\\s*math\\b")
     };
+
+    private static final Pattern CONTROL_CHARS = Pattern.compile("[\\u0000-\\u001F\\u007F]");
+    private static final Pattern CRLF = Pattern.compile("[\\r\\n]");
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        logger.info("XSSFilter initialized");
+        log.info("XssProtectionFilter initialized");
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        // Check if the request URI itself contains XSS attempts
-        String requestURI = httpRequest.getRequestURI();
-        if (containsXSS(requestURI)) {
-            logger.warn("XSS attempt detected in URI: {}", requestURI);
-            httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
+            chain.doFilter(request, response);
             return;
         }
 
-        // Wrap the request to sanitize parameters
-        XSSRequestWrapper wrappedRequest = new XSSRequestWrapper(httpRequest);
-        chain.doFilter(wrappedRequest, response);
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+        String requestTarget = buildRequestTarget(httpRequest);
+
+        if (isSuspicious(requestTarget)) {
+            log.warn("Blocked suspicious request target: {}", safeForLog(requestTarget));
+            httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request");
+            return;
+        }
+
+        chain.doFilter(request, response);
     }
 
     @Override
     public void destroy() {
-        logger.info("XSSFilter destroyed");
+        log.info("XssProtectionFilter destroyed");
     }
 
-    /**
-     * Check if the input string contains potential XSS patterns
-     */
-    private boolean containsXSS(String value) {
-        if (value == null) {
+    private String buildRequestTarget(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        String query = request.getQueryString();
+
+        if (query == null || query.isEmpty()) {
+            return uri;
+        }
+        return uri + "?" + query;
+    }
+
+    private boolean isSuspicious(String value) {
+        if (value == null || value.isEmpty()) {
             return false;
         }
 
-        // Decode URL encoding first
-        String decodedValue = java.net.URLDecoder.decode(value, java.nio.charset.StandardCharsets.UTF_8);
+        String inspected = value.length() > MAX_INSPECTION_LENGTH
+            ? value.substring(0, MAX_INSPECTION_LENGTH)
+            : value;
 
-        for (Pattern pattern : XSS_PATTERNS) {
-            if (pattern.matcher(decodedValue).find()) {
+        if (CONTROL_CHARS.matcher(inspected).find() || CRLF.matcher(inspected).find()) {
+            return true;
+        }
+
+        if (matchesAny(inspected)) {
+            return true;
+        }
+
+        String decodedOnce = urlDecodeSafely(inspected);
+        return !decodedOnce.equals(inspected) && matchesAny(decodedOnce);
+    }
+
+    private boolean matchesAny(String value) {
+        for (Pattern pattern : SUSPICIOUS_PATTERNS) {
+            if (pattern.matcher(value).find()) {
                 return true;
             }
         }
         return false;
     }
 
-    /**
-     * Sanitize the input string using OWASP Encoder
-     */
-    private String sanitizeInput(String value) {
-        if (value == null) {
-            return null;
+    private String urlDecodeSafely(String value) {
+        try {
+            return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
+        } catch (IllegalArgumentException ex) {
+            return value;
+        } catch (Exception ex) {
+            return value;
         }
-
-        // First check if it contains XSS patterns
-        if (containsXSS(value)) {
-            logger.warn("XSS attempt detected and sanitized: {}", value);
-            // For URLs and parameters that contain XSS, we encode them
-            return Encode.forHtml(value);
-        }
-
-        // For normal content, apply basic HTML encoding
-        return Encode.forHtml(value);
     }
 
-    /**
-     * Custom HttpServletRequestWrapper to sanitize request parameters
-     */
-    public class XSSRequestWrapper extends HttpServletRequestWrapper {
-
-        private final boolean isJson;
-
-        public XSSRequestWrapper(HttpServletRequest request) {
-            super(request);
-            String contentType = request.getContentType();
-            isJson = contentType != null && contentType.contains("application/json");
+    private String safeForLog(String value) {
+        if (value == null) {
+            return "null";
         }
-
-        @Override
-        public String[] getParameterValues(String parameter) {
-            if (isJson) {
-                return super.getParameterValues(parameter); // skip sanitizing for JSON requests
-            }
-            String[] values = super.getParameterValues(parameter);
-
-            if ("query".equals(parameter) && values != null) {
-                return values;  // Return raw array without escaping
-            }
-
-            if (values == null) {
-                return null;
-            }
-
-            String[] encodedValues = new String[values.length];
-            for (int i = 0; i < values.length; i++) {
-                encodedValues[i] = sanitizeInput(values[i]);
-            }
-            return encodedValues;
-        }
-
-        @Override
-        public String getParameter(String parameter) {
-            if (isJson) {
-                return super.getParameter(parameter); // skip sanitizing for JSON requests
-            }
-            String value = super.getParameter(parameter);
-
-            if ("query".equals(parameter) && value != null) {
-                // Return raw value to avoid double escaping
-                return value;
-            }
-
-            return sanitizeInput(value);
-        }
-
-        @Override
-        public String getHeader(String name) {
-            String value = super.getHeader(name);
-            return sanitizeInput(value);
-        }
-
-        @Override
-        public Enumeration<String> getHeaders(String name) {
-            Vector<String> sanitizedHeaders = new Vector<>();
-            Enumeration<String> headers = super.getHeaders(name);
-
-            while (headers.hasMoreElements()) {
-                String header = headers.nextElement();
-                sanitizedHeaders.add(sanitizeInput(header));
-            }
-
-            return sanitizedHeaders.elements();
-        }
-
-        @Override
-        public Map<String, String[]> getParameterMap() {
-            if (isJson) {
-                return super.getParameterMap(); // skip sanitizing for JSON requests
-            }
-
-            Map<String, String[]> originalMap = super.getParameterMap();
-            Map<String, String[]> sanitizedMap = new HashMap<>();
-
-            for (Map.Entry<String, String[]> entry : originalMap.entrySet()) {
-                String key = entry.getKey();
-                String[] originalValues = entry.getValue();
-                String[] sanitizedValues = new String[originalValues.length];
-
-                for (int i = 0; i < originalValues.length; i++) {
-                    if ("query".equals(key)) {
-                        // Bypass sanitization for 'query' parameter - return raw values
-                        sanitizedValues[i] = originalValues[i];
-                    } else {
-                        sanitizedValues[i] = sanitizeInput(originalValues[i]);
-                    }
-                }
-
-                sanitizedMap.put(key, sanitizedValues);
-            }
-
-            return sanitizedMap;
-        }
-
-        @Override
-        public String getQueryString() {
-            if (isJson) {
-                return super.getQueryString();
-            }
-            String queryString = super.getQueryString();
-            return sanitizeInput(queryString);
-        }
+        String sanitized = value.replaceAll("[\\r\\n\\t]", "_");
+        return sanitized.length() > 512 ? sanitized.substring(0, 512) + "..." : sanitized;
     }
 }

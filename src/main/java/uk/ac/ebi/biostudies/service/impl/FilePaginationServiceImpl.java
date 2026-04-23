@@ -161,8 +161,8 @@ public class FilePaginationServiceImpl implements FilePaginationService {
         QueryParser parser = new QueryParser(Constants.Fields.ACCESSION, new KeywordAnalyzer());
         IndexReader reader = indexManager.getFileIndexReader();
         ObjectNode studyInfo = getStudyInfo(accession, secretKey);
+        if (studyInfo == null || studyInfo.get(Constants.Fields.FILES) == null) return mapper.createObjectNode();
         long totalFiles = studyInfo.get(Constants.Fields.FILES).asLong();
-        if (studyInfo == null) return mapper.createObjectNode();
         ArrayNode columns = (ArrayNode) studyInfo.get("columns");
         try {
             List<SortField> allSortedFields = new ArrayList<>();
@@ -188,27 +188,32 @@ public class FilePaginationServiceImpl implements FilePaginationService {
             }
             if (searchedColumns.size() > 0)
                 query = applyPerFieldSearch(searchedColumns, query);
-            TopDocs hits = searcher.search(query, Integer.MAX_VALUE, sort);
+            long filteredCount = searcher.count(query);
             ObjectNode response = mapper.createObjectNode();
             response.put(Constants.File.DRAW, draw);
             response.put(Constants.File.RECORDTOTAL, totalFiles);
-            response.put(Constants.File.RECORDFILTERED, hits.totalHits.value);
-            if (hits.totalHits.value >= 0) {
+            response.put(Constants.File.RECORDFILTERED, filteredCount);
+            if (filteredCount >= 0) {
                 if (pageSize == -1) pageSize = Integer.MAX_VALUE;
                 ArrayNode docs = mapper.createArrayNode();
-                for (int i = start; i < start + pageSize && i < hits.totalHits.value; i++) {
-                    ObjectNode docNode = mapper.createObjectNode();
-                    Document doc = reader.document(hits.scoreDocs[i].doc);
-                    if (metadata) {
-                        for (JsonNode field : columns) {
-                            String fName = field.get("name").asText();
-                            docNode.put(field.get("name").asText().replaceAll("[\\[\\]\\(\\)\\s]", "_"), doc.get(fName) == null ? "" : doc.get(fName));
+                if (start < filteredCount) {
+                    long end = Math.min(filteredCount, (long) start + pageSize);
+                    int hitsToFetch = (int) Math.min(end, Integer.MAX_VALUE);
+                    TopDocs hits = searcher.search(query, hitsToFetch, sort);
+                    for (int i = start; i < end; i++) {
+                        ObjectNode docNode = mapper.createObjectNode();
+                        Document doc = reader.document(hits.scoreDocs[i].doc);
+                        if (metadata) {
+                            for (JsonNode field : columns) {
+                                String fName = field.get("name").asText();
+                                docNode.put(field.get("name").asText().replaceAll("[\\[\\]\\(\\)\\s]", "_"), doc.get(fName) == null ? "" : doc.get(fName));
+                            }
                         }
+                        docNode.put(Constants.File.PATH, doc.get(Constants.File.PATH) == null ? "" : doc.get(Constants.File.PATH));
+                        docNode.put(Constants.File.TYPE, doc.get(Constants.File.IS_DIRECTORY) == null ? "file" : doc.get(Constants.File.IS_DIRECTORY).equalsIgnoreCase("true") ? "directory" : "file");
+                        docNode.put(Constants.File.SIZE.toLowerCase(), Long.parseLong(doc.get(Constants.File.SIZE)));
+                        docs.add(docNode);
                     }
-                    docNode.put(Constants.File.PATH, doc.get(Constants.File.PATH) == null ? "" : doc.get(Constants.File.PATH));
-                    docNode.put(Constants.File.TYPE, doc.get(Constants.File.IS_DIRECTORY) == null ? "file" : doc.get(Constants.File.IS_DIRECTORY).equalsIgnoreCase("true") ? "directory" : "file");
-                    docNode.put(Constants.File.SIZE.toLowerCase(), Long.parseLong(doc.get(Constants.File.SIZE)));
-                    docs.add(docNode);
                 }
                 response.set(Constants.File.DATA, docs);
                 return response;
