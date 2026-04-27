@@ -12,8 +12,9 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   DOCKER_IMAGE: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}
 
-services:
-  - docker:dind
+# Temporary disable docker service for new test GitLab CI
+#services:
+#  - docker:dind
 
 .deploy-template: &deploy-template
   stage: deploy
