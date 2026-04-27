@@ -199,6 +199,12 @@ public class FilePaginationServiceImpl implements FilePaginationService {
                 if (start < filteredCount) {
                     long end = Math.min(filteredCount, (long) start + pageSize);
                     int hitsToFetch = (int) Math.min(end, Integer.MAX_VALUE);
+
+                    if (hitsToFetch <= 0) {
+                        response.set(Constants.File.DATA, docs);
+                        return response;
+                    }
+
                     TopDocs hits = searcher.search(query, hitsToFetch, sort);
                     for (int i = start; i < end; i++) {
                         ObjectNode docNode = mapper.createObjectNode();
